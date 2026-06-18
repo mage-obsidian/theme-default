@@ -1,0 +1,97 @@
+/* ============================================================
+   OBSIDIAN — MageObsidian/default theme tokens (Tailwind 4)
+   Cool mineral base · vitreous obsidian signature surfaces ·
+   iridescent sheen as the single signature · sharpened edges.
+   ============================================================ */
+@import "tailwindcss";
+
+@theme {
+  /* — Obsidian: vitreous near-black, cool violet undertone — */
+  --color-obsidian-950: #08070b;
+  --color-obsidian-900: #0d0c12;
+  --color-obsidian-800: #16151d;
+  --color-obsidian-700: #211f2a;
+  --color-obsidian-600: #2e2b39;
+
+  /* — Alabaster: cool mineral light base (not warm cream) — */
+  --color-alabaster: #eceaf0;
+  --color-alabaster-raised: #f6f5f8;
+  --color-paper: #ffffff;
+
+  /* — Ash: pewter neutrals — */
+  --color-ash-200: #dad8e2;
+  --color-ash-300: #c6c3d0;
+  --color-ash-400: #a09cad;
+  --color-ash-500: #76727f;
+
+  /* — Ink: text — */
+  --color-ink: #141319;
+  --color-ink-soft: #403d49;
+  --color-on-obsidian: #ecebf0;
+  --color-on-obsidian-soft: #a7a3b4;
+
+  /* — Sheen stops (signature) + restrained functional accents — */
+  --color-sheen-violet: #7b63a8;
+  --color-sheen-teal: #3f8a86;
+  --color-sheen-bronze: #b08a5a;
+  --color-accent: #2f6e66;
+  --color-accent-soft: #cfe0dc;
+  --color-sale: #9a5b3f;
+
+  /* — Typography — */
+  --font-display: "Bodoni Moda", Georgia, serif;
+  --font-body: "Hanken Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* — Fluid type scale — */
+  --text-eyebrow: 0.72rem;
+  --text-lead: 1.3rem;
+  --text-h3: clamp(1.4rem, 1.1rem + 1.4vw, 2rem);
+  --text-h2: clamp(2rem, 1.4rem + 3vw, 3.4rem);
+  --text-hero: clamp(3rem, 1.2rem + 9vw, 8.5rem);
+
+  /* — Radius (conchoidal edge) — */
+  --radius-edge: 2px;
+
+  /* — Motion — */
+  --ease-obsidian: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Signature utility: iridescent sheen over a vitreous surface.
+   Subtle at rest, swept on interaction. Reused by islands/partials. */
+@utility sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+@utility sheen {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -40% -10%;
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      color-mix(in srgb, var(--color-sheen-violet) 55%, transparent) 44%,
+      color-mix(in srgb, var(--color-sheen-teal) 50%, transparent) 52%,
+      color-mix(in srgb, var(--color-sheen-bronze) 45%, transparent) 60%,
+      transparent 74%
+    );
+    transform: translateX(-65%) rotate(2deg);
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-obsidian),
+      transform 1.1s var(--ease-obsidian);
+    pointer-events: none;
+    z-index: -1;
+    mix-blend-mode: screen;
+  }
+  &:hover::after,
+  &:focus-within::after {
+    opacity: 0.85;
+    transform: translateX(60%) rotate(2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheen::after { display: none; }
+}
