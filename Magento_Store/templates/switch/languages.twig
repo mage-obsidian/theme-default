@@ -1,0 +1,13 @@
+{#
+  Language / store-view switcher (desktop header). Renders only when there is
+  more than one active store view. Data comes from the StoreSwitcher ViewModel
+  (block argument `switcher`) — the same source the mobile drawer reads. Mounts
+  eager because it sits in the above-the-fold header utility cluster.
+#}
+{% if block.getSwitcher().hasMultiple() %}
+    {{ render_vue('MageObsidian_Storefront::navigation/Switcher', {
+        label: block.getSwitcher().getCurrentLabel(),
+        srLabel: __('Change language'),
+        items: block.getSwitcher().getItems()
+    }, true) }}
+{% endif %}

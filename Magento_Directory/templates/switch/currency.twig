@@ -1,0 +1,13 @@
+{#
+  Currency switcher (desktop header). Renders only when more than one currency
+  is allowed. Data comes from the CurrencySwitcher ViewModel (block argument
+  `switcher`); each option is a native `directory/currency/switch` GET link, so
+  it works without JS. Mounts eager (above-the-fold header).
+#}
+{% if block.getSwitcher().hasMultiple() %}
+    {{ render_vue('MageObsidian_Storefront::navigation/Switcher', {
+        label: block.getSwitcher().getCurrentLabel(),
+        srLabel: __('Change currency'),
+        items: block.getSwitcher().getItems()
+    }, true) }}
+{% endif %}
