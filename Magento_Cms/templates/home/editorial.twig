@@ -1,0 +1,18 @@
+{#
+  Editorial / manifesto band closing the home. Pure type on the obsidian field —
+  the brand statement, with a quiet link through to the brand story.
+#}
+<section class="bg-obsidian-950 text-on-obsidian">
+    <div class="mx-auto max-w-[1100px] px-6 py-24 text-center md:px-8 md:py-32">
+        <p class="font-mono uppercase tracking-[0.3em] text-on-obsidian-soft" style="font-size:var(--text-eyebrow)">
+            {{ __('Manifesto') }}
+        </p>
+        <p class="mx-auto mt-8 max-w-[20ch] font-display leading-[1.05]" style="font-size:var(--text-h2)">
+            {{ __('Nothing that doesn’t earn its place.') }}
+        </p>
+        <a href="{{ block.getUrl('about-us') }}"
+           class="mt-10 inline-flex items-center gap-2 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-on-obsidian-soft transition-colors hover:text-on-obsidian">
+            {{ __('Read the philosophy') }} <span aria-hidden="true">→</span>
+        </a>
+    </div>
+</section>

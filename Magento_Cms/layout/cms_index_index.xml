@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+  OBSIDIAN home. The CMS "home" page is intentionally left empty; the storefront
+  owns the home as a designed, versioned Twig composition (hero + category grid +
+  editorial). The empty cms_page block stays — it renders nothing visible but is
+  what sets the document <title> and meta from the CMS "home" page — while we drop
+  the body H1 and render our own block fed by the FeaturedCategories ViewModel.
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- Drop only the "Home Page" H1; the hero's H1 is the real page heading.
+             Keep cms_page (above) so the document <title>/meta stay set. -->
+        <referenceBlock name="page.main.title" remove="true"/>
+
+        <referenceContainer name="content">
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.home"
+                   template="Magento_Cms::home/home.twig">
+                <arguments>
+                    <argument name="featured" xsi:type="object">MageObsidian\Storefront\ViewModel\FeaturedCategories</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

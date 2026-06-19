@@ -1,0 +1,12 @@
+{#
+  OBSIDIAN home — designed and server-rendered (the CMS "home" page is left empty
+  on purpose; the storefront owns the home composition). Composes three sections
+  via includes; the category data comes from the FeaturedCategories ViewModel
+  (block argument `featured`). `block` is a MageObsidian Template so render_vue /
+  helpers are available and the includes share its context.
+#}
+<div class="cms-home">
+    {% include 'Magento_Cms::home/hero.twig' %}
+    {% include 'Magento_Cms::home/category-grid.twig' %}
+    {% include 'Magento_Cms::home/editorial.twig' %}
+</div>
