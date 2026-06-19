@@ -1,0 +1,30 @@
+{#
+  Configurable buy box as a Vue island. We pass core's assembled getJsonConfig()
+  and getJsonSwatchConfig() as JSON strings (the island parses them) rather than
+  re-deriving the variant index. `cfg` is the core renderer declared in the PDP
+  layout only as this data source. With JS off, swatches cannot render.
+#}
+{% set view = block.getView() %}
+{% set cfg = block.getChildBlock('configurable') %}
+{{ render_vue('MageObsidian_Storefront::catalog/ProductForm', {
+    config: cfg.getJsonConfig(),
+    swatches: cfg.getJsonSwatchConfig(),
+    productId: view.getProductId(),
+    action: view.getAddToCartAction(),
+    uenc: view.getUenc(),
+    initialPrice: view.formatPrice(view.getFinalPrice()),
+    labels: {
+        chooseFor: __('Choose %1'),
+        addToCart: __('Add to cart'),
+        qty: __('Qty'),
+        selectOptions: __('Select the options above'),
+        unavailable: __('This combination is unavailable'),
+        added: __('Added to cart'),
+        failed: __('Could not add to cart')
+    }
+}, true) }}
+<noscript>
+    <p class="pdp__noscript mt-2 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-ink-soft">
+        {{ __('Enable JavaScript to choose options and add this product to your cart.') }}
+    </p>
+</noscript>

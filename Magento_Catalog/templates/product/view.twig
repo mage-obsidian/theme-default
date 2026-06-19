@@ -1,0 +1,81 @@
+{#
+  Product detail page. Configurable products mount the swatch island; every other
+  type uses the progressive add-to-cart form. Product/Offer + BreadcrumbList
+  JSON-LD are emitted by the engine.
+#}
+{% set view = block.getView() %}
+{% set gallery = block.getGallery() %}
+{% set product = view.getProduct() %}
+{% set configurable = view.isConfigurable() %}
+
+{% if product %}
+<article class="pdp mx-auto max-w-[1320px] px-4 pb-24 pt-2 md:px-8"
+         data-pdp data-product-id="{{ view.getProductId() }}">
+    <div class="pdp__grid grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-2">
+
+        {# ---- Gallery (server-rendered, LCP-eager) ---- #}
+        {% include 'Magento_Catalog::product/gallery.twig' with { images: gallery.getImages() } %}
+
+        {# ---- Buy box ---- #}
+        <div class="pdp__info lg:sticky lg:top-24 lg:self-start">
+            <h1 class="pdp__name font-display text-3xl leading-tight text-ink md:text-4xl">{{ view.getName() }}</h1>
+            <p class="pdp__sku mt-2 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-ink-soft">
+                {{ __('SKU') }}: {{ view.getSku() }}
+            </p>
+
+            {# Configurable price is dynamic (owned by the island); the static box
+               covers every other type. #}
+            {% if not configurable %}
+                <div class="pdp__price mt-6 flex items-baseline gap-3">
+                    {% if view.isOnSale() %}
+                        <span class="pdp__price-final font-mono text-2xl text-sale">{{ view.getFinalPrice()|price }}</span>
+                        <span class="pdp__price-regular font-mono text-base text-ink-soft line-through">{{ view.getRegularPrice()|price }}</span>
+                    {% else %}
+                        <span class="pdp__price-final font-mono text-2xl text-ink">{{ view.getFinalPrice()|price }}</span>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% set shortDescription = view.getShortDescriptionHtml() %}
+            {% if shortDescription %}
+                <div class="pdp__short prose mt-6 max-w-prose text-ink-soft">{{ shortDescription|raw }}</div>
+            {% endif %}
+
+            <div class="pdp__buy mt-8">
+                {% if configurable %}
+                    {% include 'Magento_Catalog::product/form/configurable.twig' %}
+                {% elseif view.isSaleable() %}
+                    {% include 'Magento_Catalog::product/form/simple.twig' %}
+                {% else %}
+                    <p class="pdp__unavailable inline-flex items-center rounded-edge border border-ash-200 px-5 py-3 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ash-500">
+                        {{ __('Out of stock') }}
+                    </p>
+                {% endif %}
+            </div>
+
+            {% set attributes = block.getChildBlock('product_attributes') ? block.getChildBlock('product_attributes').getAdditionalData() : [] %}
+            {% if attributes is not empty %}
+                <section class="pdp__specs mt-12 border-t border-ash-200 pt-8" aria-labelledby="pdp-specs-title">
+                    <h2 id="pdp-specs-title" class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-ink-soft">{{ __('Details') }}</h2>
+                    <dl class="mt-4 grid grid-cols-1 gap-y-3 sm:grid-cols-[auto_1fr] sm:gap-x-8">
+                        {% for attribute in attributes %}
+                            <dt class="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-ink-soft">{{ attribute.label }}</dt>
+                            <dd class="text-sm text-ink">{{ attribute.value|raw }}</dd>
+                        {% endfor %}
+                    </dl>
+                </section>
+            {% endif %}
+        </div>
+    </div>
+
+    {% set description = view.getDescriptionHtml() %}
+    {% if description %}
+        <section class="pdp__description mt-16 border-t border-ash-200 pt-12" aria-labelledby="pdp-description-title">
+            <h2 id="pdp-description-title" class="font-display text-xl text-ink">{{ __('About this product') }}</h2>
+            <div class="prose mt-6 max-w-prose text-ink-soft">{{ description|raw }}</div>
+        </section>
+    {% endif %}
+
+    <script type="module" src="{{ vite_url('MageObsidian_Storefront::js/gallery') }}"></script>
+</article>
+{% endif %}

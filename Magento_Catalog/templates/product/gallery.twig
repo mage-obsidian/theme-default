@@ -1,0 +1,39 @@
+{#
+  Server-rendered gallery. The first image is the LCP (eager, high priority); the
+  rest stay lazy. Thumbs swap the main image via gallery.js, which also swaps it
+  on the configurable island's `obsidian:variant-image` event.
+#}
+{% if images is not empty %}
+{% set main = images|first %}
+<div class="pdp__gallery" role="group" aria-label="{{ __('Product gallery')|escape_html_attr }}">
+    <figure class="pdp__gallery-main relative m-0 block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised">
+        <img data-gallery-main
+             class="pdp__gallery-img h-full w-full object-cover"
+             src="{{ main.large|escape_url }}"
+             alt="{{ main.label|escape_html_attr }}"
+             width="800" height="1000"
+             fetchpriority="high" decoding="async">
+    </figure>
+
+    {% if images|length > 1 %}
+        <ul class="pdp__gallery-thumbs mt-4 grid grid-cols-4 gap-3 sm:grid-cols-5" role="list">
+            {% for image in images %}
+                <li>
+                    <button type="button"
+                            class="pdp__thumb block w-full overflow-hidden rounded-edge border border-transparent bg-alabaster-raised transition-colors aria-pressed:border-ink"
+                            data-gallery-thumb
+                            data-large="{{ image.large|escape_html_attr }}"
+                            data-label="{{ image.label|escape_html_attr }}"
+                            aria-pressed="{{ loop.first ? 'true' : 'false' }}"
+                            aria-label="{{ __('Show image %1', loop.index)|escape_html_attr }}">
+                        <img class="aspect-[4/5] h-full w-full object-cover"
+                             src="{{ image.thumb|escape_url }}"
+                             alt=""
+                             loading="lazy" decoding="async">
+                    </button>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endif %}

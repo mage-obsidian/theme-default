@@ -1,0 +1,25 @@
+{#
+  Add-to-cart for non-configurable types. `data-add-to-cart` opts into AJAX
+  quick-add (cart-actions.js); composite types that still need options omit it and
+  fall back to a native POST so Magento drives the flow.
+#}
+{% set view = block.getView() %}
+{% set quickAdd = not view.needsOptions() %}
+<form class="pdp__form flex flex-wrap items-end gap-4"
+      {% if quickAdd %}data-add-to-cart{% endif %}
+      action="{{ view.getAddToCartAction()|escape_url }}" method="post">
+    <input type="hidden" name="product" value="{{ view.getProductId() }}">
+    <input type="hidden" name="uenc" value="{{ view.getUenc()|escape_html_attr }}">
+    {{ block.getBlockHtml('formkey')|raw }}
+
+    <div class="pdp__qty">
+        <label for="pdp-qty" class="block font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Qty') }}</label>
+        <input id="pdp-qty" name="qty" type="number" inputmode="numeric" min="1" step="1" value="1"
+               class="mt-2 w-20 rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 text-center font-mono text-sm text-ink focus:border-ink focus:outline-none">
+    </div>
+
+    <button type="submit"
+            class="inline-flex flex-1 items-center justify-center rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink disabled:opacity-60">
+        {{ __('Add to cart') }}
+    </button>
+</form>
