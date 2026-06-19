@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+  OBSIDIAN skin overrides on top of MageObsidian/theme-base.
+  Swaps the header/footer to Twig templates and loads the type families.
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="head.additional">
+            <block name="obsidian.fonts" template="Magento_Theme::html/head/fonts.twig"/>
+        </referenceBlock>
+        <referenceBlock name="header-content" template="Magento_Theme::html/header.twig"/>
+        <referenceBlock name="footer.content" template="Magento_Theme::html/footer.twig"/>
+        <!-- copyright is rendered inside footer.twig -->
+        <referenceBlock name="copyright" remove="true"/>
+    </body>
+</page>

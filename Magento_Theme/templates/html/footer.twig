@@ -1,0 +1,36 @@
+{#
+  OBSIDIAN footer — vitreous obsidian surface, the dark counterpart to the
+  light header. block.getChildHtml() renders the native footer_links block.
+#}
+<div class="border-t border-obsidian-800 bg-obsidian-950 text-on-obsidian-soft">
+    <div class="mx-auto grid max-w-[1320px] gap-10 px-4 py-16 md:grid-cols-[1.6fr_1fr_1fr] md:px-8">
+        <div>
+            <div class="mb-4 font-display text-xl tracking-[0.16em] text-on-obsidian">OBSIDIAN</div>
+            <p class="max-w-[32ch] text-sm leading-relaxed">
+                Outerwear and tailoring cut along one clean line. A volcanic-glass palette,
+                knife-clean seams, and nothing that doesn't earn its place.
+            </p>
+        </div>
+
+        <nav aria-label="Shop">
+            <div class="mb-4 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-on-obsidian">Shop</div>
+            <ul class="space-y-2 text-sm">
+                {% for label in ['New in', 'Outerwear', 'Tailoring', 'The Vitreous Edit'] %}
+                    <li><a href="#" class="transition-colors hover:text-on-obsidian">{{ label }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+
+        <div>
+            <div class="mb-4 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-on-obsidian">More</div>
+            {{ block.getChildHtml()|raw }}
+        </div>
+    </div>
+
+    <div class="border-t border-obsidian-800">
+        <div class="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-3 px-4 py-6 font-mono text-[0.7rem] uppercase tracking-[0.14em] md:px-8">
+            <span>© AW25 OBSIDIAN — a MageObsidian demo line</span>
+            <span>Cut in Porto · Shipped worldwide</span>
+        </div>
+    </div>
+</div>
