@@ -1,0 +1,26 @@
+{#
+  Breadcrumb trail. `crumbs` is assigned by Magento\Theme\Block\Html\Breadcrumbs
+  (crumbName => {label, title, link, last}). Rendered as an ordered list inside a
+  labelled nav landmark. The JSON-LD BreadcrumbList is emitted separately by the
+  engine's CurrentPageSchemaProvider, so this template stays presentation-only to
+  avoid a duplicate node. OBSIDIAN keeps it quiet: mono, ash separators.
+#}
+{% if crumbs and crumbs is iterable %}
+<nav class="breadcrumbs mx-auto max-w-[1320px] px-4 py-4 md:px-8 print:hidden" aria-label="{{ __('Breadcrumb') }}">
+    <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-ink-soft">
+        {% for crumbName, crumbInfo in crumbs %}
+            <li class="item flex items-center gap-2 {{ crumbName|escape_html_attr }}">
+                {% if crumbInfo.link %}
+                    <a class="transition-colors hover:text-ink" href="{{ crumbInfo.link|escape_url }}"
+                       title="{{ crumbInfo.title }}">{{ crumbInfo.label }}</a>
+                {% elseif crumbInfo.last %}
+                    <strong class="font-normal text-ink" aria-current="page">{{ crumbInfo.label }}</strong>
+                {% else %}
+                    {{ crumbInfo.label }}
+                {% endif %}
+                {% if not loop.last %}<span class="text-ash-300" aria-hidden="true">/</span>{% endif %}
+            </li>
+        {% endfor %}
+    </ol>
+</nav>
+{% endif %}

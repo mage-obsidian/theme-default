@@ -1,30 +1,40 @@
 {#
-  OBSIDIAN header — minimal premium. Cool alabaster bar, Bodoni wordmark,
-  mono nav/utilities. Static for now; the cart/search/account islands land
-  in a later step. block is the Magento header-content block.
+  OBSIDIAN header — minimal premium. Cool alabaster bar, Bodoni wordmark, mono
+  nav/utilities. Nav items come from the Navigation ViewModel (single source,
+  shared with the mobile menu and footer); the desktop list is rendered through
+  the nav_list macro. The mobile menu is an eager island (child block).
+  `block` is the Magento header-content block.
 #}
-<div class="sticky top-0 z-30 border-b border-ash-200 bg-alabaster/85 backdrop-blur-md">
-    <div class="mx-auto flex h-[68px] max-w-[1320px] items-center justify-between gap-6 px-4 md:px-8">
-        <a href="{{ block.getUrl('') }}"
-           class="font-display text-2xl font-semibold tracking-[0.16em] text-ink"
-           aria-label="OBSIDIAN — home">OBSIDIAN</a>
+{% from 'Magento_Theme::macros/ui.twig' import nav_list %}
+<div class="sticky top-0 z-30 border-b border-ash-200 bg-alabaster/85 backdrop-blur-md print:hidden">
+    <div class="mx-auto flex h-[68px] max-w-[1320px] items-center justify-between gap-4 px-4 md:gap-6 md:px-8">
+        <div class="flex items-center gap-2">
+            {{ child_html('mobile_menu') }}
+            <a href="{{ block.getUrl('') }}"
+               class="font-display text-2xl font-semibold tracking-[0.16em] text-ink"
+               aria-label="{{ __('OBSIDIAN — home')|escape_html_attr }}">OBSIDIAN</a>
+        </div>
 
-        <nav class="hidden items-center gap-8 md:flex" aria-label="Primary">
-            {% for label in ['New in', 'Outerwear', 'Tailoring', 'The Vitreous Edit', 'Archive'] %}
-                <a href="#"
-                   class="font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink">{{ label }}</a>
-            {% endfor %}
+        <nav class="hidden items-center gap-8 md:flex" aria-label="{{ __('Primary')|escape_html_attr }}">
+            {{ nav_list(
+                block.getNavigation().getItems(),
+                'font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink'
+            ) }}
         </nav>
 
         <div class="flex items-center gap-4 font-mono text-[0.72rem] uppercase tracking-[0.12em] text-ink-soft">
-            <a href="#" class="hidden transition-colors hover:text-ink sm:inline">Account</a>
-            <button type="button" aria-label="Search" class="transition-colors hover:text-ink">
+            <div class="hidden items-center gap-4 md:flex">
+                {{ child_html('switcher_language') }}
+                {{ child_html('switcher_currency') }}
+            </div>
+            <a href="{{ block.getUrl('customer/account') }}" class="hidden transition-colors hover:text-ink sm:inline">{{ __('Account') }}</a>
+            <button type="button" aria-label="{{ __('Search')|escape_html_attr }}" class="transition-colors hover:text-ink">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                 </svg>
             </button>
-            <a href="#" class="inline-flex items-center gap-2 rounded-edge border border-ash-300 px-3 py-2 transition-colors hover:border-ink">
-                <span class="h-1.5 w-1.5 rounded-full bg-accent"></span> Bag
+            <a href="{{ block.getUrl('checkout/cart') }}" class="inline-flex items-center gap-2 rounded-edge border border-ash-300 px-3 py-2 transition-colors hover:border-ink">
+                {{ child_html('cart_count') }} {{ __('Bag') }}
             </a>
         </div>
     </div>

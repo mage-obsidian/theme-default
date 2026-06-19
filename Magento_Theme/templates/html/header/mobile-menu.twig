@@ -1,0 +1,26 @@
+{#
+  Mobile navigation island holder. Rendered by a MageObsidian Template block
+  (see layout) so render_vue is available; mounts eager because it sits in the
+  above-the-fold header. Nav items come from the shared Navigation ViewModel —
+  the same source the desktop nav and footer use, so there is no duplicated list.
+  The store/currency switchers (same ViewModels as the desktop islands) are
+  passed in only when they have more than one option; the component reuses the
+  Switcher in its inline variant inside the drawer.
+#}
+{% set stores = block.getStoreSwitcher() %}
+{% set currencies = block.getCurrencySwitcher() %}
+{{ render_vue(
+    'MageObsidian_Storefront::navigation/MobileMenu',
+    {
+        links: block.getNavigation().getItems(),
+        label: __('Menu'),
+        navLabel: __('Browse'),
+        stores: stores.hasMultiple()
+            ? { label: stores.getCurrentLabel(), srLabel: __('Change language'), items: stores.getItems() }
+            : null,
+        currencies: currencies.hasMultiple()
+            ? { label: currencies.getCurrentLabel(), srLabel: __('Change currency'), items: currencies.getItems() }
+            : null
+    },
+    true
+) }}

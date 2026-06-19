@@ -1,0 +1,133 @@
+{#
+  Collection pager (Magento\Theme\Block\Html\Pager). Two changes vs Luma:
+  - the per-page limiter redirects via a native ESM listener bound once per
+    select (Luma used data-mage-init redirectUrl, a RequireJS widget);
+  - numbers are grouped per locale via the engine's `number` filter.
+  OBSIDIAN renders it as a quiet mono toolbar.
+#}
+{% if block.getCollection().getSize() %}
+    {% if block.getUseContainer() %}<div class="pager flex flex-wrap items-center justify-between gap-4 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink-soft">{% endif %}
+
+    {% if block.getShowAmounts() %}
+        <p class="toolbar-amount">
+            <span class="toolbar-number">
+                {%- if block.getLastPageNum() > 1 -%}
+                    {{ __('Items %1 to %2 of %3 total', block.getFirstNum()|number, block.getLastNum()|number, block.getTotalNum()|number) }}
+                {%- elseif block.getTotalNum() == 1 -%}
+                    {{ __('%1 Item', block.getTotalNum()|number) }}
+                {%- else -%}
+                    {{ __('%1 Item(s)', block.getTotalNum()|number) }}
+                {%- endif -%}
+            </span>
+        </p>
+    {% endif %}
+
+    {% if block.getLastPageNum() > 1 %}
+        <div class="pages">
+            <strong class="label sr-only" id="paging-label">{{ __('Page') }}</strong>
+            <ul class="items pages-items flex items-center gap-1" aria-labelledby="paging-label">
+                {% if not block.isFirstPage() %}
+                    {% set prevText = block.getAnchorTextForPrevious() %}
+                    <li class="item pages-item-previous">
+                        <a class="previous flex h-9 items-center rounded-edge border border-ash-300 px-3 transition-colors hover:border-ink hover:text-ink"
+                           href="{{ block.getPreviousPageUrl()|escape_url }}"
+                           title="{{ prevText ? prevText : __('Previous') }}">
+                            <span class="sr-only">{{ __('Page') }}</span>
+                            <span aria-hidden="true">{{ prevText ? prevText : '‹' }}</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if block.canShowFirst() %}
+                    <li class="item">
+                        <a class="page first flex h-9 min-w-9 items-center justify-center rounded-edge px-2 transition-colors hover:text-ink"
+                           href="{{ block.getFirstPageUrl()|escape_url }}">
+                            <span class="sr-only">{{ __('Page') }}</span>
+                            <span>{{ 1|number }}</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if block.canShowPreviousJump() %}
+                    <li class="item">
+                        <a class="page previous jump flex h-9 min-w-9 items-center justify-center px-2"
+                           aria-label="{{ __('Skip to page %1', block.getPreviousJumpPage())|escape_html_attr }}"
+                           href="{{ block.getPreviousJumpUrl()|escape_url }}"><span aria-hidden="true">…</span></a>
+                    </li>
+                {% endif %}
+
+                {% for page in block.getFramePages() %}
+                    {% if block.isPageCurrent(page) %}
+                        <li class="item current">
+                            <strong class="page flex h-9 min-w-9 items-center justify-center rounded-edge bg-ink px-2 text-alabaster"
+                                    aria-current="page">
+                                <span class="sr-only">{{ __("You're currently reading page") }}</span>
+                                <span>{{ page|number }}</span>
+                            </strong>
+                        </li>
+                    {% else %}
+                        <li class="item">
+                            <a class="page flex h-9 min-w-9 items-center justify-center rounded-edge px-2 transition-colors hover:text-ink"
+                               href="{{ block.getPageUrl(page)|escape_url }}">
+                                <span class="sr-only">{{ __('Page') }}</span>
+                                <span>{{ page|number }}</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if block.canShowNextJump() %}
+                    <li class="item">
+                        <a class="page next jump flex h-9 min-w-9 items-center justify-center px-2"
+                           aria-label="{{ __('Skip to page %1', block.getNextJumpPage())|escape_html_attr }}"
+                           href="{{ block.getNextJumpUrl()|escape_url }}"><span aria-hidden="true">…</span></a>
+                    </li>
+                {% endif %}
+
+                {% if block.canShowLast() %}
+                    <li class="item">
+                        <a class="page last flex h-9 min-w-9 items-center justify-center rounded-edge px-2 transition-colors hover:text-ink"
+                           href="{{ block.getLastPageUrl()|escape_url }}">
+                            <span class="sr-only">{{ __('Page') }}</span>
+                            <span>{{ block.getLastPageNum()|number }}</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if not block.isLastPage() %}
+                    {% set nextText = block.getAnchorTextForNext() %}
+                    <li class="item pages-item-next">
+                        <a class="next flex h-9 items-center rounded-edge border border-ash-300 px-3 transition-colors hover:border-ink hover:text-ink"
+                           href="{{ block.getNextPageUrl()|escape_url }}"
+                           title="{{ nextText ? nextText : __('Next') }}">
+                            <span class="sr-only">{{ __('Page') }}</span>
+                            <span aria-hidden="true">{{ nextText ? nextText : '›' }}</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {% if block.isShowPerPage() %}
+        <label class="limiter flex items-center gap-2">
+            <span class="limiter-label font-normal">{{ __('Show') }}</span>
+            <select data-mage-obsidian-limiter
+                    class="limiter-options h-9 rounded-edge border border-ash-300 bg-alabaster px-2 text-ink">
+                {% for key, limit in block.getAvailableLimit() %}
+                    <option value="{{ block.getLimitUrl(key)|escape_url }}"{{ block.isLimitCurrent(key) ? ' selected' }}>{{ limit }}</option>
+                {% endfor %}
+            </select>
+            <span class="limiter-text">{{ __('per page') }}</span>
+        </label>
+        <script type="module">
+            document.querySelectorAll('select[data-mage-obsidian-limiter]').forEach((el) => {
+                if (el.dataset.bound) return;
+                el.dataset.bound = '1';
+                el.addEventListener('change', () => { if (el.value) window.location.assign(el.value); });
+            });
+        </script>
+    {% endif %}
+
+    {% if block.getUseContainer() %}</div>{% endif %}
+{% endif %}

@@ -1,0 +1,6 @@
+{#
+  Global toast host (mounted once). Announces `obsidian:toast` events in an
+  aria-live region — used by add-to-cart now, reusable by wishlist/compare/etc.
+  Mounts eager so it is ready before the first event fires.
+#}
+{{ render_vue('MageObsidian_Storefront::feedback/Toast', {}, true) }}

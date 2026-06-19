@@ -9,9 +9,71 @@
         <referenceBlock name="head.additional">
             <block name="obsidian.fonts" template="Magento_Theme::html/head/fonts.twig"/>
         </referenceBlock>
-        <referenceBlock name="header-content" template="Magento_Theme::html/header.twig"/>
-        <referenceBlock name="footer.content" template="Magento_Theme::html/footer.twig"/>
+        <!-- Replace the parent theme's (theme-base) demo language/currency
+             switchers with OBSIDIAN Twig islands mounted in the header utility
+             cluster. Removing here — child-theme presentation replacing parent-
+             theme presentation — is the right layer: these blocks come from a
+             theme, not a core module. -->
+        <referenceBlock name="store_language" remove="true"/>
+        <referenceBlock name="currency" remove="true"/>
+
+        <referenceBlock name="header-content" template="Magento_Theme::html/header.twig">
+            <arguments>
+                <!-- Single source of the main nav, shared with the mobile menu. -->
+                <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
+            </arguments>
+            <!-- Dedicated MageObsidian Template child so the mobile-menu island can
+                 use render_vue; header-content itself stays the generic Theme block. -->
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.mobile_menu"
+                   as="mobile_menu" template="Magento_Theme::html/header/mobile-menu.twig">
+                <arguments>
+                    <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
+                    <!-- Same switcher ViewModels as the desktop islands, so the
+                         drawer and the header share one source. -->
+                    <argument name="store_switcher" xsi:type="object">MageObsidian\Storefront\ViewModel\StoreSwitcher</argument>
+                    <argument name="currency_switcher" xsi:type="object">MageObsidian\Storefront\ViewModel\CurrencySwitcher</argument>
+                </arguments>
+            </block>
+            <!-- Desktop switcher islands (header.twig hides them on mobile; the
+                 drawer carries them there). MageObsidian Template children so
+                 render_vue is available. -->
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.switcher.language"
+                   as="switcher_language" template="Magento_Store::switch/languages.twig">
+                <arguments>
+                    <argument name="switcher" xsi:type="object">MageObsidian\Storefront\ViewModel\StoreSwitcher</argument>
+                </arguments>
+            </block>
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.switcher.currency"
+                   as="switcher_currency" template="Magento_Directory::switch/currency.twig">
+                <arguments>
+                    <argument name="switcher" xsi:type="object">MageObsidian\Storefront\ViewModel\CurrencySwitcher</argument>
+                </arguments>
+            </block>
+            <!-- Live bag count island (reactive via the customer-data bridge). -->
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.cart_count"
+                   as="cart_count" template="Magento_Theme::html/header/cart-count.twig"/>
+        </referenceBlock>
+        <referenceBlock name="footer.content" template="Magento_Theme::html/footer.twig">
+            <arguments>
+                <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
+            </arguments>
+        </referenceBlock>
         <!-- copyright is rendered inside footer.twig -->
         <referenceBlock name="copyright" remove="true"/>
+
+        <!-- Repoint Magento_Theme's structural blocks to their Twig ports. -->
+        <referenceBlock name="skip_to_content" template="Magento_Theme::html/skip.twig"/>
+        <referenceBlock name="skip_to_content.target" template="Magento_Theme::html/skiptarget.twig"/>
+        <referenceBlock name="breadcrumbs" template="Magento_Theme::html/breadcrumbs.twig"/>
+        <referenceBlock name="page.main.title" template="Magento_Theme::html/title.twig"/>
+        <referenceBlock name="ajax.message.placeholder" template="Magento_Theme::html/messages.twig"/>
+        <referenceBlock name="global_notices" template="Magento_Theme::html/notices.twig"/>
+
+        <!-- Global toast host (accessible aria-live). Reused by add-to-cart and,
+             later, wishlist/compare. -->
+        <referenceContainer name="before.body.end">
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.toast"
+                   template="Magento_Theme::html/toast.twig"/>
+        </referenceContainer>
     </body>
 </page>

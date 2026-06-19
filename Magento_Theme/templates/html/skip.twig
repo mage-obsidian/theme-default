@@ -1,0 +1,10 @@
+{#
+  Skip-to-content link. Visually hidden until focused, then revealed as an
+  alabaster bar so keyboard users can jump past the header to the main content.
+  `block` exposes the layout-configured target id and label.
+#}
+{% set target = block.getTarget() %}
+<a class="action skip skip-{{ target|escape_html_attr }} sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-edge focus:border focus:border-ink focus:bg-alabaster focus:px-4 focus:py-2 focus:font-mono focus:text-[0.72rem] focus:uppercase focus:tracking-[0.14em] focus:text-ink focus:no-underline"
+   href="#{{ target|escape_html_attr }}">
+    <span>{{ block.getLabel() }}</span>
+</a>

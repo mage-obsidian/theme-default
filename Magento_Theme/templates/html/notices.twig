@@ -1,0 +1,39 @@
+{#
+  Global environment notices: no-JS, no-localStorage, and demo-store. The
+  localStorage probe runs as a native ESM module (no RequireJS); it only reveals
+  its notice when the write throws. OBSIDIAN styles them as quiet sale-toned bars.
+#}
+{% if block.displayNoscriptNotice() %}
+    <noscript>
+        <div class="message global noscript bg-sale/10 p-3 text-center text-sm text-ink" role="alert">
+            <p>
+                <strong>{{ __('JavaScript seems to be disabled in your browser.') }}</strong>
+                <span>{{ __('For the best experience on our site, be sure to turn on Javascript in your browser.') }}</span>
+            </p>
+        </div>
+    </noscript>
+{% endif %}
+
+{% if block.displayNoLocalStorageNotice() %}
+    <div id="local_storage_notice" class="notice global local_storage hidden bg-sale/10 p-3 text-center text-sm text-ink" role="alert">
+        <p>
+            <strong>{{ __('Local Storage seems to be disabled in your browser.') }}</strong>
+            <br/>
+            {{ __('For the best experience on our site, be sure to turn on Local Storage in your browser.') }}
+        </p>
+    </div>
+    <script type="module">
+        try {
+            localStorage.setItem('mage-obsidian-test-local-storage', '1');
+            localStorage.removeItem('mage-obsidian-test-local-storage');
+        } catch (e) {
+            document.querySelector('#local_storage_notice').classList.remove('hidden');
+        }
+    </script>
+{% endif %}
+
+{% if block.displayDemoNotice() %}
+    <div class="message global demo bg-obsidian-950 p-3 text-center font-mono text-[0.72rem] uppercase tracking-[0.14em] text-on-obsidian" role="status">
+        <p>{{ __('This is a demo store. No orders will be fulfilled.') }}</p>
+    </div>
+{% endif %}

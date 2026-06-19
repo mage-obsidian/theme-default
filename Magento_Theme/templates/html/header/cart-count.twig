@@ -1,0 +1,6 @@
+{#
+  Live bag count island for the header. Rendered by a MageObsidian Template child
+  block so render_vue is available; mounts eager (above the fold). Reactive via
+  the engine's customer-data bridge — updates after add-to-cart without a reload.
+#}
+{{ render_vue('MageObsidian_Storefront::cart/CartCount', { label: __('in your bag') }, true) }}

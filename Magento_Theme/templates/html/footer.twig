@@ -1,8 +1,10 @@
 {#
   OBSIDIAN footer — vitreous obsidian surface, the dark counterpart to the
-  light header. block.getChildHtml() renders the native footer_links block.
+  light header. The Shop column reads the shared Navigation ViewModel (same
+  source as the header/mobile menu); block.getChildHtml() renders the native
+  footer_links block in the More column.
 #}
-<div class="border-t border-obsidian-800 bg-obsidian-950 text-on-obsidian-soft">
+<div class="border-t border-obsidian-800 bg-obsidian-950 text-on-obsidian-soft print:hidden">
     <div class="mx-auto grid max-w-[1320px] gap-10 px-4 py-16 md:grid-cols-[1.6fr_1fr_1fr] md:px-8">
         <div>
             <div class="mb-4 font-display text-xl tracking-[0.16em] text-on-obsidian">OBSIDIAN</div>
@@ -12,17 +14,17 @@
             </p>
         </div>
 
-        <nav aria-label="Shop">
-            <div class="mb-4 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-on-obsidian">Shop</div>
+        <nav aria-label="{{ __('Shop')|escape_html_attr }}">
+            <div class="mb-4 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-on-obsidian">{{ __('Shop') }}</div>
             <ul class="space-y-2 text-sm">
-                {% for label in ['New in', 'Outerwear', 'Tailoring', 'The Vitreous Edit'] %}
-                    <li><a href="#" class="transition-colors hover:text-on-obsidian">{{ label }}</a></li>
+                {% for item in block.getNavigation().getItems() %}
+                    <li><a href="{{ item.url|escape_url }}" class="transition-colors hover:text-on-obsidian">{{ item.label }}</a></li>
                 {% endfor %}
             </ul>
         </nav>
 
         <div>
-            <div class="mb-4 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-on-obsidian">More</div>
+            <div class="mb-4 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-on-obsidian">{{ __('More') }}</div>
             {{ block.getChildHtml()|raw }}
         </div>
     </div>
