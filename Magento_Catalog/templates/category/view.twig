@@ -1,0 +1,52 @@
+{#
+  Category body, dispatched by display mode. `block` is the core
+  Magento\Catalog\Block\Category\View (it owns isProductMode / isMixedMode /
+  isContentMode). For static / PAGE landings we surface the real category tree as
+  a navigable tile grid (the `landing` ViewModel) instead of an off-brand Luma CMS
+  block; product mode renders the listing; mixed mode shows both. The <h1>/title
+  are handled by the sibling category.title block.
+#}
+{% set category = block.getCurrentCategory() %}
+{% set landing = block.getLanding() %}
+{% set description = landing.getDescriptionHtml() %}
+
+{% if description %}
+    <div class="category-description prose mb-10 max-w-prose text-ink-soft">{{ description|raw }}</div>
+{% endif %}
+
+{% if block.isContentMode() or block.isMixedMode() %}
+    {# Respect an explicitly-wired CMS landing block if the category has one. #}
+    {% if category.getLandingPage() %}
+        <div class="category-cms mb-12">{{ block.getCmsBlockHtml()|raw }}</div>
+    {% endif %}
+
+    {% set tiles = landing.getItems() %}
+    {% if tiles is not empty %}
+        <nav class="subcategory-grid grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3"
+             aria-label="{{ __('Shop by category')|escape_html_attr }}">
+            {% for tile in tiles %}
+                <a class="subcategory-card group relative flex flex-col" href="{{ tile.url|escape_url }}" data-prefetch>
+                    <span class="subcategory-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised">
+                        {% if tile.image %}
+                            <img class="subcategory-card__img h-full w-full object-cover"
+                                 src="{{ tile.image|escape_url }}" alt="" loading="lazy" decoding="async">
+                        {% endif %}
+                        <span class="subcategory-card__veil absolute inset-0" aria-hidden="true"></span>
+                    </span>
+                    <span class="subcategory-card__body mt-4 flex items-baseline justify-between gap-3">
+                        <span class="subcategory-card__label font-display text-xl leading-tight text-ink transition-colors group-hover:text-accent">{{ tile.label }}</span>
+                        {% if tile.count %}
+                            <span class="subcategory-card__count font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink-soft">{{ tile.count }} {{ __('items') }}</span>
+                        {% endif %}
+                    </span>
+                </a>
+            {% endfor %}
+        </nav>
+    {% endif %}
+{% endif %}
+
+{# Products show in every mode except static-only (this also covers the common
+   case of an unset display_mode, which defaults to a product listing). #}
+{% if not block.isContentMode() %}
+    {{ block.getProductListHtml()|raw }}
+{% endif %}

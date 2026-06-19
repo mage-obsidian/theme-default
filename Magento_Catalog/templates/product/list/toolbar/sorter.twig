@@ -1,0 +1,26 @@
+{#
+  Sort control. Each <option> value is a full URL preserving the other params
+  (limit, page) with the new order — a tiny ESM (in toolbar.twig) navigates on
+  change. The asc/desc toggle is a real link (works without JS).
+#}
+{% set dir = block.getCurrentDirection() == 'desc' ? 'asc' : 'desc' %}
+<div class="toolbar-sorter sorter flex items-center gap-2">
+    <label for="sorter" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Sort By') }}</label>
+    <select id="sorter" data-mage-obsidian-nav
+            class="h-9 rounded-edge border border-ash-300 bg-alabaster px-2 font-mono text-[0.72rem] text-ink">
+        {% for key, order in block.getAvailableOrders() %}
+            <option value="{{ block.getPagerUrl({'product_list_order': key})|escape_url }}"{{ block.isOrderCurrent(key) ? ' selected' }}>{{ __(order) }}</option>
+        {% endfor %}
+    </select>
+    <a href="{{ block.getPagerUrl({'product_list_dir': dir})|escape_url }}"
+       class="inline-flex h-9 w-9 items-center justify-center rounded-edge border border-ash-300 text-ink-soft transition-colors hover:border-ink hover:text-ink"
+       aria-label="{{ (dir == 'asc' ? __('Set Ascending Direction') : __('Set Descending Direction'))|escape_html_attr }}">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" aria-hidden="true">
+            {% if block.getCurrentDirection() == 'desc' %}
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h13.5M3 9h9m-9 4.5h9m4.5-9v12m0 0 3-3m-3 3-3-3" />
+            {% else %}
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h13.5M3 9h9m-9 4.5h6m7.5 4.5V6m0 0 3 3m-3-3-3 3" />
+            {% endif %}
+        </svg>
+    </a>
+</div>

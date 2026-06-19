@@ -1,0 +1,13 @@
+{#
+  Result count ("Items 1-24 of 60"). Numbers go through the locale `number`
+  filter (the FormatExtension), same as the pager.
+#}
+<p class="toolbar-amount font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink-soft" id="toolbar-amount" aria-live="polite">
+    {% if block.getLastPageNum() > 1 %}
+        {{ __('Items %1-%2 of %3', block.getFirstNum()|number, block.getLastNum()|number, block.getTotalNum()|number) }}
+    {% elseif block.getTotalNum() == 1 %}
+        {{ __('%1 Item', block.getTotalNum()|number) }}
+    {% else %}
+        {{ __('%1 Items', block.getTotalNum()|number) }}
+    {% endif %}
+</p>

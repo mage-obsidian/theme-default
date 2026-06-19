@@ -1,0 +1,15 @@
+{#
+  Items-per-page control. Like the sorter, each <option> value is a full URL and
+  the shared ESM navigates on change. Wrapped in a <label> so the visible
+  "Show … per page" text is the accessible name.
+#}
+<label class="field limiter flex items-center gap-2">
+    <span class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Show') }}</span>
+    <select data-mage-obsidian-nav
+            class="h-9 rounded-edge border border-ash-300 bg-alabaster px-2 font-mono text-[0.72rem] text-ink">
+        {% for key, limit in block.getAvailableLimit() %}
+            <option value="{{ block.getPagerUrl({'product_list_limit': key})|escape_url }}"{{ block.isLimitCurrent(key) ? ' selected' }}>{{ limit|number }}</option>
+        {% endfor %}
+    </select>
+    <span class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('per page') }}</span>
+</label>

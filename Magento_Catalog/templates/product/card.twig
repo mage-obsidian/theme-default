@@ -1,0 +1,63 @@
+{#
+  Reusable product card (server-rendered for SEO). Included by the category
+  listing now and by search / related / home-featured later — one card, many
+  surfaces. `product` is the current product; `block` is the ListProduct block,
+  whose helpers (image, price, add-to-cart params) we reuse instead of re-wrapping
+  core. `index` lets the first row load eager (LCP) while the rest stay lazy.
+
+  Quick-add (simple/virtual) submits a real <form> to checkout/cart/add — it
+  works with no JS and is progressively enhanced by cart-actions.js. Products
+  that need options route to the PDP.
+#}
+{% set url = product.getProductUrl() %}
+{#
+  The list is rendered by the core ListProduct block, which is NOT a MageObsidian
+  Template — so the `image()` helper (and render_vue/vite_url) are unavailable
+  here. We use Magento's native image block instead: it already emits an <img>
+  with width/height (anti-CLS) and loading=lazy. Styling (object-cover, hover
+  scale) is applied via CSS on `.product-card__media img`.
+#}
+<article class="product-card group flex flex-col">
+    <a href="{{ url|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised" tabindex="-1" data-prefetch>
+        {{ block.getImage(product, 'category_page_grid').toHtml()|raw }}
+    </a>
+
+    <div class="product-card__body mt-4 flex flex-1 flex-col gap-2">
+        <h2 class="product-card__name font-display text-base leading-snug text-ink">
+            <a href="{{ url|escape_url }}" class="transition-colors hover:text-accent">{{ product.getName() }}</a>
+        </h2>
+
+        {#
+          The core price render block (product.price.render.default) is part of
+          the suppressed Magento_Catalog frontend layout, so block.getProductPrice
+          is unavailable. We format the final price with the `price` filter
+          (PriceExtension). Special/range/tier rendering returns with a declared
+          price-render block in a later batch.
+        #}
+        <div class="product-card__price font-mono text-sm text-ink">{{ product.getFinalPrice()|price }}</div>
+
+        <div class="product-card__action mt-2">
+            {% if block.getCard().isQuickAdd(product) %}
+                {% set post = block.getAddToCartPostParams(product) %}
+                <form data-add-to-cart action="{{ post.action|escape_url }}" method="post">
+                    <input type="hidden" name="product" value="{{ post.data.product }}">
+                    <input type="hidden" name="uenc" value="{{ post.data.uenc }}">
+                    {{ block.getBlockHtml('formkey')|raw }}
+                    <button type="submit"
+                            class="inline-flex w-full items-center justify-center rounded-edge border border-ash-300 px-4 py-2.5 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink transition-colors hover:border-ink hover:bg-ink hover:text-alabaster disabled:opacity-60">
+                        {{ __('Add to cart') }}
+                    </button>
+                </form>
+            {% elseif product.isSaleable() %}
+                <a href="{{ url|escape_url }}"
+                   class="inline-flex w-full items-center justify-center rounded-edge border border-ash-300 px-4 py-2.5 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink transition-colors hover:border-ink">
+                    {{ __('Choose options') }}
+                </a>
+            {% else %}
+                <span class="inline-flex w-full items-center justify-center rounded-edge border border-ash-200 px-4 py-2.5 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ash-500">
+                    {{ __('Out of stock') }}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+</article>

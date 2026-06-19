@@ -1,0 +1,29 @@
+{#
+  Product list toolbar (Magento\Catalog\Block\Product\ProductList\Toolbar). Top
+  render shows the result amount + sort + limit; bottom render shows the pager.
+  No grid/list view switcher (grid-only). The legacy `data-mage-init` jQuery
+  widget is gone: sort/limit are <select>s whose option values are full URLs and
+  a tiny ESM navigates on change (no-JS users still have the direction link).
+#}
+{% if block.getCollection().getSize() %}
+    {% if block.getIsBottom() %}
+        <div class="toolbar toolbar-products toolbar-bottom mt-12 flex justify-center">
+            {{ block.getPagerHtml()|raw }}
+        </div>
+    {% else %}
+        <div class="toolbar toolbar-products toolbar-top mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-ash-200 pb-4">
+            {% include 'Magento_Catalog::product/list/toolbar/amount.twig' %}
+            <div class="flex items-center gap-5">
+                {% include 'Magento_Catalog::product/list/toolbar/sorter.twig' %}
+                {% include 'Magento_Catalog::product/list/toolbar/limiter.twig' %}
+            </div>
+        </div>
+        <script type="module">
+            document.querySelectorAll('select[data-mage-obsidian-nav]').forEach((el) => {
+                if (el.dataset.bound) return;
+                el.dataset.bound = '1';
+                el.addEventListener('change', () => { if (el.value) window.location.assign(el.value); });
+            });
+        </script>
+    {% endif %}
+{% endif %}

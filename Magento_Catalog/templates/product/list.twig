@@ -1,0 +1,42 @@
+{#
+  Category product listing. Reuses the core ListProduct block (collection loading,
+  toolbar, pagination) — we only swap the template to Twig. Grid-only (the legacy
+  grid/list switch is dropped for a cleaner, faster premium grid). The toolbar is
+  rendered top (sort/limit/amount) and bottom (pager); each card comes from the
+  shared card partial. `block` is Magento\Catalog\Block\Product\ListProduct.
+#}
+{% set products = block.getLoadedProductCollection() %}
+{% if not products.count() %}
+    <div class="message info empty py-16 text-center font-mono text-sm uppercase tracking-[0.16em] text-ink-soft">
+        {{ __('We can’t find products matching the selection.') }}
+    </div>
+{% else %}
+    {{ block.getToolbarHtml()|raw }}
+    {{ block.getAdditionalHtml()|raw }}
+
+    <ol class="products-grid grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-4"
+        aria-label="{{ __('Products')|escape_html_attr }}">
+        {% for product in products %}
+            <li class="product-item">
+                {% include 'Magento_Catalog::product/card.twig' with { product: product, index: loop.index0 } %}
+            </li>
+        {% endfor %}
+    </ol>
+
+    {{ block.getChildBlock('toolbar').setIsBottom(true).toHtml()|raw }}
+
+    {# ItemList structured data (reuses the already-loaded collection via the
+       MageObsidian child block — no extra query, engine untouched). #}
+    {{ child_html('item_list') }}
+
+    {# Near-instant PDP navigation: prefetch a card's target on hover intent. #}
+    <script type="speculationrules">
+    {
+        "prefetch": [{
+            "source": "document",
+            "where": { "selector_matches": "a[data-prefetch]" },
+            "eagerness": "moderate"
+        }]
+    }
+    </script>
+{% endif %}

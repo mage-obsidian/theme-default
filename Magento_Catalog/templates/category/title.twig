@@ -1,0 +1,8 @@
+{#
+  Category heading. The block sets the document <title> in _prepareLayout; here
+  it renders the visible <h1>. `block` is MageObsidian\Storefront\Block\Catalog\CategoryTitle.
+#}
+{% set name = block.getCategoryName() %}
+{% if name %}
+    <h1 class="category-title mb-6 font-display text-h3 leading-tight text-ink">{{ name }}</h1>
+{% endif %}

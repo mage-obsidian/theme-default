@@ -1,0 +1,18 @@
+{#
+  ItemList JSON-LD for the category listing (SEO). Rendered by a MageObsidian
+  Template child of the ListProduct block, so json_ld is available and we reuse
+  the parent's already-loaded collection — no extra query, engine untouched.
+#}
+{% set products = block.getParentBlock().getLoadedProductCollection() %}
+{% set elements = [] %}
+{% for product in products %}
+    {% set elements = elements|merge([{
+        '@type': 'ListItem',
+        position: loop.index,
+        url: product.getProductUrl(),
+        name: product.getName()
+    }]) %}
+{% endfor %}
+{% if elements|length %}
+    {{ json_ld('ItemList', { numberOfItems: elements|length, itemListElement: elements }) }}
+{% endif %}
