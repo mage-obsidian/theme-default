@@ -57,6 +57,36 @@
   --ease-obsidian: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
+/* Accessibility base. Tailwind v4 dropped the default `cursor: pointer` on
+   <button>/[role=button] from its preflight, and there is no global keyboard
+   focus ring — restore both here so every interactive element (Twig + Vue) gets
+   the right affordance from one place. @layer base keeps low precedence so
+   utilities still win. */
+@layer base {
+  :where(button, [role="button"]):not(:disabled, [aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Honor reduced-motion globally: neutralizes transforms/animations the
+   per-component rules miss (category image scale, switcher chevron, hover),
+   complementing the existing .sheen and drawer reduced-motion rules. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Signature utility: iridescent sheen over a vitreous surface.
    Subtle at rest, swept on interaction. Reused by islands/partials. */
 @utility sheen {
@@ -94,4 +124,226 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sheen::after { display: none; }
+}
+
+/* Print: drop interactive chrome and hydration islands, flatten the palette to
+   save ink. Header/footer/breadcrumbs opt out at the template level via
+   `print:hidden`; this covers the cross-cutting bits. */
+@media print {
+  [data-mage-island],
+  [data-drawer-backdrop] {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  /* Avoid page-break orphans inside cards/sections. */
+  img,
+  figure,
+  tr {
+    break-inside: avoid;
+  }
+}
+
+/* CMS static-page prose. The CMS Page/Block render filtered HTML straight from
+   _toHtml (no template), so static pages — about-us, customer-service, privacy,
+   enable-cookies, 404 — are styled here by scoping to Magento's body classes.
+   The designed home (body.cms-index-index) is intentionally excluded. */
+.cms-page-view .column.main,
+.cms-noroute-index .column.main {
+  max-width: 76ch;
+  margin-inline: auto;
+  padding: 3rem 1.5rem 5rem;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  line-height: 1.7;
+}
+
+.cms-page-view .column.main :is(h1, h2, h3),
+.cms-noroute-index .column.main :is(h1, h2, h3) {
+  font-family: var(--font-display);
+  color: var(--color-ink);
+  line-height: 1.1;
+  margin: 2.5rem 0 1rem;
+}
+
+.cms-page-view .column.main h1,
+.cms-noroute-index .column.main h1 { font-size: var(--text-h2); margin-top: 0; }
+.cms-page-view .column.main h2 { font-size: var(--text-h3); }
+.cms-page-view .column.main h3 { font-size: var(--text-lead); }
+
+.cms-page-view .column.main p,
+.cms-noroute-index .column.main p { margin: 1rem 0; }
+
+.cms-page-view .column.main :is(ul, ol) { margin: 1rem 0; padding-left: 1.5rem; }
+.cms-page-view .column.main ul { list-style: disc; }
+.cms-page-view .column.main ol { list-style: decimal; }
+.cms-page-view .column.main li { margin: 0.35rem 0; }
+
+.cms-page-view .column.main a,
+.cms-noroute-index .column.main a {
+  color: var(--color-accent);
+  text-underline-offset: 0.2em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s var(--ease-obsidian);
+}
+.cms-page-view .column.main a:hover { color: var(--color-ink); }
+
+.cms-page-view .column.main blockquote {
+  margin: 1.5rem 0;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--color-accent);
+  color: var(--color-ink-soft);
+  font-style: italic;
+}
+
+.cms-page-view .column.main :is(img, table) { max-width: 100%; height: auto; }
+
+/* ── Catalog: product card media. Magento's native <img> (anti-CLS width/height
+   + lazy); we cover-fit it and add the hover scale here since the helper image()
+   is unavailable in the core ListProduct render context. ── */
+.product-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease-obsidian);
+}
+.product-card:hover .product-card__media img { transform: scale(1.03); }
+
+/* ── Catalog: product card price (Magento renders the price block HTML; we only
+   skin its classes to the obsidian palette) ── */
+.product-card__price .price { color: var(--color-ink); }
+.product-card__price .old-price .price,
+.product-card__price .price-label { color: var(--color-ash-500); }
+.product-card__price .old-price .price { text-decoration: line-through; }
+.product-card__price .special-price .price { color: var(--color-sale); }
+.product-card__price .price-box { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline; }
+
+/* Long-list render perf: skip off-screen cards' layout/paint, reserving space
+   so there is no CLS. The intrinsic size is remembered after first render. */
+.products-grid .product-item {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
+}
+
+/* ── Catalog: subcategory landing tiles. PAGE / static categories surface the
+   real category tree as navigable tiles instead of an off-brand CMS block. The
+   child categories carry no image of their own, so the artwork is a
+   representative product; the veil keeps the label legible and lifts an obsidian
+   sheen on hover. ── */
+.subcategory-card__img { transition: transform 0.6s var(--ease-obsidian); }
+.subcategory-card:hover .subcategory-card__img { transform: scale(1.04); }
+.subcategory-card__veil {
+  background: linear-gradient(to top, rgb(0 0 0 / 0.30), transparent 55%);
+  opacity: 0.55;
+  transition: opacity 0.4s var(--ease-obsidian);
+}
+.subcategory-card:hover .subcategory-card__veil { opacity: 0.85; }
+
+/* ── Catalog: product detail page. Server-rendered gallery (the main image is
+   the LCP) with thumbs that swap it; the configurable swatches are a Vue island.
+   Swatch availability greys impossible combinations with a diagonal cut. ── */
+.pdp__gallery-img { transition: opacity 0.3s var(--ease-obsidian); }
+
+.pdp__thumb { cursor: pointer; }
+.pdp__thumb img {
+  opacity: 0.72;
+  transition: opacity 0.3s var(--ease-obsidian);
+}
+.pdp__thumb[aria-pressed="true"] img,
+.pdp__thumb:hover img { opacity: 1; }
+
+.pdp__swatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0.5rem;
+  border: 1px solid var(--color-ash-300);
+  border-radius: var(--radius-edge);
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease-obsidian),
+    box-shadow 0.2s var(--ease-obsidian);
+}
+.pdp__swatch--text {
+  padding-inline: 1rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-ink);
+}
+.pdp__swatch:hover { border-color: var(--color-ink); }
+.pdp__swatch--selected {
+  border-color: var(--color-ink);
+  box-shadow: inset 0 0 0 1px var(--color-ink);
+}
+.pdp__swatch:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.pdp__swatch--unavailable {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pdp__swatch--unavailable::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top left,
+    transparent 46%,
+    var(--color-ash-400) 47%,
+    var(--color-ash-400) 53%,
+    transparent 54%
+  );
+}
+.pdp__swatch-chip {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12);
+}
+
+/* ── View animations (front enhancement) ── */
+
+/* Smooth cross-document navigation crossfade (category ↔ PDP, pagination, sort).
+   Per-element morphs (card image → PDP hero) arrive with the PDP. */
+@view-transition { navigation: auto; }
+
+/* Subtle scroll-driven entrance for cards. Guarded by @supports and
+   no-preference so unsupported browsers and reduced-motion users see static
+   cards (the keyframe only hides them while the animation is actually running). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .products-grid .product-item,
+    .subcategory-grid .subcategory-card {
+      animation: obsidian-card-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+@keyframes obsidian-card-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Reduced-motion: the global blanket covers animations/transitions but NOT the
+   view-transition pseudos — disable cross-document transitions explicitly. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
