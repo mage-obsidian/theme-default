@@ -6,7 +6,7 @@
 #}
 {% set view = block.getView() %}
 {% set cfg = block.getChildBlock('configurable') %}
-{{ render_vue('MageObsidian_Storefront::catalog/ProductForm', {
+{{ render_vue('MageObsidian_Catalog::catalog/ProductForm', {
     config: cfg.getJsonConfig(),
     swatches: cfg.getJsonSwatchConfig(),
     productId: view.getProductId(),
