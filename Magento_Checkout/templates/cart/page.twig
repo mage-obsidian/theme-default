@@ -1,0 +1,107 @@
+{#
+  Shopping bag page. `block` is the MageObsidian Template (obsidian.cart); lines
+  come from the CartItems ViewModel, summary/coupon/cross-sell from core blocks
+  re-rendered by our Twig. Mutations are progressive: the native forms POST to the
+  core controllers (work without JS); cart-page.js intercepts them for AJAX + a
+  morph-refresh. The data-* URLs feed the enhancer the sidebar endpoints. The
+  shipping estimator is intentionally deferred to the checkout wave.
+#}
+{% set items = block.getCartItems().getItems() %}
+<div
+    data-cart-root
+    data-update-url="{{ block.getUrl('checkout/sidebar/updateItemQty')|escape_url }}"
+    data-remove-url="{{ block.getUrl('checkout/sidebar/removeItem')|escape_url }}"
+    class="mx-auto w-full max-w-[1320px] px-4 py-10 md:px-8"
+>
+    <div class="mb-8">{{ child_html('cart_title') }}</div>
+
+    {% if items is empty %}
+        <div class="flex flex-col items-center gap-4 rounded-edge border border-dashed border-ash-300 px-6 py-20 text-center">
+            <p class="font-display text-2xl text-ink">{{ __('Your bag is empty') }}</p>
+            <p class="max-w-[40ch] text-ink-soft">{{ __('Browse the collection to add something you love.') }}</p>
+            <a href="{{ block.getUrl('')|escape_url }}" class="mt-2 inline-flex items-center rounded-edge bg-ink px-5 py-3 font-mono text-xs uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800">
+                {{ __('Continue shopping') }}
+            </a>
+        </div>
+    {% else %}
+        <div class="grid gap-10 lg:grid-cols-[1fr_360px]">
+            <form action="{{ block.getUrl('checkout/cart/updatePost')|escape_url }}" method="post" data-cart-form>
+                {{ block.getBlockHtml('formkey')|raw }}
+                <ul class="divide-y divide-ash-200 border-y border-ash-200">
+                    {% for item in items %}
+                        <li class="flex gap-4 py-6" data-cart-line>
+                            <a href="{{ item.url|escape_url }}" class="block h-28 w-24 shrink-0 overflow-hidden rounded-edge bg-ash-100">
+                                {% if item.image %}
+                                    <img src="{{ item.image|escape_url }}" alt="{{ item.name|escape_html_attr }}" class="h-full w-full object-cover" loading="lazy" width="96" height="112">
+                                {% endif %}
+                            </a>
+
+                            <div class="flex min-w-0 flex-1 flex-col gap-1">
+                                <a href="{{ item.url|escape_url }}" class="text-base font-medium text-ink transition-colors hover:text-accent">{{ item.name }}</a>
+                                {% if item.options is not empty %}
+                                    <ul class="text-sm text-ink-soft">
+                                        {% for option in item.options %}
+                                            <li><span class="text-ash-500">{{ option.label }}:</span> {{ option.value }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                <p class="mt-1 font-mono text-sm text-ink-soft">{{ item.price }}</p>
+
+                                <div class="mt-auto flex items-center gap-4 pt-3">
+                                    <div class="inline-flex items-center rounded-edge border border-ash-300">
+                                        <button type="button" class="flex h-9 w-9 items-center justify-center text-ink-soft transition-colors hover:text-ink disabled:opacity-40" data-cart-step="-1" aria-label="{{ __('Decrease quantity')|escape_html_attr }}">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/></svg>
+                                        </button>
+                                        <input
+                                            type="number" min="1" inputmode="numeric"
+                                            name="cart[{{ item.id }}][qty]"
+                                            value="{{ item.qty }}"
+                                            data-cart-qty data-item-id="{{ item.id }}"
+                                            class="h-9 w-12 border-x border-ash-300 bg-transparent text-center font-mono text-sm text-ink [appearance:textfield] focus:outline-none [&::-webkit-inner-spin-button]:appearance-none"
+                                            aria-label="{{ __('Quantity')|escape_html_attr }} — {{ item.name|escape_html_attr }}"
+                                        >
+                                        <button type="button" class="flex h-9 w-9 items-center justify-center text-ink-soft transition-colors hover:text-ink" data-cart-step="1" aria-label="{{ __('Increase quantity')|escape_html_attr }}">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+                                        </button>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        formaction="{{ block.getUrl('checkout/cart/delete')|escape_url }}"
+                                        name="id" value="{{ item.id }}"
+                                        data-cart-remove data-item-id="{{ item.id }}"
+                                        class="text-sm text-ash-500 underline-offset-4 transition-colors hover:text-accent hover:underline"
+                                    >{{ __('Remove') }}</button>
+                                </div>
+                            </div>
+
+                            <p class="shrink-0 font-mono text-base text-ink">{{ item.rowTotal }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="mt-6 flex items-center justify-between gap-4">
+                    <a href="{{ block.getUrl('')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.16em] text-ink-soft transition-colors hover:text-ink">{{ __('Continue shopping') }}</a>
+                    {# No-JS quantity update; cart-page.js makes the steppers live. #}
+                    <button type="submit" class="rounded-edge border border-ash-300 px-4 py-2 font-mono text-xs uppercase tracking-[0.16em] text-ink-soft transition-colors hover:border-ink hover:text-ink" data-cart-update>{{ __('Update bag') }}</button>
+                </div>
+            </form>
+
+            <aside class="flex flex-col gap-6">
+                <div class="rounded-edge border border-ash-200 bg-alabaster-raised p-6">
+                    {{ child_html('totals') }}
+                    <a href="{{ block.getUrl('checkout')|escape_url }}" class="mt-6 inline-flex w-full items-center justify-center rounded-edge bg-ink px-5 py-3.5 font-mono text-xs uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800">
+                        {{ __('Proceed to checkout') }}
+                    </a>
+                </div>
+                {{ child_html('coupon') }}
+            </aside>
+        </div>
+
+        {{ child_html('crosssell') }}
+    {% endif %}
+</div>
+
+{# Progressive enhancer (outside the morphed region so a refresh never re-runs it).
+   Without JS the native forms POST to the core cart controllers. #}
+<script type="module" src="{{ vite_url('MageObsidian_Checkout::js/cart-page') }}"></script>

@@ -33,7 +33,10 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
                 </svg>
             </button>
-            <a href="{{ block.getUrl('checkout/cart') }}" class="inline-flex items-center gap-2 rounded-edge border border-ash-300 px-3 py-2 transition-colors hover:border-ink">
+            {# `data-minicart-trigger` is a neutral hook: with no JS (or no checkout
+               module) this stays a plain link to the cart page; the checkout
+               module's mini-cart island enhances it to open the drawer instead. #}
+            <a href="{{ block.getUrl('checkout/cart') }}" data-minicart-trigger class="inline-flex items-center gap-2 rounded-edge border border-ash-300 px-3 py-2 transition-colors hover:border-ink">
                 {{ child_html('cart_count') }} {{ __('Bag') }}
             </a>
         </div>

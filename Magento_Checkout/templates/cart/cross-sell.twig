@@ -1,0 +1,22 @@
+{# Cross-sell row. `block` is core Magento\Checkout\Block\Cart\Crosssell (an
+   AbstractProduct, so getImage works). Presentation-only links into the PDP — the
+   add-to-cart card lives in the catalog domain and we don't couple to it here. #}
+{% set products = block.getItems() %}
+{% if products is not empty %}
+    <section class="mt-16 border-t border-ash-200 pt-10" aria-labelledby="cart-crosssell-heading">
+        <h2 id="cart-crosssell-heading" class="mb-6 font-display text-2xl tracking-[0.04em] text-ink">{{ __('You may also like') }}</h2>
+        <ul class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+            {% for product in products %}
+                <li>
+                    <a href="{{ product.getProductUrl()|escape_url }}" class="group flex flex-col" data-prefetch>
+                        <span class="block aspect-[4/5] overflow-hidden rounded-edge bg-ash-100">
+                            {{ block.getImage(product, 'cart_cross_sell_products').toHtml()|raw }}
+                        </span>
+                        <span class="mt-3 text-sm font-medium text-ink transition-colors group-hover:text-accent">{{ product.getName() }}</span>
+                        <span class="mt-1 font-mono text-sm text-ink-soft">{{ product.getFinalPrice()|price }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endif %}

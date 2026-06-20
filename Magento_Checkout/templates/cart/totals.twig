@@ -1,0 +1,15 @@
+{# Cart totals. `block` is core Magento\Checkout\Block\Cart\Totals; we iterate its
+   already-collected totals rather than the suppressed Knockout summary. Values are
+   store-currency floats formatted by the `price` filter. #}
+{% set totals = block.getTotals() %}
+<dl class="flex flex-col gap-3 font-mono text-sm">
+    {% for code, total in totals %}
+        {% if total.getValue() is not null %}
+            {% set isGrand = code == 'grand_total' %}
+            <div class="flex items-center justify-between gap-4 {{ isGrand ? 'border-t border-ash-200 pt-3 text-base font-semibold text-ink' : 'text-ink-soft' }}">
+                <dt class="uppercase tracking-[0.1em]">{{ total.getTitle() }}</dt>
+                <dd class="{{ isGrand ? 'text-ink' : '' }}">{{ total.getValue()|price }}</dd>
+            </div>
+        {% endif %}
+    {% endfor %}
+</dl>

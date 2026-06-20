@@ -1,0 +1,27 @@
+{#
+  Mini-cart island mount. Eager so the drawer is interactive above the fold; it
+  binds to the header's [data-minicart-trigger] and reads Magento's `cart`
+  customer-data section for its contents. URLs are resolved server-side so
+  store-code / secure-base-url stay correct. `block` is the MageObsidian Template.
+#}
+{{ render_vue('MageObsidian_Checkout::cart/MiniCart', {
+    cartUrl: block.getUrl('checkout/cart'),
+    checkoutUrl: block.getUrl('checkout'),
+    updateUrl: block.getUrl('checkout/sidebar/updateItemQty'),
+    removeUrl: block.getUrl('checkout/sidebar/removeItem'),
+    labels: {
+        title: __('Your bag'),
+        empty: __('Your bag is empty'),
+        emptyHint: __('Browse the collection to add something you love.'),
+        viewBag: __('View bag'),
+        checkout: __('Checkout'),
+        subtotal: __('Subtotal'),
+        remove: __('Remove'),
+        quantity: __('Quantity'),
+        decrease: __('Decrease quantity'),
+        increase: __('Increase quantity'),
+        close: __('Close'),
+        open: __('Open bag'),
+        items: __('items in your bag')
+    }
+}, true) }}
