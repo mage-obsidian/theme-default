@@ -1,0 +1,32 @@
+{#
+  One-page checkout. `block` is the MageObsidian Template (obsidian.checkout). The
+  whole flow is a single Vue island seeded from the CheckoutConfig ViewModel
+  (server-primed quote + auth mode), so the first paint needs no REST round-trip;
+  the step UIs and REST mutations layer on in later milestones. Mounted eager —
+  the checkout IS the page — while payment/review components are code-split inside
+  the island. The <h1> is server-rendered above the island for heading hierarchy.
+#}
+<div class="mx-auto w-full max-w-[1320px] px-4 pt-10 md:px-8">
+    {{ child_html('checkout_title') }}
+</div>
+
+{# Reserve vertical space so the eager island's client mount does not push the
+   footer down (cuts layout shift / CLS); content fills this once hydrated. #}
+<div style="min-height:60vh">
+{{ render_vue('MageObsidian_Checkout::checkout/Checkout', {
+    config: block.getCheckoutConfig().getConfig(),
+    labels: {
+        steps: __('Checkout steps'),
+        stepIdentification: __('Identification'),
+        stepShipping: __('Shipping'),
+        stepPayment: __('Payment'),
+        stepReview: __('Review'),
+        stepPlaceholder: __('This step comes online in the next milestone.'),
+        summary: __('Order summary'),
+        empty: __('Your bag is empty.'),
+        subtotal: __('Subtotal'),
+        total: __('Total')
+    }
+}, true) }}
+</div>
+
