@@ -1,0 +1,33 @@
+{# Account shell: sidebar nav (AccountNav ViewModel) + the page content slot.
+   `block` is the MageObsidian Template wrapper. #}
+{% set nav = block.getAccountNav() %}
+{% set labels = {
+    dashboard: __('Account Dashboard'),
+    orders: __('My Orders'),
+    address: __('Address Book'),
+    edit: __('Account Information'),
+    newsletter: __('Newsletter Subscriptions')
+} %}
+<section class="mx-auto w-full max-w-[1320px] px-4 py-12 md:px-8">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-[220px_1fr]">
+        <aside>
+            <nav aria-label="{{ __('Account')|escape_html_attr }}">
+                <ul class="flex flex-col gap-1">
+                    {% for link in nav.getLinks() %}
+                        <li>
+                            <a
+                                href="{{ link.url|escape_url }}"
+                                {% if link.active %}aria-current="page"{% endif %}
+                                class="block rounded-edge px-3 py-2 font-mono text-xs uppercase tracking-[0.14em] transition-colors {{ link.active ? 'bg-ash-100 text-ink' : 'text-ink-soft hover:bg-ash-100 hover:text-ink' }}"
+                            >{{ labels[link.id] }}</a>
+                        </li>
+                    {% endfor %}
+                    <li class="mt-2 border-t border-ash-200 pt-2">
+                        <a href="{{ nav.getLogoutUrl()|escape_url }}" class="block rounded-edge px-3 py-2 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:bg-ash-100 hover:text-ink">{{ __('Sign Out') }}</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        <div>{{ child_html('account_content') }}</div>
+    </div>
+</section>

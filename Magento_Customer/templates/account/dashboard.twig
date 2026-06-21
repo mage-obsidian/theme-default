@@ -1,0 +1,32 @@
+{# Account dashboard. `info` and `address` are the core Dashboard\Info /
+   Dashboard\Address blocks used as data sources. #}
+{% set info = block.getChildBlock('info') %}
+{% set address = block.getChildBlock('address') %}
+<h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Account Dashboard') }}</h1>
+
+<div class="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
+    <section class="rounded-edge border border-ash-200 p-6">
+        <h2 class="font-mono text-xs uppercase tracking-[0.16em] text-ink-soft">{{ __('Contact Information') }}</h2>
+        <p class="mt-3 text-sm text-ink">{{ info.getName() }}</p>
+        <p class="text-sm text-ink-soft">{{ info.getCustomer().getEmail() }}</p>
+        <div class="mt-4 flex gap-5 font-mono text-xs uppercase tracking-[0.12em]">
+            <a href="{{ block.getUrl('customer/account/edit')|escape_url }}" class="text-accent underline-offset-4 transition-colors hover:underline">{{ __('Edit') }}</a>
+            <a href="{{ info.getChangePasswordUrl()|escape_url }}" class="text-accent underline-offset-4 transition-colors hover:underline">{{ __('Change Password') }}</a>
+        </div>
+    </section>
+
+    <section class="rounded-edge border border-ash-200 p-6">
+        <h2 class="font-mono text-xs uppercase tracking-[0.16em] text-ink-soft">{{ __('Default Addresses') }}</h2>
+        <div class="mt-4 grid grid-cols-1 gap-4">
+            <div>
+                <h3 class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ash-500">{{ __('Billing') }}</h3>
+                <div class="mt-1 text-sm leading-relaxed text-ink-soft">{{ address.getPrimaryBillingAddressHtml()|raw }}</div>
+            </div>
+            <div>
+                <h3 class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ash-500">{{ __('Shipping') }}</h3>
+                <div class="mt-1 text-sm leading-relaxed text-ink-soft">{{ address.getPrimaryShippingAddressHtml()|raw }}</div>
+            </div>
+        </div>
+        <a href="{{ block.getUrl('customer/address')|escape_url }}" class="mt-4 inline-block font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('Manage Addresses') }}</a>
+    </section>
+</div>

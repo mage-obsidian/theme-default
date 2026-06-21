@@ -1,0 +1,68 @@
+{# Edit account information. `form_data` is the core Form\Edit block (post data,
+   min length). Native POST to editPost; edit-enhancer.ts toggles the email /
+   password fieldsets and validates conditionally. #}
+{% set edit = block.getChildBlock('form_data') %}
+{% set cust = edit.getCustomer() %}
+{% set inputClass = 'h-11 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none' %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+<h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Account Information') }}</h1>
+
+<form
+    action="{{ block.getUrl('customer/account/editPost')|escape_url }}"
+    method="post"
+    class="mt-8 flex max-w-lg flex-col gap-5"
+    data-edit-form
+    data-password-min-length="{{ edit.getMinimumPasswordLength()|escape_html_attr }}"
+    data-err-required="{{ __('This is a required field.')|escape_html_attr }}"
+    data-err-email="{{ __('Please enter a valid email address.')|escape_html_attr }}"
+    data-err-minlength="{{ __('Please use at least %1 characters.', edit.getMinimumPasswordLength())|escape_html_attr }}"
+    data-err-match="{{ __('The two passwords do not match.')|escape_html_attr }}"
+>
+    {{ block.getBlockHtml('formkey')|raw }}
+
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div class="flex flex-col gap-2">
+            <label for="edit-firstname" class="{{ labelClass }}">{{ __('First Name') }}</label>
+            <input type="text" id="edit-firstname" name="firstname" value="{{ cust.getFirstname()|escape_html_attr }}" required autocomplete="given-name" class="{{ inputClass }}">
+        </div>
+        <div class="flex flex-col gap-2">
+            <label for="edit-lastname" class="{{ labelClass }}">{{ __('Last Name') }}</label>
+            <input type="text" id="edit-lastname" name="lastname" value="{{ cust.getLastname()|escape_html_attr }}" required autocomplete="family-name" class="{{ inputClass }}">
+        </div>
+    </div>
+
+    <label class="flex items-center gap-3 {{ labelClass }}">
+        <input type="checkbox" name="change_email" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
+        {{ __('Change Email') }}
+    </label>
+    <div data-email-fields class="flex flex-col gap-2">
+        <label for="edit-email" class="{{ labelClass }}">{{ __('Email') }}</label>
+        <input type="email" id="edit-email" name="email" value="{{ cust.getEmail()|escape_html_attr }}" autocomplete="email" autocapitalize="off" class="{{ inputClass }}">
+    </div>
+
+    <label class="flex items-center gap-3 {{ labelClass }}">
+        <input type="checkbox" name="change_password" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
+        {{ __('Change Password') }}
+    </label>
+    <div data-current-password-fields class="flex flex-col gap-2">
+        <label for="edit-current-password" class="{{ labelClass }}">{{ __('Current Password') }}</label>
+        <input type="password" id="edit-current-password" name="current_password" autocomplete="current-password" class="{{ inputClass }}">
+    </div>
+    <div data-password-fields class="flex flex-col gap-5">
+        <div class="flex flex-col gap-2">
+            <label for="edit-password" class="{{ labelClass }}">{{ __('New Password') }}</label>
+            <input type="password" id="edit-password" name="password" autocomplete="new-password" class="{{ inputClass }}">
+        </div>
+        <div class="flex flex-col gap-2">
+            <label for="edit-password-confirmation" class="{{ labelClass }}">{{ __('Confirm New Password') }}</label>
+            <input type="password" id="edit-password-confirmation" name="password_confirmation" autocomplete="new-password" class="{{ inputClass }}">
+        </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+        <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Save') }}</button>
+        <a href="{{ block.getUrl('customer/account')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Back') }}</a>
+    </div>
+</form>
+
+<script type="module" src="{{ vite_url('MageObsidian_Customer::js/edit-enhancer') }}"></script>
