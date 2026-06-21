@@ -1,0 +1,19 @@
+{#
+  Compact rating summary under the PDP title. Links to the reviews section.
+  `block` is a MageObsidian Template carrying the ProductReviews ViewModel.
+#}
+{% from 'Magento_Review::review/stars.twig' import stars %}
+{% set reviews = block.getReviews() %}
+{% set count = reviews.getCount() %}
+<div class="pdp__review-summary mt-3">
+    {% if count > 0 %}
+        <a href="#reviews" class="inline-flex items-center gap-2 text-ink-soft transition-colors hover:text-ink">
+            {{ stars(reviews.getAveragePercent(), __('%1 out of 5 stars', reviews.getAverageStars())) }}
+            <span class="font-mono text-[0.7rem]">{{ __('%1 review(s)', count) }}</span>
+        </a>
+    {% else %}
+        <a href="#reviews" class="inline-block font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">
+            {{ __('Be the first to review this product') }}
+        </a>
+    {% endif %}
+</div>

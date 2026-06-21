@@ -23,6 +23,10 @@
                 {{ __('SKU') }}: {{ view.getSku() }}
             </p>
 
+            {# Optional reviews hook: a domain Review module fills this with a
+               compact rating summary; empty when no such module is installed. #}
+            {{ child_html('review_summary') }}
+
             {# Configurable price is dynamic (owned by the island); the static box
                covers every other type. #}
             {% if not configurable %}
@@ -75,6 +79,10 @@
             <div class="prose mt-6 max-w-prose text-ink-soft">{{ description|raw }}</div>
         </section>
     {% endif %}
+
+    {# Optional reviews hook: the Review domain module fills this with the
+       approved-review list + submit form; empty when not installed. #}
+    {{ child_html('reviews') }}
 
     <script type="module" src="{{ vite_url('MageObsidian_Catalog::js/gallery') }}"></script>
 </article>

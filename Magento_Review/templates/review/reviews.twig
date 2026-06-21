@@ -1,0 +1,119 @@
+{#
+  PDP reviews section: approved-review list, the submit form (progressive — a
+  native POST to review/product/post, enhanced into interactive stars), and the
+  aggregateRating/review JSON-LD the engine intentionally leaves out.
+
+  `block` is a MageObsidian Template carrying the ProductReviews ViewModel; its
+  `form` child is the core Block\Form, read for the rating types and post action.
+#}
+{% from 'Magento_Review::review/stars.twig' import stars %}
+{% set reviews = block.getReviews() %}
+{% set form = block.getChildBlock('form') %}
+{% set count = reviews.getCount() %}
+
+<section id="reviews" class="pdp__reviews mt-16 border-t border-ash-200 pt-12" aria-labelledby="reviews-title">
+    <div class="mx-auto max-w-[1320px]">
+        <header class="flex flex-wrap items-baseline justify-between gap-4">
+            <h2 id="reviews-title" class="font-display text-xl text-ink">{{ __('Reviews') }}</h2>
+            {% if count > 0 %}
+                <div class="flex items-center gap-2">
+                    {{ stars(reviews.getAveragePercent(), __('%1 out of 5 stars', reviews.getAverageStars())) }}
+                    <span class="font-mono text-[0.72rem] text-ink-soft">{{ __('%1 of 5 · %2 review(s)', reviews.getAverageStars(), count) }}</span>
+                </div>
+            {% endif %}
+        </header>
+
+        {% if reviews.hasReviews() %}
+            <ol class="reviews-list mt-8 grid gap-8 sm:grid-cols-2" role="list">
+                {% for review in reviews.getItems() %}
+                    <li class="review rounded-edge border border-ash-200 bg-alabaster-raised p-6">
+                        {{ stars(review.percent, __('%1 out of 5 stars', (review.percent / 20)|round(1))) }}
+                        <h3 class="mt-3 font-display text-base text-ink">{{ review.title }}</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-ink-soft">{{ review.detail }}</p>
+                        <footer class="mt-4 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">
+                            {{ review.nickname }} · {{ review.created_at|slice(0, 10) }}
+                        </footer>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p class="mt-6 font-mono text-sm text-ink-soft">{{ __('No reviews yet. Be the first to share your thoughts.') }}</p>
+        {% endif %}
+
+        <div class="review-form mt-12 max-w-2xl">
+            <h3 class="font-display text-lg text-ink">{{ __('Write a review') }}</h3>
+            <form method="post" action="{{ form.getAction()|escape_url }}" class="mt-6 flex flex-col gap-5" data-review-form>
+                {{ block.getBlockHtml('formkey')|raw }}
+
+                {% set ratings = form.getRatings() %}
+                {% if ratings and ratings.getSize() %}
+                    <div class="flex flex-col gap-4">
+                        {% for rating in ratings %}
+                            <fieldset class="review-rating border-0 p-0" role="radiogroup" aria-label="{{ rating.getRatingCode() }}">
+                                <legend class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ rating.getRatingCode() }}</legend>
+                                <div class="review-rating__stars mt-2">
+                                    {% for option in rating.getOptions()|reverse %}
+                                        {% set inputId = 'rating-' ~ rating.getId() ~ '-' ~ option.getValue() %}
+                                        <input class="review-rating__input sr-only" type="radio"
+                                               id="{{ inputId }}" name="ratings[{{ rating.getId() }}]"
+                                               value="{{ option.getId() }}" required>
+                                        <label class="review-rating__star" for="{{ inputId }}">
+                                            <span class="sr-only">{{ __('%1 stars', option.getValue()) }}</span>
+                                            <span aria-hidden="true">★</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </fieldset>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="flex flex-col gap-1">
+                    <label for="review-nickname" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Nickname') }}</label>
+                    <input id="review-nickname" name="nickname" type="text" required
+                           class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="review-title" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Summary') }}</label>
+                    <input id="review-title" name="title" type="text" required
+                           class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="review-detail" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Review') }}</label>
+                    <textarea id="review-detail" name="detail" rows="4" required
+                              class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none"></textarea>
+                </div>
+
+                <button type="submit" class="action submit inline-flex w-fit items-center justify-center rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink">
+                    {{ __('Submit Review') }}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {% if reviews.hasReviews() %}
+        {% set ld = {
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            'name': reviews.getProductName(),
+            'url': reviews.getProductUrl(),
+            'aggregateRating': {
+                '@type': 'AggregateRating',
+                'ratingValue': reviews.getAverageStars(),
+                'reviewCount': count,
+                'bestRating': 5,
+                'worstRating': 1
+            },
+            'review': reviews.getItems()|map(r => {
+                '@type': 'Review',
+                'author': { '@type': 'Person', 'name': r.nickname },
+                'name': r.title,
+                'reviewBody': r.detail,
+                'reviewRating': { '@type': 'Rating', 'ratingValue': (r.percent / 20)|round(1), 'bestRating': 5, 'worstRating': 1 }
+            })
+        } %}
+        <script type="application/ld+json">{{ ld|json_encode|raw }}</script>
+    {% endif %}
+
+    <script type="module" src="{{ vite_url('MageObsidian_Review::js/review-form') }}"></script>
+</section>
