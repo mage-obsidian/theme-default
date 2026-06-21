@@ -28,16 +28,9 @@
             {{ child_html('review_summary') }}
 
             {# Configurable price is dynamic (owned by the island); the static box
-               covers every other type. #}
+               covers every other type with the native render (special/tier/range). #}
             {% if not configurable %}
-                <div class="pdp__price mt-6 flex items-baseline gap-3">
-                    {% if view.isOnSale() %}
-                        <span class="pdp__price-final font-mono text-2xl text-sale">{{ view.getFinalPrice()|price }}</span>
-                        <span class="pdp__price-regular font-mono text-base text-ink-soft line-through">{{ view.getRegularPrice()|price }}</span>
-                    {% else %}
-                        <span class="pdp__price-final font-mono text-2xl text-ink">{{ view.getFinalPrice()|price }}</span>
-                    {% endif %}
-                </div>
+                <div class="pdp__price mt-6">{{ view.getPriceHtml()|raw }}</div>
             {% endif %}
 
             {% set shortDescription = view.getShortDescriptionHtml() %}

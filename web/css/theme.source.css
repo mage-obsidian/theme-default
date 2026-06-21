@@ -214,14 +214,37 @@
 }
 .product-card:hover .product-card__media img { transform: scale(1.03); }
 
-/* ── Catalog: product card price (Magento renders the price block HTML; we only
-   skin its classes to the obsidian palette) ── */
-.product-card__price .price { color: var(--color-ink); }
+/* ── Catalog: native price render (product.price.render.default) skinned to the
+   obsidian palette. Shared by the listing card and the PDP buy box. ── */
+.product-card__price .price,
+.pdp__price .price { font-family: var(--font-mono); color: var(--color-ink); }
+.product-card__price .price-box,
+.pdp__price .price-box { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline; }
+.product-card__price .special-price .price,
+.pdp__price .special-price .price { color: var(--color-sale); }
 .product-card__price .old-price .price,
-.product-card__price .price-label { color: var(--color-ash-500); }
-.product-card__price .old-price .price { text-decoration: line-through; }
-.product-card__price .special-price .price { color: var(--color-sale); }
-.product-card__price .price-box { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline; }
+.pdp__price .old-price .price { color: var(--color-ash-500); text-decoration: line-through; }
+/* "Special Price" / "Regular Price" labels are redundant — colour and the
+   strikethrough already convey it. Hidden visually, kept for screen readers. The
+   minimal-price "As low as" label stays, since it carries meaning. */
+.product-card__price .special-price .price-label,
+.product-card__price .old-price .price-label,
+.pdp__price .special-price .price-label,
+.pdp__price .old-price .price-label {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.product-card__price .minimal-price,
+.product-card__price .minimal-price-link,
+.pdp__price .minimal-price,
+.pdp__price .minimal-price-link {
+  display: block; margin-top: 0.25rem; font-size: 0.72rem;
+  color: var(--color-ash-500); text-decoration: none;
+}
+.pdp__price .price { font-size: 1.5rem; line-height: 2rem; }
+.pdp__price .old-price .price { font-size: 1rem; }
+.pdp__price .minimal-price,
+.pdp__price .minimal-price-link { font-size: 0.8rem; }
 
 /* Long-list render perf: skip off-screen cards' layout/paint, reserving space
    so there is no CLS. The intrinsic size is remembered after first render. */

@@ -53,14 +53,7 @@
             <a href="{{ url|escape_url }}" class="transition-colors hover:text-accent">{{ product.getName() }}</a>
         </h2>
 
-        {#
-          The core price render block (product.price.render.default) is part of
-          the suppressed Magento_Catalog frontend layout, so block.getProductPrice
-          is unavailable. We format the final price with the `price` filter
-          (PriceExtension). Special/range/tier rendering returns with a declared
-          price-render block in a later batch.
-        #}
-        <div class="product-card__price font-mono text-sm text-ink">{{ product.getFinalPrice()|price }}</div>
+        <div class="product-card__price font-mono text-sm text-ink">{{ block.getProductPrice(product)|raw }}</div>
 
         <div class="product-card__action mt-2">
             {% if block.getCard().isQuickAdd(product) %}
