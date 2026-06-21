@@ -1,0 +1,21 @@
+{# Order totals. `block` is the core Order\Totals block itself; rendering it runs
+   _beforeToHtml → _initTotals, so getTotals() is populated here (it is not when
+   the block is only used as a bare data source). The base block omits a tax
+   line, so we inject it from the order right before the grand total. #}
+{% set order = block.getOrder() %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+<table class="w-full max-w-sm text-sm">
+    <caption class="sr-only">{{ __('Order Totals') }}</caption>
+    {% for total in block.getTotals() %}
+        {% if total.getCode() == 'grand_total' and order.getTaxAmount() > 0 %}
+            <tr class="text-ink-soft">
+                <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Tax') }}</th>
+                <td class="py-2 text-right">{{ order.formatPrice(order.getTaxAmount())|raw }}</td>
+            </tr>
+        {% endif %}
+        <tr class="{{ total.getCode() == 'grand_total' ? 'border-t border-ash-300 font-display text-base text-ink' : 'text-ink-soft' }}">
+            <th scope="row" class="py-2 pr-6 text-left font-normal {{ total.getCode() == 'grand_total' ? '' : labelClass }}">{{ total.getLabel() }}</th>
+            <td class="py-2 text-right">{{ block.formatValue(total)|raw }}</td>
+        </tr>
+    {% endfor %}
+</table>

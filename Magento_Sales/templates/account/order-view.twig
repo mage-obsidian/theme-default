@@ -1,0 +1,85 @@
+{# Order detail. Data sources: `view` (Order\View, payment HTML), `items`
+   (Order\Items), `totals` (Order\Totals), `info` (Order\Info, formatted
+   addresses). Reorder is a native POST form; print is a GET link. No JS. #}
+{% set view = block.getChildBlock('view') %}
+{% set items = block.getChildBlock('items') %}
+{% set info = block.getChildBlock('info') %}
+{% set order = view.getOrder() %}
+{% set billing = order.getBillingAddress() %}
+{% set shipping = order.getShippingAddress() %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+{% set cardClass = 'rounded-edge border border-ash-200 p-6' %}
+
+<div class="flex flex-wrap items-start justify-between gap-4">
+    <div class="flex flex-col gap-1">
+        <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Order') }} #{{ order.getRealOrderId() }}</h1>
+        <span class="text-sm text-ink-soft">{{ order.getCreatedAt()|date_format('long') }}</span>
+    </div>
+    <span class="inline-flex items-center rounded-full border border-ash-300 px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink">{{ order.getStatusLabel() }}</span>
+</div>
+
+<div class="mt-8 overflow-x-auto">
+    <table class="w-full border-collapse text-sm">
+        <caption class="sr-only">{{ __('Items Ordered') }}</caption>
+        <thead>
+            <tr class="border-b border-ash-300 text-left {{ labelClass }}">
+                <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Product') }}</th>
+                <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('SKU') }}</th>
+                <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Price') }}</th>
+                <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Qty') }}</th>
+                <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Subtotal') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items.getItems() %}
+                {% if not item.getParentItem() %}
+                    <tr class="border-b border-ash-100 align-top">
+                        <td class="py-3 pr-4 text-ink">{{ item.getName() }}</td>
+                        <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
+                        <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getPrice())|raw }}</td>
+                        <td class="py-3 pr-4 text-right text-ink">{{ item.getQtyOrdered()|round }}</td>
+                        <td class="py-3 text-right text-ink">{{ order.formatPrice(item.getRowTotal())|raw }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-6 flex justify-end">
+    {{ child_html('totals')|raw }}
+</div>
+
+<div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
+    {% if billing %}
+        <section class="{{ cardClass }}">
+            <h2 class="{{ labelClass }}">{{ __('Billing Address') }}</h2>
+            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(billing)|raw }}</address>
+        </section>
+    {% endif %}
+    {% if shipping %}
+        <section class="{{ cardClass }}">
+            <h2 class="{{ labelClass }}">{{ __('Shipping Address') }}</h2>
+            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(shipping)|raw }}</address>
+        </section>
+    {% endif %}
+    <section class="{{ cardClass }}">
+        <h2 class="{{ labelClass }}">{{ __('Payment Method') }}</h2>
+        <p class="mt-3 text-sm text-ink-soft">{{ order.getPayment().getMethodInstance().getTitle() }}</p>
+    </section>
+    {% if shipping and order.getShippingDescription() %}
+        <section class="{{ cardClass }}">
+            <h2 class="{{ labelClass }}">{{ __('Shipping Method') }}</h2>
+            <p class="mt-3 text-sm text-ink-soft">{{ order.getShippingDescription() }}</p>
+        </section>
+    {% endif %}
+</div>
+
+<div class="mt-10 flex flex-wrap items-center gap-4">
+    <form action="{{ block.getUrl('sales/order/reorder', {'order_id': order.getId()})|escape_url }}" method="post" class="inline">
+        {{ block.getBlockHtml('formkey')|raw }}
+        <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Reorder') }}</button>
+    </form>
+    <a href="{{ block.getUrl('sales/order/print', {'order_id': order.getId()})|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Print Order') }}</a>
+    <a href="{{ block.getUrl('sales/order/history')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Back to My Orders') }}</a>
+</div>

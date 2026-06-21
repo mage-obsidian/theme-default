@@ -1,0 +1,36 @@
+{# Order history. `history` is the core Order\History block (order collection,
+   view and reorder URLs). Reorder is a native POST form (form key); the page is
+   server-rendered with no JS. #}
+{% set history = block.getChildBlock('history') %}
+{% set orders = history.getOrders() %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+
+<h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('My Orders') }}</h1>
+
+{% if orders.getSize() > 0 %}
+    <ul class="mt-8 flex flex-col gap-4">
+        {% for order in orders %}
+            <li class="rounded-edge border border-ash-200 p-6">
+                <div class="flex flex-wrap items-start justify-between gap-4">
+                    <div class="flex flex-col gap-1">
+                        <span class="{{ labelClass }}">{{ __('Order') }} #{{ order.getRealOrderId() }}</span>
+                        <span class="text-sm text-ink-soft">{{ order.getCreatedAt()|date_format('medium') }}</span>
+                    </div>
+                    <span class="inline-flex items-center rounded-full border border-ash-300 px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink">{{ order.getStatusLabel() }}</span>
+                </div>
+                <div class="mt-4 flex flex-wrap items-center justify-between gap-4">
+                    <span class="font-display text-xl text-ink">{{ order.formatPrice(order.getGrandTotal())|raw }}</span>
+                    <div class="flex items-center gap-5">
+                        <a href="{{ history.getViewUrl(order)|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('View Order') }}</a>
+                        <form action="{{ history.getReorderUrl(order)|escape_url }}" method="post" class="inline">
+                            {{ block.getBlockHtml('formkey')|raw }}
+                            <button type="submit" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Reorder') }}</button>
+                        </form>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p class="mt-8 text-sm text-ink-soft">{{ __('You have placed no orders.') }}</p>
+{% endif %}
