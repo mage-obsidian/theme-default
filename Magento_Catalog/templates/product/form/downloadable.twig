@@ -1,0 +1,71 @@
+{#
+  Downloadable buy box: native add-to-cart POST plus the link selector. Links
+  purchased separately POST as links[]; the controller validates required
+  selection, so the form works with no JS. Samples are plain download links.
+  (AJAX / live-total is deferred — composite POST stays native for now.)
+#}
+{% set view = block.getView() %}
+{% set links = block.getChildBlock('downloadable_links') %}
+{% set samples = block.getChildBlock('downloadable_samples') %}
+{% set separately = links and links.getLinksPurchasedSeparately() %}
+{% set required = links and links.getLinkSelectionRequired() %}
+
+<form class="pdp__form flex flex-col gap-6"
+      action="{{ view.getAddToCartAction()|escape_url }}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="product" value="{{ view.getProductId() }}">
+    <input type="hidden" name="uenc" value="{{ view.getUenc()|escape_html_attr }}">
+    {{ block.getBlockHtml('formkey')|raw }}
+
+    {% if links and links.getLinks() is not empty %}
+        <fieldset class="pdp__links flex flex-col gap-3">
+            <legend class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">
+                {{ links.getLinksTitle() }}{% if required and separately %} <span class="text-sale">*</span>{% endif %}
+            </legend>
+            {% for link in links.getLinks() %}
+                <label class="pdp__link flex items-center gap-3 text-sm text-ink">
+                    {% if separately %}
+                        <input type="checkbox" name="links[]" value="{{ link.getId() }}" {{ links.getLinkCheckedValue(link) }}
+                               class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
+                    {% endif %}
+                    <span class="flex-1">{{ link.getTitle() }}</span>
+                    {% if separately %}
+                        <span class="font-mono text-ink-soft">+{{ view.formatPrice(links.getCurrencyPrice(link.getPrice())) }}</span>
+                    {% endif %}
+                    {% if link.getSampleUrl() %}
+                        <a href="{{ links.getLinkSampleUrl(link)|escape_url }}"
+                           {% if links.getIsOpenInNewWindow() %}target="_blank" rel="noopener"{% endif %}
+                           class="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-accent underline">{{ __('Sample') }}</a>
+                    {% endif %}
+                </label>
+            {% endfor %}
+        </fieldset>
+    {% endif %}
+
+    <div class="flex flex-wrap items-end gap-4">
+        <div class="pdp__qty">
+            <label for="pdp-qty" class="block font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Qty') }}</label>
+            <input id="pdp-qty" name="qty" type="number" inputmode="numeric" min="1" step="1" value="1"
+                   class="mt-2 w-20 rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 text-center font-mono text-sm text-ink focus:border-ink focus:outline-none">
+        </div>
+
+        <button type="submit"
+                class="inline-flex flex-1 items-center justify-center rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink disabled:opacity-60">
+            {{ __('Add to cart') }}
+        </button>
+    </div>
+</form>
+
+{% if samples and samples.hasSamples() %}
+    <section class="pdp__samples mt-6 border-t border-ash-200 pt-6" aria-labelledby="pdp-samples-title">
+        <h2 id="pdp-samples-title" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ samples.getSamplesTitle() }}</h2>
+        <ul class="mt-3 flex flex-col gap-2">
+            {% for sample in samples.getSamples() %}
+                <li>
+                    <a href="{{ samples.getSampleUrl(sample)|escape_url }}"
+                       {% if samples.getIsOpenInNewWindow() %}target="_blank" rel="noopener"{% endif %}
+                       class="inline-flex items-center gap-2 text-sm text-accent underline">{{ sample.getTitle() }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endif %}

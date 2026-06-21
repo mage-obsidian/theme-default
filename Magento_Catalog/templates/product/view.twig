@@ -42,7 +42,11 @@
                 {% if configurable %}
                     {% include 'Magento_Catalog::product/form/configurable.twig' %}
                 {% elseif view.isSaleable() %}
-                    {% include 'Magento_Catalog::product/form/simple.twig' %}
+                    {% if view.isDownloadable() %}
+                        {% include 'Magento_Catalog::product/form/downloadable.twig' %}
+                    {% else %}
+                        {% include 'Magento_Catalog::product/form/simple.twig' %}
+                    {% endif %}
                 {% else %}
                     <p class="pdp__unavailable inline-flex items-center rounded-edge border border-ash-200 px-5 py-3 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ash-500">
                         {{ __('Out of stock') }}
