@@ -1,0 +1,57 @@
+{#
+  Grouped buy box: a table of associated simple products. Each row POSTs
+  super_group[id]=qty and the controller adds every row with qty > 0. The price
+  per row is the native render (the grouped block extends AbstractProduct).
+  Works with no JS.
+#}
+{% set view = block.getView() %}
+{% set grouped = block.getChildBlock('grouped') %}
+{% set items = grouped ? grouped.getAssociatedProducts() : [] %}
+
+<form class="pdp__form pdp__group flex flex-col gap-6"
+      action="{{ view.getAddToCartAction()|escape_url }}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="product" value="{{ view.getProductId() }}">
+    <input type="hidden" name="uenc" value="{{ view.getUenc()|escape_html_attr }}">
+    {{ block.getBlockHtml('formkey')|raw }}
+
+    {% if items is not empty %}
+        <table class="pdp__group-table w-full border-collapse text-left">
+            <thead>
+                <tr class="border-b border-ash-200">
+                    <th scope="col" class="py-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">{{ __('Product') }}</th>
+                    <th scope="col" class="py-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">{{ __('Price') }}</th>
+                    <th scope="col" class="py-2 text-right font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">{{ __('Qty') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr class="border-b border-ash-200">
+                        <td class="py-3 pr-4 text-sm text-ink">{{ item.getName() }}</td>
+                        <td class="py-3 pr-4 text-sm">
+                            {% if item.isSaleable() %}
+                                {{ grouped.getProductPrice(item)|raw }}
+                            {% else %}
+                                <span class="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ash-500">{{ __('Out of stock') }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 text-right">
+                            {% if item.isSaleable() %}
+                                <input name="super_group[{{ item.getId() }}]" type="number" inputmode="numeric" min="0" step="1"
+                                       value="{{ item.getQty() * 1 }}"
+                                       aria-label="{{ (__('Quantity') ~ ' — ' ~ item.getName())|escape_html_attr }}"
+                                       class="w-20 rounded-edge border border-ash-300 bg-transparent px-3 py-2 text-center font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="font-mono text-sm text-ink-soft">{{ __('No associated products are available.') }}</p>
+    {% endif %}
+
+    <button type="submit"
+            class="inline-flex items-center justify-center rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink disabled:opacity-60">
+        {{ __('Add to cart') }}
+    </button>
+</form>

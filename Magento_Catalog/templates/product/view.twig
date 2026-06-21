@@ -27,9 +27,10 @@
                compact rating summary; empty when no such module is installed. #}
             {{ child_html('review_summary') }}
 
-            {# Configurable price is dynamic (owned by the island); the static box
-               covers every other type with the native render (special/tier/range). #}
-            {% if not configurable %}
+            {# Configurable price is dynamic (owned by the island); grouped has no
+               own price (its rows carry them). Every other type uses the native
+               render (special/tier/range). #}
+            {% if not configurable and not view.isGrouped() %}
                 <div class="pdp__price mt-6">{{ view.getPriceHtml()|raw }}</div>
             {% endif %}
 
@@ -44,6 +45,8 @@
                 {% elseif view.isSaleable() %}
                     {% if view.isDownloadable() %}
                         {% include 'Magento_Catalog::product/form/downloadable.twig' %}
+                    {% elseif view.isGrouped() %}
+                        {% include 'Magento_Catalog::product/form/grouped.twig' %}
                     {% else %}
                         {% include 'Magento_Catalog::product/form/simple.twig' %}
                     {% endif %}
