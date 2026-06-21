@@ -14,9 +14,9 @@
         data-login-form
         data-ajax-login="{{ block.getUrl('customer/ajax/login')|escape_url }}"
         data-redirect="{{ block.getUrl('customer/account')|escape_url }}"
-        data-err-required="{{ __('This is a required field.')|escape_html_attr }}"
-        data-err-email="{{ __('Please enter a valid email address.')|escape_html_attr }}"
-        data-err-failed="{{ __('We could not sign you in. Check your details and try again.')|escape_html_attr }}"
+        data-err-required="{{ __('This is a required field.') }}"
+        data-err-email="{{ __('Please enter a valid email address.') }}"
+        data-err-failed="{{ __('We could not sign you in. Check your details and try again.') }}"
     >
         {{ block.getBlockHtml('formkey')|raw }}
 

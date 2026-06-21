@@ -15,10 +15,10 @@
         class="mt-8 flex flex-col gap-5"
         data-register-form
         data-password-min-length="8"
-        data-err-required="{{ __('This is a required field.')|escape_html_attr }}"
-        data-err-email="{{ __('Please enter a valid email address.')|escape_html_attr }}"
-        data-err-minlength="{{ __('Please use at least 8 characters.')|escape_html_attr }}"
-        data-err-match="{{ __('The two passwords do not match.')|escape_html_attr }}"
+        data-err-required="{{ __('This is a required field.') }}"
+        data-err-email="{{ __('Please enter a valid email address.') }}"
+        data-err-minlength="{{ __('Please use at least 8 characters.') }}"
+        data-err-match="{{ __('The two passwords do not match.') }}"
     >
         {{ block.getBlockHtml('formkey')|raw }}
 
