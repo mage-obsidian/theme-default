@@ -9,6 +9,7 @@
     {% set state = block.getChildBlock('state') %}
     {% set active = state ? state.getActiveFilters() : [] %}
     {% set filters = block.getFilters() %}
+    {% set swatchVm = block.getSwatchViewModel() %}
 
     <details class="ln-disclosure">
         <summary class="ln-toggle">{{ __('Filters') }}</summary>
@@ -38,16 +39,34 @@
                     {% if filter.getItemsCount() > 0 %}
                         <details class="ln__filter" open>
                             <summary class="ln__filter-title">{{ filter.getName() }}</summary>
-                            <ul class="ln__items">
-                                {% for item in filter.getItems() %}
-                                    <li>
-                                        <a href="{{ item.getUrl()|escape_url }}" class="ln__item" rel="nofollow">
-                                            <span class="ln__item-label">{{ item.getLabel()|raw }}</span>
-                                            <span class="ln__item-count">{{ item.getCount() }}</span>
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                            {% if swatchVm and swatchVm.isSwatch(filter) %}
+                                <ul class="ln__swatches">
+                                    {% for opt in swatchVm.getData(filter) %}
+                                        <li>
+                                            <a href="{{ opt.link|escape_url }}" class="ln__swatch" rel="nofollow"
+                                               title="{{ opt.label|escape_html_attr }}">
+                                                {% if opt.color %}
+                                                    <span class="ln__swatch-color" style="background-color: {{ opt.color|raw }}"></span>
+                                                {% else %}
+                                                    <span class="ln__swatch-text">{{ opt.label }}</span>
+                                                {% endif %}
+                                                <span class="sr-only">{{ opt.label }}</span>
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <ul class="ln__items">
+                                    {% for item in filter.getItems() %}
+                                        <li>
+                                            <a href="{{ item.getUrl()|escape_url }}" class="ln__item" rel="nofollow">
+                                                <span class="ln__item-label">{{ item.getLabel()|raw }}</span>
+                                                <span class="ln__item-count">{{ item.getCount() }}</span>
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                         </details>
                     {% endif %}
                 {% endfor %}
