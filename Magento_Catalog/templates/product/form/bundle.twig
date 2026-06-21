@@ -1,0 +1,46 @@
+{#
+  Bundle buy box: the native option controls (getOptionHtml, skinned by CSS) POST
+  bundle_option[...] / bundle_option_qty[...]; the controller validates required
+  options, so the form works with no JS. A small island reads getJsonConfig and
+  the form to show a live selection total over the native From price box.
+#}
+{% set view = block.getView() %}
+{% set bundle = block.getChildBlock('bundle') %}
+{% set options = bundle ? bundle.getOptions() : [] %}
+
+<form data-bundle-form class="pdp__form pdp__bundle flex flex-col gap-6"
+      action="{{ view.getAddToCartAction()|escape_url }}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="product" value="{{ view.getProductId() }}">
+    <input type="hidden" name="uenc" value="{{ view.getUenc()|escape_html_attr }}">
+    {{ block.getBlockHtml('formkey')|raw }}
+
+    {% if options is not empty %}
+        <div class="pdp__bundle-options flex flex-col gap-5">
+            {% for option in options %}
+                <div class="pdp__bundle-option">{{ bundle.getOptionHtml(option)|raw }}</div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="font-mono text-sm text-ink-soft">{{ __('No options available.') }}</p>
+    {% endif %}
+
+    <div class="flex flex-wrap items-end gap-4">
+        <div class="pdp__qty">
+            <label for="pdp-qty" class="block font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Qty') }}</label>
+            <input id="pdp-qty" name="qty" type="number" inputmode="numeric" min="1" step="1" value="1"
+                   class="mt-2 w-20 rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 text-center font-mono text-sm text-ink focus:border-ink focus:outline-none">
+        </div>
+
+        <button type="submit"
+                class="inline-flex flex-1 items-center justify-center rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink disabled:opacity-60">
+            {{ __('Add to cart') }}
+        </button>
+    </div>
+</form>
+
+{{ render_vue('MageObsidian_Catalog::bundle/BundlePrice', {
+    config: bundle.getJsonConfig(),
+    formSelector: '[data-bundle-form]',
+    currencyFormat: view.getCurrencyFormat(),
+    label: __('Your selection')
+}, true) }}

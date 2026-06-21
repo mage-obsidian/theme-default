@@ -47,6 +47,8 @@
                         {% include 'Magento_Catalog::product/form/downloadable.twig' %}
                     {% elseif view.isGrouped() %}
                         {% include 'Magento_Catalog::product/form/grouped.twig' %}
+                    {% elseif view.isBundle() %}
+                        {% include 'Magento_Catalog::product/form/bundle.twig' %}
                     {% else %}
                         {% include 'Magento_Catalog::product/form/simple.twig' %}
                     {% endif %}
