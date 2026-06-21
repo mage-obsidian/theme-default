@@ -1,10 +1,10 @@
 {#
   One-page checkout. `block` is the MageObsidian Template (obsidian.checkout). The
-  whole flow is a single Vue island seeded from the CheckoutConfig ViewModel
-  (server-primed quote + auth mode), so the first paint needs no REST round-trip;
-  the step UIs and REST mutations layer on in later milestones. Mounted eager —
-  the checkout IS the page — while payment/review components are code-split inside
-  the island. The <h1> is server-rendered above the island for heading hierarchy.
+  whole flow is a single Vue island seeded from the CheckoutConfig + DirectoryData
+  ViewModels (server-primed quote + auth mode + countries/regions), so the first
+  paint needs no REST round-trip; the REST mutations layer on through the store.
+  Mounted eager — the checkout IS the page — while the per-step UIs are code-split
+  inside the island. The <h1> is server-rendered above the island for hierarchy.
 #}
 <div class="mx-auto w-full max-w-[1320px] px-4 pt-10 md:px-8">
     {{ child_html('checkout_title') }}
@@ -15,6 +15,8 @@
 <div style="min-height:60vh">
 {{ render_vue('MageObsidian_Checkout::checkout/Checkout', {
     config: block.getCheckoutConfig().getConfig(),
+    directory: block.getDirectoryData().getData(),
+    loginUrl: block.getUrl('customer/account/login'),
     labels: {
         steps: __('Checkout steps'),
         stepIdentification: __('Identification'),
@@ -26,6 +28,37 @@
         empty: __('Your bag is empty.'),
         subtotal: __('Subtotal'),
         total: __('Total')
+    },
+    identificationLabels: {
+        intro: __('Enter your email to continue as a guest.'),
+        email: __('Email address'),
+        invalidEmail: __('Please enter a valid email address.'),
+        continue: __('Continue'),
+        accountExists: __('An account already exists with this email.'),
+        signIn: __('Sign in')
+    },
+    shippingLabels: {
+        addressHeading: __('Shipping address'),
+        methodsHeading: __('Shipping method'),
+        getRates: __('Show shipping methods'),
+        free: __('Free'),
+        continue: __('Continue to payment'),
+        loading: __('Loading…')
+    },
+    addressLabels: {
+        firstname: __('First name'),
+        lastname: __('Last name'),
+        company: __('Company'),
+        street: __('Street address'),
+        streetLine2: __('Apartment, suite, etc.'),
+        city: __('City'),
+        country: __('Country'),
+        region: __('State / Province'),
+        regionPlaceholder: __('Please select a region'),
+        postcode: __('ZIP / Postal code'),
+        telephone: __('Phone number'),
+        required: __('This field is required.'),
+        optional: __('optional')
     }
 }, true) }}
 </div>
