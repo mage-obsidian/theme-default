@@ -1,0 +1,57 @@
+{#
+  Layered navigation sidebar (category + search). `block` is the Navigation
+  block; the State child carries the active filters. Every filter item is a
+  native link to the filtered URL — the whole sidebar works with no JS. On mobile
+  it collapses behind a "Filters" disclosure; on desktop the disclosure is forced
+  open via CSS (see .ln-disclosure in the catalog styles).
+#}
+{% if block.canShowBlock() %}
+    {% set state = block.getChildBlock('state') %}
+    {% set active = state ? state.getActiveFilters() : [] %}
+    {% set filters = block.getFilters() %}
+
+    <details class="ln-disclosure">
+        <summary class="ln-toggle">{{ __('Filters') }}</summary>
+        <div class="ln-body">
+            <nav class="ln" aria-label="{{ __('Shopping options')|escape_html_attr }}">
+                {% if active is not empty %}
+                    <div class="ln__active">
+                        <div class="ln__active-head">
+                            <span>{{ __('Now Shopping by') }}</span>
+                            <a href="{{ block.getClearUrl()|escape_url }}" class="ln__clear" rel="nofollow">{{ __('Clear All') }}</a>
+                        </div>
+                        <ul class="ln__chips">
+                            {% for item in active %}
+                                <li>
+                                    <a href="{{ item.getRemoveUrl()|escape_url }}" class="ln__chip" rel="nofollow">
+                                        <span>{{ item.getFilter().getName() }}: {{ item.getLabel()|raw }}</span>
+                                        <span aria-hidden="true">&times;</span>
+                                        <span class="sr-only">{{ __('Remove This Item') }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                {% for filter in filters %}
+                    {% if filter.getItemsCount() > 0 %}
+                        <details class="ln__filter" open>
+                            <summary class="ln__filter-title">{{ filter.getName() }}</summary>
+                            <ul class="ln__items">
+                                {% for item in filter.getItems() %}
+                                    <li>
+                                        <a href="{{ item.getUrl()|escape_url }}" class="ln__item" rel="nofollow">
+                                            <span class="ln__item-label">{{ item.getLabel()|raw }}</span>
+                                            <span class="ln__item-count">{{ item.getCount() }}</span>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </details>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+        </div>
+    </details>
+{% endif %}
