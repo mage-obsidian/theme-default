@@ -1,0 +1,60 @@
+{# Sign-in page. `block` is the MageObsidian Template wrapper; `form_data` is the
+   core Magento\Customer\Block\Form\Login used only as a data source (post URL and
+   the username persisted after a failed no-JS attempt). The form POSTs natively
+   to loginPost; login-enhancer.ts adds inline validation and an AJAX sign-in. #}
+{% set login = block.getChildBlock('form_data') %}
+<section class="mx-auto w-full max-w-md px-4 py-16">
+    <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Sign In') }}</h1>
+    <p class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Welcome back to OBSIDIAN') }}</p>
+
+    <form
+        action="{{ login.getPostActionUrl()|escape_url }}"
+        method="post"
+        class="mt-8 flex flex-col gap-5"
+        data-login-form
+        data-ajax-login="{{ block.getUrl('customer/ajax/login')|escape_url }}"
+        data-redirect="{{ block.getUrl('customer/account')|escape_url }}"
+        data-err-required="{{ __('This is a required field.')|escape_html_attr }}"
+        data-err-email="{{ __('Please enter a valid email address.')|escape_html_attr }}"
+        data-err-failed="{{ __('We could not sign you in. Check your details and try again.')|escape_html_attr }}"
+    >
+        {{ block.getBlockHtml('formkey')|raw }}
+
+        <p data-login-error role="alert" class="empty:hidden rounded-edge border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700"></p>
+
+        <div class="flex flex-col gap-2">
+            <label for="login-email" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Email') }}</label>
+            <input
+                type="email"
+                id="login-email"
+                name="login[username]"
+                value="{{ login.getUsername()|escape_html_attr }}"
+                required
+                autocomplete="email"
+                autocapitalize="off"
+                class="h-11 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none"
+            >
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <label for="login-password" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Password') }}</label>
+            <input
+                type="password"
+                id="login-password"
+                name="login[password]"
+                required
+                autocomplete="current-password"
+                class="h-11 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none"
+            >
+        </div>
+
+        <button type="submit" class="mt-1 h-11 rounded-edge bg-ink font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Sign In') }}</button>
+
+        <div class="flex items-center justify-between font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
+            <a href="{{ login.getForgotPasswordUrl()|escape_url }}" class="underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Forgot your password?') }}</a>
+            <a href="{{ block.getUrl('customer/account/create')|escape_url }}" class="underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Create an account') }}</a>
+        </div>
+    </form>
+</section>
+
+<script type="module" src="{{ vite_url('MageObsidian_Customer::js/login-enhancer') }}"></script>
