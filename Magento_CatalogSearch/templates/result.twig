@@ -1,0 +1,45 @@
+{#
+  Search results page. `block` is Magento\CatalogSearch\Block\Result, which set
+  the document <title> and the Home/search breadcrumbs in _prepareLayout. Here it
+  owns the single <h1> and branches on the result count: the catalog grid when
+  there are matches, an OBSIDIAN empty state otherwise.
+
+  getSearchQueryText() embeds the already-escaped query (getEscapedQueryText, the
+  same value the native mini form prints with @noEscape), so it is output with
+  `|raw` to avoid the autoescape double-escaping it (see the escape_html_attr
+  note in the theme); the value is safe because the query is pre-escaped.
+#}
+<div class="search-results mx-auto max-w-[1320px] px-4 py-10 md:px-8">
+    <header class="search-results__head mb-8">
+        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-ink-soft">{{ __('Search') }}</p>
+        <h1 class="mt-2 font-display text-h3 leading-tight text-ink">{{ block.getSearchQueryText()|raw }}</h1>
+        {% if block.getResultCount() %}
+            <p class="mt-2 font-mono text-sm text-ink-soft">
+                {{ __('%1 item(s)', block.getResultCount()) }}
+            </p>
+        {% endif %}
+    </header>
+
+    {% set notes = block.getNoteMessages() %}
+    {% if notes %}
+        <div class="search-results__notes mb-6 rounded-edge border border-ash-200 bg-alabaster-raised px-4 py-3 font-mono text-sm text-ink-soft" role="status">
+            {% for note in notes %}
+                <p>{{ note|raw }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if block.getResultCount() %}
+        {{ block.getProductListHtml()|raw }}
+    {% else %}
+        <div class="search-results__empty py-16 text-center">
+            <p class="font-mono text-sm uppercase tracking-[0.16em] text-ink-soft">
+                {{ block.getNoResultText() ?: __('Your search returned no results.') }}
+            </p>
+            <a href="{{ block.getUrl('') }}"
+               class="mt-8 inline-flex items-center justify-center rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink">
+                {{ __('Continue shopping') }}
+            </a>
+        </div>
+    {% endif %}
+</div>

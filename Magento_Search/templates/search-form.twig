@@ -1,0 +1,42 @@
+{#
+  Header quick-search. Mounts the SearchAutocomplete island (icon → panel with an
+  accessible combobox over the native suggest endpoint). Rendered by a
+  MageObsidian Template child block so render_vue is available; eager because it
+  sits in the above-the-fold header. `block` carries the SearchForm ViewModel,
+  which wraps Magento's native search helper (store-aware URLs + length limits).
+
+  Progressive enhancement: the <noscript> below is a plain GET form to the same
+  results URL, so search works with no JS. With JS, the island renders instead.
+#}
+{% set form = block.getSearchForm() %}
+{{ render_vue(
+    'MageObsidian_Storefront::navigation/SearchAutocomplete',
+    {
+        actionUrl: form.getActionUrl(),
+        queryParam: form.getQueryParam(),
+        queryValue: form.getQueryValue(),
+        suggestUrl: form.getSuggestUrl(),
+        minLength: form.getMinQueryLength(),
+        maxLength: form.getMaxQueryLength(),
+        suggestionsEnabled: form.isSuggestionsAllowed(),
+        labels: {
+            search: __('Search'),
+            placeholder: __('Search the store'),
+            submit: __('Search'),
+            close: __('Close search'),
+            results: __('Search suggestions')
+        }
+    },
+    true
+) }}
+<noscript>
+    <form action="{{ form.getActionUrl()|escape_url }}" method="get" role="search"
+          class="flex items-center gap-2">
+        <label class="sr-only" for="header-search">{{ __('Search') }}</label>
+        <input id="header-search" type="text" name="{{ form.getQueryParam() }}"
+               value="{{ form.getQueryValue() }}" maxlength="{{ form.getMaxQueryLength() }}"
+               placeholder="{{ __('Search the store') }}"
+               class="rounded-edge border border-ash-300 bg-transparent px-3 py-2 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+        <button type="submit" class="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-ink-soft hover:text-ink">{{ __('Search') }}</button>
+    </form>
+</noscript>
