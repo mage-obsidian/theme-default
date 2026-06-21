@@ -108,6 +108,10 @@
         </section>
     {% endif %}
 
+    {# Related + upsell product lists (empty when the product has none). #}
+    {{ child_html('related') }}
+    {{ child_html('upsell') }}
+
     {# Optional reviews hook: the Review domain module fills this with the
        approved-review list + submit form; empty when not installed. #}
     {{ child_html('reviews') }}

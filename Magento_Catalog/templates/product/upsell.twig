@@ -1,0 +1,16 @@
+{#
+  Upsell products on the PDP ("you might also like"). Native link-based list
+  (Magento\...\Upsell), same AbstractProduct base as the listing, so it reuses the
+  shared card. Links to PDPs; quick-add cards still POST natively.
+#}
+{% set items = block.getItems() %}
+{% if items|length > 0 %}
+    <section class="pdp__upsell mt-16 border-t border-ash-200 pt-12" aria-labelledby="pdp-upsell-title">
+        <h2 id="pdp-upsell-title" class="font-display text-xl text-ink">{{ __('We found other products you might like!') }}</h2>
+        <div class="mt-8 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+            {% for item in items %}
+                {% include 'Magento_Catalog::product/card.twig' with { product: item, index: loop.index0 } %}
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}
