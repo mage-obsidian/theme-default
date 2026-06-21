@@ -1,0 +1,122 @@
+{# Add / edit address. `edit` is the core Address\Edit block (saved address, URLs,
+   region JSON, default flags). `address_form` (AddressForm ViewModel) supplies
+   country/region option lists. The region select is rendered server-side for the
+   current country so the form works without JS; address-form-enhancer.ts swaps
+   regions when the country changes. Native POST to the save URL. #}
+{% set edit = block.getChildBlock('edit') %}
+{% set addressForm = block.getAddressForm() %}
+{% set addr = edit.getAddress() %}
+{% set currentCountry = edit.getCountryId() ?: addressForm.getDefaultCountryId() %}
+{% set regionOptions = addressForm.getRegionOptions(currentCountry) %}
+{% set hasRegions = regionOptions is not empty %}
+{% set regionId = edit.getRegionId() %}
+{% set streetLines = edit.getViewModel().addressGetStreetLines() %}
+{% set inputClass = 'h-11 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none' %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+
+<h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ edit.getTitle()}}</h1>
+
+<form
+    action="{{ edit.getSaveUrl()|escape_url }}"
+    method="post"
+    class="mt-8 flex max-w-xl flex-col gap-5"
+    data-address-form
+    data-err-required="{{ __('This is a required field.')|escape_html_attr }}"
+>
+    {# Region data for the dependent select. Carried in a JSON script (not an
+       attribute) so the braces/quotes survive the engine's HTML autoescape. #}
+    <script type="application/json" data-region-json>{{ edit.getRegionProvider().getRegionJson()|raw }}</script>
+    {{ block.getBlockHtml('formkey')|raw }}
+
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div class="flex flex-col gap-2">
+            <label for="addr-firstname" class="{{ labelClass }}">{{ __('First Name') }}</label>
+            <input type="text" id="addr-firstname" name="firstname" value="{{ addr.getFirstname()|escape_html_attr }}" required autocomplete="given-name" class="{{ inputClass }}">
+        </div>
+        <div class="flex flex-col gap-2">
+            <label for="addr-lastname" class="{{ labelClass }}">{{ __('Last Name') }}</label>
+            <input type="text" id="addr-lastname" name="lastname" value="{{ addr.getLastname()|escape_html_attr }}" required autocomplete="family-name" class="{{ inputClass }}">
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-2">
+        <label for="addr-company" class="{{ labelClass }}">{{ __('Company') }}</label>
+        <input type="text" id="addr-company" name="company" value="{{ addr.getCompany()|escape_html_attr }}" autocomplete="organization" class="{{ inputClass }}">
+    </div>
+
+    <div class="flex flex-col gap-2">
+        <label for="addr-telephone" class="{{ labelClass }}">{{ __('Phone Number') }}</label>
+        <input type="tel" id="addr-telephone" name="telephone" value="{{ addr.getTelephone()|escape_html_attr }}" required autocomplete="tel" class="{{ inputClass }}">
+    </div>
+
+    <div class="flex flex-col gap-2">
+        <label for="street_1" class="{{ labelClass }}">{{ __('Street Address') }}</label>
+        <input type="text" id="street_1" name="street[0]" value="{{ edit.getStreetLine(1)|escape_html_attr }}" required autocomplete="address-line1" class="{{ inputClass }}">
+        {% if streetLines > 1 %}
+            {% for i in 1..(streetLines - 1) %}
+                <input type="text" name="street[{{ i }}]" value="{{ edit.getStreetLine(i + 1)|escape_html_attr }}" autocomplete="address-line{{ i + 1 }}" aria-label="{{ __('Street Address: Line %1', i + 1)|escape_html_attr }}" class="{{ inputClass }}">
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div class="flex flex-col gap-2">
+            <label for="country" class="{{ labelClass }}">{{ __('Country') }}</label>
+            <select id="country" name="country_id" required autocomplete="country" data-country class="{{ inputClass }}">
+                {% for option in addressForm.getCountryOptions() %}
+                    <option value="{{ option.value|escape_html_attr }}"{{ option.value == currentCountry ? ' selected' : '' }}>{{ option.label}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex flex-col gap-2" data-region-field>
+            <label for="region_id" class="{{ labelClass }}">{{ __('State/Province') }}</label>
+            <select id="region_id" name="region_id" data-region-select{{ hasRegions ? '' : ' disabled' }} class="{{ inputClass }}{{ hasRegions ? '' : ' hidden' }}">
+                <option value="">{{ __('Please select a region, state or province.') }}</option>
+                {% for option in regionOptions %}
+                    <option value="{{ option.value|escape_html_attr }}"{{ option.value == regionId ? ' selected' : '' }}>{{ option.label}}</option>
+                {% endfor %}
+            </select>
+            <input type="text" id="region" name="region" value="{{ edit.getRegion()|escape_html_attr }}" data-region-input autocomplete="address-level1"{{ hasRegions ? ' disabled' : '' }} class="{{ inputClass }}{{ hasRegions ? ' hidden' : '' }}">
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div class="flex flex-col gap-2">
+            <label for="city" class="{{ labelClass }}">{{ __('City') }}</label>
+            <input type="text" id="city" name="city" value="{{ addr.getCity()|escape_html_attr }}" required autocomplete="address-level2" class="{{ inputClass }}">
+        </div>
+        <div class="flex flex-col gap-2">
+            <label for="zip" class="{{ labelClass }}">{{ __('Zip/Postal Code') }}</label>
+            <input type="text" id="zip" name="postcode" value="{{ addr.getPostcode()|escape_html_attr }}" required autocomplete="postal-code" data-postcode class="{{ inputClass }}">
+        </div>
+    </div>
+
+    {% if edit.isDefaultBilling() %}
+        <p class="{{ labelClass }} text-ink">{{ __("It's a default billing address.") }}</p>
+    {% elseif edit.canSetAsDefaultBilling() %}
+        <label class="flex items-center gap-3 {{ labelClass }}">
+            <input type="checkbox" name="default_billing" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
+            {{ __('Use as my default billing address') }}
+        </label>
+    {% else %}
+        <input type="hidden" name="default_billing" value="1">
+    {% endif %}
+
+    {% if edit.isDefaultShipping() %}
+        <p class="{{ labelClass }} text-ink">{{ __("It's a default shipping address.") }}</p>
+    {% elseif edit.canSetAsDefaultShipping() %}
+        <label class="flex items-center gap-3 {{ labelClass }}">
+            <input type="checkbox" name="default_shipping" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
+            {{ __('Use as my default shipping address') }}
+        </label>
+    {% else %}
+        <input type="hidden" name="default_shipping" value="1">
+    {% endif %}
+
+    <div class="flex items-center gap-4 pt-2">
+        <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Save Address') }}</button>
+        <a href="{{ edit.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Go back') }}</a>
+    </div>
+</form>
+
+<script type="module" src="{{ vite_url('MageObsidian_Customer::js/address-form-enhancer') }}"></script>
