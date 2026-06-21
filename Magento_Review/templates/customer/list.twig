@@ -1,0 +1,26 @@
+{% from 'Magento_Review::review/stars.twig' import stars %}
+{% set reviews = block.getReviews() %}
+
+<div class="account-reviews">
+    <h1 class="font-display text-3xl text-ink">{{ __('My Product Reviews') }}</h1>
+
+    {% if reviews and reviews.getSize() > 0 %}
+        <ol class="mt-8 flex flex-col divide-y divide-ash-200 border-y border-ash-200" role="list">
+            {% for review in reviews %}
+                <li class="flex flex-col gap-2 py-6">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <a href="{{ block.getProductUrl(review)|escape_url }}" class="font-display text-lg text-ink underline-offset-4 hover:underline">{{ review.getName() }}</a>
+                        {{ stars(review.getSum(), __('%1 out of 5 stars', (review.getSum() / 20)|round(1))) }}
+                    </div>
+                    <p class="text-sm leading-relaxed text-ink-soft">{{ review.getDetail() }}</p>
+                    <footer class="mt-1 flex flex-wrap items-center gap-3 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">
+                        <span>{{ block.dateFormat(review.getReviewCreatedAt()) }}</span>
+                        <a href="{{ block.getReviewUrl(review)|escape_url }}" class="text-ink underline">{{ __('See Details') }}</a>
+                    </footer>
+                </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p class="mt-6 font-mono text-sm text-ink-soft">{{ __('You have submitted no reviews.') }}</p>
+    {% endif %}
+</div>
