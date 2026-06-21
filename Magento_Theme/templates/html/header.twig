@@ -29,6 +29,9 @@
             </div>
             {{ child_html('account_menu') }}
             {{ child_html('search') }}
+            <a href="{{ block.getUrl('wishlist') }}" class="inline-flex items-center transition-colors hover:text-ink" aria-label="{{ __('My Wish List')|escape_html_attr }}">
+                {{ child_html('wishlist_count') }}
+            </a>
             {# `data-minicart-trigger` is a neutral hook: with no JS (or no checkout
                module) this stays a plain link to the cart page; the checkout
                module's mini-cart island enhances it to open the drawer instead. #}

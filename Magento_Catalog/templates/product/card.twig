@@ -18,9 +18,23 @@
   scale) is applied via CSS on `.product-card__media img`.
 #}
 <article class="product-card group flex flex-col">
-    <a href="{{ url|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised" tabindex="-1" data-prefetch>
-        {{ block.getImage(product, 'category_page_grid').toHtml()|raw }}
-    </a>
+    <div class="product-card__media-wrap relative">
+        <a href="{{ url|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised" tabindex="-1" data-prefetch>
+            {{ block.getImage(product, 'category_page_grid').toHtml()|raw }}
+        </a>
+        <form data-add-to-wishlist data-product-id="{{ product.getId() }}"
+              action="{{ block.getUrl('wishlist/index/add') }}" method="post"
+              class="product-card__wishlist absolute right-2 top-2 z-10">
+            <input type="hidden" name="product" value="{{ product.getId() }}">
+            {{ block.getBlockHtml('formkey')|raw }}
+            <button type="submit" aria-pressed="false" aria-label="{{ __('Add to Wish List')|escape_html_attr }}"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ash-300 bg-alabaster/90 text-ink-soft backdrop-blur transition-colors hover:border-ink hover:text-ink">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                </svg>
+            </button>
+        </form>
+    </div>
 
     <div class="product-card__body mt-4 flex flex-1 flex-col gap-2">
         <h2 class="product-card__name font-display text-base leading-snug text-ink">

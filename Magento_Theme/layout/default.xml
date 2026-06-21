@@ -52,6 +52,8 @@
             <!-- Live bag count island (reactive via the customer-data bridge). -->
             <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.cart_count"
                    as="cart_count" template="Magento_Theme::html/header/cart-count.twig"/>
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.wishlist_count"
+                   as="wishlist_count" template="Magento_Theme::html/header/wishlist-count.twig"/>
         </referenceBlock>
         <referenceBlock name="footer.content" template="Magento_Theme::html/footer.twig">
             <arguments>
