@@ -1,25 +1,56 @@
 {#
-  Add-to-cart for non-configurable types. `data-add-to-cart` opts into AJAX
-  quick-add (cart-actions.js); composite types that still need options omit it and
-  fall back to a native POST so Magento drives the flow.
+  Add-to-cart for non-configurable types.
+
+  - Plain simple/virtual (no custom options): `data-add-to-cart` opts into the
+    shared AJAX quick-add (cart-actions.js); works with no JS via native POST.
+  - With custom options: `data-product-form` hands the form to the product-options
+    enhancer, which renders a live total, validates required options, and AJAX-adds
+    (the form's FormData carries every option field, including file uploads). The
+    option fields are server-rendered with native names, so the no-JS POST works.
+  - Composite types with no custom options (bundle/grouped) still fall back to a
+    native POST until their own option UIs land.
 #}
 {% set view = block.getView() %}
+{% set optionsBlock = block.getChildBlock('product_options') %}
+{% set hasOptions = optionsBlock and optionsBlock.getOptions() is not empty %}
 {% set quickAdd = not view.needsOptions() %}
-<form class="pdp__form flex flex-wrap items-end gap-4"
-      {% if quickAdd %}data-add-to-cart{% endif %}
-      action="{{ view.getAddToCartAction()|escape_url }}" method="post">
+<form class="pdp__form flex flex-col gap-6"
+      {% if hasOptions %}data-product-form
+          data-base-price="{{ view.getFinalPrice() }}"
+          data-currency-format="{{ view.getCurrencyFormat() }}"
+          data-msg-added="{{ __('Added to cart') }}"
+          data-msg-failed="{{ __('Could not add to cart') }}"
+      {% elseif quickAdd %}data-add-to-cart{% endif %}
+      action="{{ view.getAddToCartAction()|escape_url }}" method="post" enctype="multipart/form-data">
     <input type="hidden" name="product" value="{{ view.getProductId() }}">
     <input type="hidden" name="uenc" value="{{ view.getUenc()|escape_html_attr }}">
     {{ block.getBlockHtml('formkey')|raw }}
 
-    <div class="pdp__qty">
-        <label for="pdp-qty" class="block font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Qty') }}</label>
-        <input id="pdp-qty" name="qty" type="number" inputmode="numeric" min="1" step="1" value="1"
-               class="mt-2 w-20 rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 text-center font-mono text-sm text-ink focus:border-ink focus:outline-none">
-    </div>
+    {% if hasOptions %}
+        {% include 'Magento_Catalog::product/options/options.twig' with {
+            view: view,
+            options: optionsBlock.getOptions(),
+            config: optionsBlock.getJsonConfig(),
+            years: view.getOptionYears()
+        } %}
+        <div class="pdp__options-total font-mono text-lg text-ink" aria-live="polite">
+            {{ __('Total') }}: <span data-options-total>{{ view.formatPrice(view.getFinalPrice()) }}</span>
+        </div>
+    {% endif %}
 
-    <button type="submit"
-            class="inline-flex flex-1 items-center justify-center rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink disabled:opacity-60">
-        {{ __('Add to cart') }}
-    </button>
+    <div class="flex flex-wrap items-end gap-4">
+        <div class="pdp__qty">
+            <label for="pdp-qty" class="block font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Qty') }}</label>
+            <input id="pdp-qty" name="qty" type="number" inputmode="numeric" min="1" step="1" value="1"
+                   class="mt-2 w-20 rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 text-center font-mono text-sm text-ink focus:border-ink focus:outline-none">
+        </div>
+
+        <button type="submit"
+                class="inline-flex flex-1 items-center justify-center rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink disabled:opacity-60">
+            {{ __('Add to cart') }}
+        </button>
+    </div>
 </form>
+{% if hasOptions %}
+    <script type="module" src="{{ vite_url('MageObsidian_Catalog::js/product-options-form') }}"></script>
+{% endif %}

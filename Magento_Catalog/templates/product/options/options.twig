@@ -1,0 +1,140 @@
+{#
+  Reusable custom-options renderer. Server-rendered with Magento's native field
+  names (options[id], options[id][], options[id][month|day|year|...],
+  options_<id>_file) so the form POSTs correctly WITHOUT JS — the server-side
+  option model validates and prices it. The `product-options` enhancer reads the
+  embedded JSON price config (getJsonConfig) to show a live delta and to validate
+  required options accessibly; with JS off the native `required` attributes and
+  the plain POST still work.
+
+  Shared by the simple form and the configurable island (one renderer, two hosts).
+  `view` is the ProductView ViewModel (plain price formatting + year range);
+  `options` are the core option models; `config` is the encoded price JSON.
+#}
+{% macro select_range(name, from, to, label, pad) %}
+    <select name="{{ name }}" aria-label="{{ label }}" data-option-input
+            class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+        <option value="">{{ label }}</option>
+        {% for n in range(from, to) %}
+            <option value="{{ n }}">{{ pad and n < 10 ? '0' ~ n : n }}</option>
+        {% endfor %}
+    </select>
+{% endmacro %}
+{% import _self as dateparts %}
+<div class="pdp__options mt-8 flex flex-col gap-6" data-product-options>
+    <script type="application/json" data-options-config>{{ config|raw }}</script>
+
+    {% for option in options %}
+        {% set id = option.getId() %}
+        {% set type = option.getType() %}
+        {% set required = option.getIsRequire() %}
+        <fieldset class="pdp__option border-0 p-0" data-option data-option-id="{{ id }}"
+                  data-option-type="{{ type }}"{% if required %} data-required{% endif %}>
+            <legend id="opt-legend-{{ id }}" class="pdp__option-label font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">
+                {{ option.getTitle() }}{% if required %} <abbr class="text-sale no-underline" title="{{ __('Required') }}">*</abbr>{% endif %}
+            </legend>
+            <div class="pdp__option-control mt-3">
+                {% if type == 'field' %}
+                    <input type="text" name="options[{{ id }}]" id="option-{{ id }}" data-option-input
+                           aria-labelledby="opt-legend-{{ id }}"
+                           {% if option.getMaxCharacters() %}maxlength="{{ option.getMaxCharacters() }}"{% endif %}
+                           {% if required %}required aria-required="true"{% endif %}
+                           class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+
+                {% elseif type == 'area' %}
+                    <textarea name="options[{{ id }}]" id="option-{{ id }}" rows="4" data-option-input
+                              aria-labelledby="opt-legend-{{ id }}"
+                              {% if option.getMaxCharacters() %}maxlength="{{ option.getMaxCharacters() }}"{% endif %}
+                              {% if required %}required aria-required="true"{% endif %}
+                              class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none"></textarea>
+
+                {% elseif type == 'drop_down' %}
+                    <select name="options[{{ id }}]" id="option-{{ id }}" data-option-input
+                            aria-labelledby="opt-legend-{{ id }}"
+                            {% if required %}required aria-required="true"{% endif %}
+                            class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                        <option value="">{{ __('-- Please Select --') }}</option>
+                        {% for value in option.getValues() %}
+                            {% set amount = value.getPrice(true) %}
+                            <option value="{{ value.getId() }}">{{ value.getTitle() }}{% if amount > 0 %} (+{{ view.formatPrice(amount) }}){% endif %}</option>
+                        {% endfor %}
+                    </select>
+
+                {% elseif type == 'radio' %}
+                    <div role="radiogroup" aria-label="{{ option.getTitle() }}" class="flex flex-col gap-2">
+                        {% if not required %}
+                            <label class="flex items-center gap-2 text-sm text-ink">
+                                <input type="radio" name="options[{{ id }}]" value="" data-option-input checked> {{ __('None') }}
+                            </label>
+                        {% endif %}
+                        {% for value in option.getValues() %}
+                            {% set amount = value.getPrice(true) %}
+                            <label class="flex items-center gap-2 text-sm text-ink">
+                                <input type="radio" name="options[{{ id }}]" value="{{ value.getId() }}" data-option-input
+                                       {% if required %}required{% endif %}>
+                                {{ value.getTitle() }}{% if amount > 0 %} <span class="text-ink-soft">+{{ view.formatPrice(amount) }}</span>{% endif %}
+                            </label>
+                        {% endfor %}
+                    </div>
+
+                {% elseif type == 'checkbox' %}
+                    <div role="group" aria-label="{{ option.getTitle() }}" class="flex flex-col gap-2">
+                        {% for value in option.getValues() %}
+                            {% set amount = value.getPrice(true) %}
+                            <label class="flex items-center gap-2 text-sm text-ink">
+                                <input type="checkbox" name="options[{{ id }}][]" value="{{ value.getId() }}" data-option-input>
+                                {{ value.getTitle() }}{% if amount > 0 %} <span class="text-ink-soft">+{{ view.formatPrice(amount) }}</span>{% endif %}
+                            </label>
+                        {% endfor %}
+                    </div>
+
+                {% elseif type == 'multiple' %}
+                    <select name="options[{{ id }}][]" id="option-{{ id }}" multiple data-option-input
+                            aria-labelledby="opt-legend-{{ id }}"
+                            {% if required %}required aria-required="true"{% endif %}
+                            class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                        {% for value in option.getValues() %}
+                            {% set amount = value.getPrice(true) %}
+                            <option value="{{ value.getId() }}">{{ value.getTitle() }}{% if amount > 0 %} (+{{ view.formatPrice(amount) }}){% endif %}</option>
+                        {% endfor %}
+                    </select>
+
+                {% elseif type in ['date', 'date_time', 'time'] %}
+                    <div class="flex flex-wrap gap-2">
+                        {% if type in ['date', 'date_time'] %}
+                            {{ dateparts.select_range('options[' ~ id ~ '][month]', 1, 12, __('Month'), true) }}
+                            {{ dateparts.select_range('options[' ~ id ~ '][day]', 1, 31, __('Day'), true) }}
+                            <select name="options[{{ id }}][year]" aria-label="{{ __('Year') }}" data-option-input
+                                    class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                                <option value="">{{ __('Year') }}</option>
+                                {% for year in years %}<option value="{{ year }}">{{ year }}</option>{% endfor %}
+                            </select>
+                        {% endif %}
+                        {% if type in ['time', 'date_time'] %}
+                            {{ dateparts.select_range('options[' ~ id ~ '][hour]', 1, 12, __('Hour'), true) }}
+                            {{ dateparts.select_range('options[' ~ id ~ '][minute]', 0, 59, __('Minute'), true) }}
+                            <select name="options[{{ id }}][day_part]" aria-label="{{ __('AM/PM') }}" data-option-input
+                                    class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                                <option value="am">{{ __('AM') }}</option>
+                                <option value="pm">{{ __('PM') }}</option>
+                            </select>
+                        {% endif %}
+                    </div>
+
+                {% elseif type == 'file' %}
+                    {% set amount = option.getPrice(true) %}
+                    <input type="file" name="options_{{ id }}_file" id="option-{{ id }}" data-option-input
+                           aria-labelledby="opt-legend-{{ id }}"
+                           {% if required %}required aria-required="true"{% endif %}
+                           class="block w-full font-mono text-sm text-ink-soft file:mr-4 file:rounded-edge file:border file:border-ink file:bg-transparent file:px-4 file:py-2 file:font-mono file:text-[0.68rem] file:uppercase file:tracking-[0.14em] file:text-ink">
+                    <input type="hidden" name="options_{{ id }}_file_action" value="save_new">
+                    {% if option.getFileExtension() %}
+                        <p class="mt-1 font-mono text-[0.66rem] text-ash-500">{{ __('Allowed file types') }}: {{ option.getFileExtension() }}</p>
+                    {% endif %}
+                    {% if amount > 0 %}<p class="mt-1 font-mono text-[0.66rem] text-ink-soft">+{{ view.formatPrice(amount) }}</p>{% endif %}
+                {% endif %}
+            </div>
+            <p class="pdp__option-error mt-2 font-mono text-[0.66rem] text-sale" data-option-error role="alert" hidden></p>
+        </fieldset>
+    {% endfor %}
+</div>

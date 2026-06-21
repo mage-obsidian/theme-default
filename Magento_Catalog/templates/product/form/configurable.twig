@@ -3,9 +3,25 @@
   and getJsonSwatchConfig() as JSON strings (the island parses them) rather than
   re-deriving the variant index. `cfg` is the core renderer declared in the PDP
   layout only as this data source. With JS off, swatches cannot render.
+
+  Custom options (if any) are server-rendered with the SAME reusable partial the
+  simple form uses; the island reads that DOM to add their price delta, validate
+  them, and append them (incl. file uploads) to the add-to-cart body.
 #}
 {% set view = block.getView() %}
 {% set cfg = block.getChildBlock('configurable') %}
+{% set optionsBlock = block.getChildBlock('product_options') %}
+{% set hasOptions = optionsBlock and optionsBlock.getOptions() is not empty %}
+
+{% if hasOptions %}
+    {% include 'Magento_Catalog::product/options/options.twig' with {
+        view: view,
+        options: optionsBlock.getOptions(),
+        config: optionsBlock.getJsonConfig(),
+        years: view.getOptionYears()
+    } %}
+{% endif %}
+
 {{ render_vue('MageObsidian_Catalog::catalog/ProductForm', {
     config: cfg.getJsonConfig(),
     swatches: cfg.getJsonSwatchConfig(),
@@ -13,6 +29,7 @@
     action: view.getAddToCartAction(),
     uenc: view.getUenc(),
     initialPrice: view.formatPrice(view.getFinalPrice()),
+    initialPriceAmount: view.getFinalPrice(),
     labels: {
         chooseFor: __('Choose %1'),
         addToCart: __('Add to cart'),
