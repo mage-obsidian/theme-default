@@ -34,6 +34,18 @@
                 </svg>
             </button>
         </form>
+        <form data-add-to-compare data-product-id="{{ product.getId() }}"
+              action="{{ block.getUrl('catalog/product_compare/add') }}" method="post"
+              class="product-card__compare absolute right-2 top-12 z-10">
+            <input type="hidden" name="product" value="{{ product.getId() }}">
+            {{ block.getBlockHtml('formkey')|raw }}
+            <button type="submit" aria-pressed="false" aria-label="{{ __('Add to Compare')|escape_html_attr }}"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ash-300 bg-alabaster/90 text-ink-soft backdrop-blur transition-colors hover:border-ink hover:text-ink">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
+                </svg>
+            </button>
+        </form>
     </div>
 
     <div class="product-card__body mt-4 flex flex-1 flex-col gap-2">

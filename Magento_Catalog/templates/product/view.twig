@@ -70,6 +70,19 @@
                 </button>
             </form>
 
+            <form data-add-to-compare data-product-id="{{ view.getProductId() }}"
+                  action="{{ block.getUrl('catalog/product_compare/add') }}" method="post" class="pdp__compare mt-3">
+                <input type="hidden" name="product" value="{{ view.getProductId() }}">
+                {{ block.getBlockHtml('formkey')|raw }}
+                <button type="submit" aria-pressed="false"
+                        class="inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink-soft transition-colors hover:text-ink">
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
+                    </svg>
+                    {{ __('Add to Compare') }}
+                </button>
+            </form>
+
             {% set attributes = block.getChildBlock('product_attributes') ? block.getChildBlock('product_attributes').getAdditionalData() : [] %}
             {% if attributes is not empty %}
                 <section class="pdp__specs mt-12 border-t border-ash-200 pt-8" aria-labelledby="pdp-specs-title">
