@@ -75,7 +75,7 @@
     {% endif %}
 </div>
 
-<div class="mt-10 flex flex-wrap items-center gap-4">
+<div class="mt-10 flex flex-wrap items-center gap-4 print:hidden">
     <form action="{{ block.getUrl('sales/order/reorder', {'order_id': order.getId()})|escape_url }}" method="post" class="inline">
         {{ block.getBlockHtml('formkey')|raw }}
         <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Reorder') }}</button>
