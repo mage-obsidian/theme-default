@@ -1,0 +1,19 @@
+{# Newsletter subscriptions. `newsletter` is the core Customer\Newsletter block
+   (current subscription state + save URL). Native POST to newsletter/manage/save;
+   works without JS (a single checkbox). #}
+{% set newsletter = block.getChildBlock('newsletter') %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+
+<h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Newsletter Subscriptions') }}</h1>
+
+<form action="{{ newsletter.getAction()|escape_url }}" method="post" class="mt-8 flex max-w-lg flex-col gap-6">
+    {{ block.getBlockHtml('formkey')|raw }}
+    <label class="flex items-center gap-3 text-sm text-ink">
+        <input type="checkbox" name="is_subscribed" id="subscription" value="1"{{ newsletter.getIsSubscribed() ? ' checked' : '' }} class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
+        {{ __('General Subscription') }}
+    </label>
+    <div class="flex items-center gap-4">
+        <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Save') }}</button>
+        <a href="{{ block.getUrl('customer/account')|escape_url }}" class="{{ labelClass }} underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Back') }}</a>
+    </div>
+</form>
