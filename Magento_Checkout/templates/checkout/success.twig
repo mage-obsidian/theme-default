@@ -1,0 +1,24 @@
+{# `block` is the native Onepage\Success block, read for the order id + URLs. #}
+<div class="mx-auto w-full max-w-[760px] px-4 py-20 text-center md:px-8">
+    {% if block.getOrderId() %}
+        <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-ink-soft">{{ __('Order confirmed') }}</p>
+        <h1 class="mt-4 font-display text-4xl text-ink md:text-5xl">{{ __('Thank you for your purchase') }}</h1>
+        <p class="mt-6 text-ink-soft">
+            {% if block.getCanViewOrder() %}
+                {{ __('Your order number is') }}
+                <a href="{{ block.getViewOrderUrl()|escape_url }}" class="font-mono text-ink underline">{{ block.getOrderId() }}</a>.
+            {% else %}
+                {{ __('Your order number is') }} <span class="font-mono text-ink">{{ block.getOrderId() }}</span>.
+            {% endif %}
+        </p>
+        <p class="mt-2 text-ink-soft">{{ __('We will email you an order confirmation with the details.') }}</p>
+
+        <a href="{{ block.getContinueUrl()|escape_url }}"
+           class="mt-10 inline-flex items-center justify-center rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink">
+            {{ __('Continue Shopping') }}
+        </a>
+    {% else %}
+        <h1 class="font-display text-3xl text-ink">{{ __('No order to show') }}</h1>
+        <a href="{{ block.getContinueUrl()|escape_url }}" class="mt-8 inline-block font-mono text-xs uppercase tracking-[0.16em] text-ink underline">{{ __('Continue Shopping') }}</a>
+    {% endif %}
+</div>
