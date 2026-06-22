@@ -1,0 +1,38 @@
+{# Cookie-restriction (e-Privacy) consent banner. `block` is a MageObsidian
+   Template; `notice` is the CookieNotice VM (self-gates on restriction mode).
+   Rendered hidden — the cookie-notice enhancer reveals it only when the consent
+   cookie is absent, and on "Allow" writes `user_allowed_save_cookie` with the
+   accepted website ids (the value Magento's server read-path expects). #}
+{% set notice = block.getCookieNotice() %}
+{% if notice.isEnabled() %}
+    <div
+        id="notice-cookie-block"
+        role="alertdialog"
+        aria-labelledby="cookie-notice-title"
+        tabindex="-1"
+        hidden
+        data-cookie-notice
+        data-cookie-name="{{ notice.getCookieName() }}"
+        data-cookie-value="{{ notice.getWebsiteIdsJson() }}"
+        data-cookie-lifetime="{{ notice.getLifetime() }}"
+        data-no-cookies-url="{{ notice.getNoCookiesUrl()|escape_url }}"
+        class="fixed inset-x-0 bottom-0 z-50 border-t border-ash-200 bg-alabaster-raised/95 backdrop-blur-sm"
+    >
+        <div class="mx-auto flex w-full max-w-[1320px] flex-col gap-4 px-4 py-5 md:flex-row md:items-center md:justify-between md:px-8">
+            <div class="max-w-[80ch] text-sm text-ink-soft">
+                <strong id="cookie-notice-title" class="font-mono text-xs uppercase tracking-[0.14em] text-ink">{{ __('We use cookies to make your experience better.') }}</strong>
+                <span class="ml-1">{{ __('To comply with the e-Privacy directive, we need your consent to set cookies.') }}</span>
+                <a href="{{ notice.getPrivacyUrl()|escape_url }}" class="underline underline-offset-4 transition-colors hover:text-accent">{{ __('Learn more') }}</a>
+            </div>
+            <button
+                type="button"
+                data-cookie-allow
+                class="inline-flex w-fit shrink-0 items-center justify-center rounded-edge bg-ink px-6 py-2.5 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800"
+            >
+                {{ __('Allow Cookies') }}
+            </button>
+        </div>
+    </div>
+
+    <script type="module" src="{{ vite_url('MageObsidian_Storefront::js/cookie-notice') }}"></script>
+{% endif %}
