@@ -1,0 +1,66 @@
+{# Printable shipment. Data source: `print` (PrintOrder\Shipment) — a single
+   shipment or the whole collection ("print all"), with per-shipment items,
+   tracking and shipping address. Standalone (header/footer print:hidden). No
+   prices on a shipment. #}
+{# The PrintOrder\Shipment block lazily fills its shipment collection and tracks
+   in _beforeToHtml, which never runs when the block is only a data source. Read
+   the collection and tracks straight off the order/shipment models instead; the
+   block's getShipment (registry) and address/item helpers do not need it. #}
+{% set printBlock = block.getChildBlock('print') %}
+{% set order = printBlock.getOrder() %}
+{% set single = printBlock.getShipment() %}
+{% set shipments = single ? [single] : order.getShipmentsCollection() %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+{% set cardClass = 'rounded-edge border border-ash-200 p-6' %}
+
+<div class="flex flex-col gap-1">
+    <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Order') }} #{{ order.getRealOrderId() }}</h1>
+    <span class="text-sm text-ink-soft">{{ order.getCreatedAt()|date_format('long') }}</span>
+</div>
+
+{% for shipment in shipments %}
+    <section class="mt-8">
+        <h2 class="font-display text-lg text-ink">{{ __('Shipment #%1', shipment.getIncrementId()) }}</h2>
+        {% set tracks = shipment.getTracksCollection() %}
+        {% if tracks.getSize() > 0 %}
+            <dl class="mt-3 flex flex-wrap items-baseline gap-2 text-sm">
+                <dt class="{{ labelClass }}">{{ __('Tracking Number(s):') }}</dt>
+                <dd class="text-ink">
+                    {% for track in tracks %}{{ track.getNumber() }}{% if not loop.last %}, {% endif %}{% endfor %}
+                </dd>
+            </dl>
+        {% endif %}
+        <div class="mt-4 overflow-x-auto">
+            <table class="w-full border-collapse text-sm">
+                <caption class="sr-only">{{ __('Items Shipped') }}</caption>
+                <thead>
+                    <tr class="border-b border-ash-300 text-left {{ labelClass }}">
+                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Product') }}</th>
+                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('SKU') }}</th>
+                        <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Qty Shipped') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in printBlock.getShipmentItems(shipment) %}
+                        {% if not item.getOrderItem().getParentItem() %}
+                            <tr class="border-b border-ash-100 align-top">
+                                <td class="py-3 pr-4 text-ink">{{ item.getName() }}</td>
+                                <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
+                                <td class="py-3 text-right text-ink">{{ item.getQty()|round }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-6">
+            <h3 class="{{ labelClass }}">{{ __('Shipping Address') }}</h3>
+            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.getShipmentAddressFormattedHtml(shipment)|raw }}</address>
+        </div>
+    </section>
+{% endfor %}
+
+<div class="mt-10 {{ cardClass }} sm:max-w-sm">
+    <h2 class="{{ labelClass }}">{{ __('Billing Address') }}</h2>
+    <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.getBillingAddressFormattedHtml(order)|raw }}</address>
+</div>

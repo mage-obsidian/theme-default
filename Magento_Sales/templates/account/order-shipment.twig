@@ -22,7 +22,11 @@
 
 {% for shipment in order.getShipmentsCollection() %}
     <section class="mt-8">
-        <h2 class="font-display text-lg text-ink">{{ __('Shipment #%1', shipment.getIncrementId()) }}</h2>
+        <div class="flex items-center justify-between gap-4">
+            <h2 class="font-display text-lg text-ink">{{ __('Shipment #%1', shipment.getIncrementId()) }}</h2>
+            <a href="{{ shipmentBlock.getPrintShipmentUrl(shipment)|escape_url }}" target="_blank" rel="noopener"
+               class="print:hidden font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Print Shipment') }}</a>
+        </div>
         {% set tracks = shipment.getTracksCollection() %}
         {% if tracks.getSize() > 0 %}
             <dl class="mt-3 flex flex-wrap items-baseline gap-2 text-sm">
