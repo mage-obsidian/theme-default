@@ -31,5 +31,7 @@
     </section>
 </div>
 
-{# Extension slot: modules add dashboard widgets here (e.g. Sales' recent orders). #}
+{# Extension slot: modules add dashboard widgets here (e.g. Sales' recent orders,
+   Review's recent reviews). #}
 {{ child_html('recent_orders')|raw }}
+{{ child_html('recent_reviews')|raw }}

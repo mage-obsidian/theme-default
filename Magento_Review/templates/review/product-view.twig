@@ -1,0 +1,43 @@
+{# Single review detail. `block` is the core Review\Block\View: product, the
+   review and the per-rating-type breakdown. Standalone page, no JS. #}
+{% from 'Magento_Review::review/stars.twig' import stars %}
+{% set product = block.getProductData() %}
+{% set review = block.getReviewData() %}
+
+{% if product.getId() %}
+    <div class="mx-auto w-full max-w-[900px] px-4 py-12 md:px-8">
+        <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Review Details') }}</h1>
+
+        <div class="mt-8 flex flex-col gap-2">
+            <a href="{{ product.getProductUrl()|escape_url }}" class="font-display text-xl text-ink underline-offset-4 transition-colors hover:text-accent hover:underline">{{ product.getName() }}</a>
+        </div>
+
+        {% if block.getRating() and block.getRating().getSize() %}
+            <div class="mt-6 {{ '' }}">
+                <p class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Product Rating') }}</p>
+                <dl class="mt-3 flex flex-col gap-2">
+                    {% for rating in block.getRating() %}
+                        {% if rating.getPercent() %}
+                            <div class="flex items-center gap-3">
+                                <dt class="w-32 text-sm text-ink-soft">{{ __(rating.getRatingCode()) }}</dt>
+                                <dd>{{ stars(rating.getPercent(), (rating.getPercent()|round) ~ '%') }}</dd>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </dl>
+            </div>
+        {% endif %}
+
+        <article class="mt-8 rounded-edge border border-ash-200 p-6">
+            {% if review.getTitle() %}<h2 class="font-display text-lg text-ink">{{ review.getTitle() }}</h2>{% endif %}
+            <p class="mt-1 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ash-500">
+                {{ __('Submitted on %1', block.dateFormat(review.getCreatedAt())) }}{% if review.getNickname() %} · {{ review.getNickname() }}{% endif %}
+            </p>
+            <p class="mt-4 whitespace-pre-line text-sm leading-relaxed text-ink">{{ review.getDetail() }}</p>
+        </article>
+
+        <div class="mt-8">
+            <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Back to Product Reviews') }}</a>
+        </div>
+    </div>
+{% endif %}

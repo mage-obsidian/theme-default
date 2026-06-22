@@ -1,0 +1,26 @@
+{# Recent reviews on the account dashboard. `block` is a MageObsidian Template;
+   `recent` is the core Customer\Recent data source (getReviews, getReviewUrl,
+   getAllReviewsUrl). Each review's rating percent is sum/count. No JS. #}
+{% from 'Magento_Review::review/stars.twig' import stars %}
+{% set recent = block.getChildBlock('recent') %}
+{% set reviews = recent.getReviews() %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+
+{% if reviews|length > 0 %}
+    <section class="mt-8">
+        <div class="flex items-center justify-between gap-4">
+            <h2 class="font-display text-lg text-ink">{{ __('Recent Reviews') }}</h2>
+            <a href="{{ recent.getAllReviewsUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('View All') }}</a>
+        </div>
+
+        <ul class="mt-4 divide-y divide-ash-200 border-y border-ash-200">
+            {% for review in reviews %}
+                {% set percent = review.getCount() ? (review.getSum() / review.getCount())|round : 0 %}
+                <li class="flex flex-wrap items-center justify-between gap-3 py-4">
+                    <a href="{{ recent.getReviewUrl(review.getReviewId())|escape_url }}" class="text-sm text-ink underline-offset-4 transition-colors hover:text-accent hover:underline">{{ review.getName() }}</a>
+                    <div>{{ stars(percent, __('%1 out of 5 stars', (percent / 20)|round(1))) }}</div>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endif %}
