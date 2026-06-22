@@ -1,10 +1,14 @@
 {# Per-item option lines (custom options, configurable attributes, additional
    options) and bundle selection children, shown under the product name in the
    order/invoice/credit-memo/shipment tables. `item_options` is the ItemOptions
-   ViewModel; `order` formats child prices in the store currency. #}
+   ViewModel; `order` formats child prices in the store currency.
+   `downloadable_links` is an OPTIONAL ViewModel contributed by MageObsidian_
+   Downloadable on the order/invoice host blocks — absent (null) elsewhere. #}
 {% set options = item_options.getOptions(item) %}
 {% set children = item_options.getChildren(item) %}
-{% if options is not empty or children is not empty %}
+{% set downloadable = block.getDownloadableLinks() %}
+{% set links = downloadable ? downloadable.getLinks(item) : [] %}
+{% if options is not empty or children is not empty or links is not empty %}
     <dl class="mt-1.5 space-y-0.5 text-xs text-ink-soft">
         {% for option in options %}
             <div class="flex gap-1.5">
@@ -18,5 +22,11 @@
                 <dd>{{ child.name }}{% if child.price and show_price|default(true) %} — {{ order.formatPrice(child.price)|raw }}{% endif %}</dd>
             </div>
         {% endfor %}
+        {% if links is not empty %}
+            <div class="flex gap-1.5">
+                <dt class="text-ash-500">{{ downloadable.getTitle() }}:</dt>
+                <dd>{{ links|join(', ') }}</dd>
+            </div>
+        {% endif %}
     </dl>
 {% endif %}

@@ -1,0 +1,69 @@
+{# "My Downloadable Products" account page. `block` is the MageObsidian Template
+   (account_content); `list` is the core Customer\Products\ListProducts data
+   source (purchased links, statuses, download URLs). One row per purchased link;
+   the download action shows only while the link is still available. No JS. #}
+{% set list = block.getChildBlock('list') %}
+{% set items = list.getItems() %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+
+<div class="flex flex-col gap-1">
+    <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('My Downloadable Products') }}</h1>
+</div>
+
+{% if items is empty %}
+    <div class="mt-8 rounded-edge border border-dashed border-ash-300 px-6 py-16 text-center text-ink-soft">
+        {{ __('You have not purchased any downloadable products yet.') }}
+    </div>
+{% else %}
+    <div class="mt-8 overflow-x-auto">
+        <table class="w-full border-collapse text-sm">
+            <caption class="sr-only">{{ __('Downloadable Products') }}</caption>
+            <thead>
+                <tr class="border-b border-ash-300 text-left {{ labelClass }}">
+                    <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Order #') }}</th>
+                    <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Date') }}</th>
+                    <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Title') }}</th>
+                    <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Status') }}</th>
+                    <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Remaining Downloads') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    {% set purchased = item.getPurchased() %}
+                    <tr class="border-b border-ash-100 align-top">
+                        <td class="py-3 pr-4">
+                            <a href="{{ list.getOrderViewUrl(purchased.getOrderId())|escape_url }}"
+                               class="text-ink underline-offset-4 transition-colors hover:text-accent hover:underline">
+                                {{ purchased.getOrderIncrementId() }}
+                            </a>
+                        </td>
+                        <td class="py-3 pr-4 text-ink-soft">{{ list.formatDate(purchased.getCreatedAt()) }}</td>
+                        <td class="py-3 pr-4 text-ink">
+                            <span class="font-medium">{{ purchased.getProductName() }}</span>
+                            {% if item.getStatus() == 'available' %}
+                                <a href="{{ list.getDownloadUrl(item)|escape_url }}"
+                                   class="mt-1 block text-sm text-accent underline-offset-4 hover:underline"
+                                   {% if list.getIsOpenInNewWindow() %}target="_blank" rel="noopener"{% endif %}>
+                                    {{ item.getLinkTitle() }}
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 pr-4 text-ink-soft">{{ __(item.getStatus()|capitalize) }}</td>
+                        <td class="py-3 text-right text-ink-soft">{{ list.getRemainingDownloads(item) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if block.getChildHtml('pager') %}
+        <div class="mt-6">{{ block.getChildHtml('pager')|raw }}</div>
+    {% endif %}
+{% endif %}
+
+<div class="mt-10">
+    <a href="{{ list.getBackUrl()|escape_url }}"
+       class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">
+        {{ __('Back') }}
+    </a>
+</div>
