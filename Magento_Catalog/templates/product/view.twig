@@ -59,6 +59,25 @@
                 {% endif %}
             </div>
 
+            {# Instant Purchase one-click button (Magento_InstantPurchase). The VM
+               self-gates on the module flag; the island self-gates on the native
+               instant-purchase customer-data section (a stored token + default
+               addresses), so it stays inert without a configured gateway. #}
+            {% set instantPurchase = block.getInstantPurchase() %}
+            {% if instantPurchase and instantPurchase.isEnabled() and view.isSaleable() %}
+                {{ render_vue('MageObsidian_InstantPurchase::InstantPurchaseButton', {
+                    purchaseUrl: instantPurchase.getPurchaseUrl(),
+                    buttonText: instantPurchase.getButtonText(),
+                    labels: {
+                        confirm: __('Place order now'),
+                        cancel: __('Cancel'),
+                        paying: __('Paying with'),
+                        shipping: __('Shipping to'),
+                        method: __('Via')
+                    }
+                }, true) }}
+            {% endif %}
+
             <form data-add-to-wishlist data-product-id="{{ view.getProductId() }}"
                   action="{{ block.getUrl('wishlist/index/add') }}" method="post" class="pdp__wishlist mt-4">
                 <input type="hidden" name="product" value="{{ view.getProductId() }}">
