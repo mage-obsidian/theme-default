@@ -4,11 +4,14 @@
   re-rendered by our Twig. Mutations are progressive: the native forms POST to the
   core controllers (work without JS); cart-page.js intercepts them for AJAX + a
   morph-refresh. The data-* URLs feed the enhancer the sidebar endpoints. The
-  shipping estimator is intentionally deferred to the checkout wave.
+  "Estimate Shipping and Tax" panel is a Vue island rendered outside the morphed
+  region so a qty refresh never destroys it (same as gift options).
 #}
 {% set items = block.getCartItems().getItems() %}
 {% set wishlist = block.getWishlist() %}
 {% set giftOptions = block.getGiftOptions() %}
+{% set checkoutConfig = block.getCheckoutConfig().getConfig() %}
+{% set directory = block.getDirectoryData().getData() %}
 <div
     data-cart-root
     data-update-url="{{ block.getUrl('checkout/sidebar/updateItemQty')|escape_url }}"
@@ -122,6 +125,38 @@
     {% endif %}
 </div>
 
+{# "Estimate Shipping and Tax" — island outside the morphed region (a qty refresh
+   replaces [data-cart-root] wholesale, which would otherwise unmount it). Aligned
+   to the summary column. Previews rates + totals via REST without touching the
+   persisted quote — the binding selection happens at checkout. #}
+{% if items is not empty %}
+    <div class="mx-auto w-full max-w-[1320px] px-4 md:px-8">
+        <div class="lg:ml-auto lg:w-[360px]">
+            {{ render_vue('MageObsidian_Checkout::components/cart/ShippingEstimator', {
+                config: {
+                    restBaseUrl: checkoutConfig.restBaseUrl,
+                    isLoggedIn: checkoutConfig.isLoggedIn,
+                    maskedCartId: checkoutConfig.maskedCartId
+                },
+                directory: directory,
+                currencyFormat: checkoutConfig.currencyFormat,
+                labels: {
+                    panel: __('Estimate Shipping and Tax'),
+                    country: __('Country'),
+                    region: __('State / Province'),
+                    regionPlaceholder: __('Please select a region'),
+                    postcode: __('ZIP / Postal code'),
+                    estimate: __('Estimate'),
+                    loading: __('Loading…'),
+                    methodsHeading: __('Shipping method'),
+                    noRates: __('No quotes are available for this address.'),
+                    free: __('Free')
+                }
+            }, true) }}
+        </div>
+    </div>
+{% endif %}
+
 {# Gift options live OUTSIDE the morphed cart region: the island mounts once and
    posts straight to the gift-message REST endpoints, so a qty refresh never
    destroys it. Gift messages have no no-JS path (neither does Luma — the API is
@@ -147,7 +182,7 @@
             saveLabel: __('Save gift message'),
             savedLabel: __('Saved'),
             failLabel: __('Could not save gift message')
-        }) }}
+        }, true) }}
         <noscript>
             <p class="mt-4 text-sm text-ink-soft">{{ __('Enable JavaScript to add a gift message.') }}</p>
         </noscript>
