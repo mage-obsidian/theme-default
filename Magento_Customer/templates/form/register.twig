@@ -53,6 +53,9 @@
             {{ __('Sign up for our newsletter') }}
         </label>
 
+        {# Remember-me (Magento_Persistent; the VM self-gates on the enable flags). #}
+        {% include 'Magento_Persistent::remember-me.twig' with { remember: block.getRemember() } only %}
+
         <button type="submit" class="mt-1 h-11 rounded-edge bg-ink font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Create an Account') }}</button>
 
         <p class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">

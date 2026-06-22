@@ -48,6 +48,9 @@
             >
         </div>
 
+        {# Remember-me (Magento_Persistent; the VM self-gates on the enable flags). #}
+        {% include 'Magento_Persistent::remember-me.twig' with { remember: block.getRemember() } only %}
+
         <button type="submit" class="mt-1 h-11 rounded-edge bg-ink font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Sign In') }}</button>
 
         <div class="flex items-center justify-between font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">

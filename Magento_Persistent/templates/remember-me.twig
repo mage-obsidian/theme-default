@@ -1,0 +1,14 @@
+{# Remember-me checkbox for the sign-in / registration forms. `remember` is the
+   Persistent Remember VM (passed in by the including form); it self-gates, so
+   this renders nothing unless persistent + remember-me are enabled. Native POST
+   field `persistent_remember_me`. #}
+{% if remember and remember.isEnabled() %}
+    <label class="flex items-start gap-3">
+        <input type="checkbox" name="persistent_remember_me" value="1" {% if remember.isCheckedByDefault() %}checked{% endif %}
+               class="mt-0.5 h-4 w-4 rounded-edge border-ash-300 text-ink focus:ring-ink">
+        <span class="text-sm text-ink-soft">
+            {{ __('Remember Me') }}
+            <span class="block text-xs text-ash-500">{{ __('Access your shopping cart on this computer even when not signed in.') }}</span>
+        </span>
+    </label>
+{% endif %}
