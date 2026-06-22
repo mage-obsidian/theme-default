@@ -1,0 +1,20 @@
+{# Cancel-order island for a cancellable order. Included by the order view,
+   history and dashboard with `order` and `cancellation` in context; renders
+   nothing when cancellation is unavailable (guest, disabled, or a non-cancellable
+   state). `block` is the host MageObsidian Template (render_vue + base URL). #}
+{% if cancellation and cancellation.canCancel(order.getId()) %}
+    {{ render_vue('MageObsidian_Sales::sales/CancelOrder', {
+        orderId: order.getId(),
+        realOrderId: order.getRealOrderId(),
+        reasons: cancellation.getCancellationReasons(order.getId()),
+        graphqlUrl: block.getBaseUrl() ~ 'graphql',
+        labels: {
+            cancel: __('Cancel Order'),
+            title: __('Cancel order'),
+            prompt: __('Provide a cancellation reason:'),
+            confirm: __('Confirm'),
+            close: __('Close'),
+            submitting: __('Cancelling…')
+        }
+    }, true) }}
+{% endif %}

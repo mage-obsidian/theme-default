@@ -3,6 +3,7 @@
    server-rendered with no JS. #}
 {% set history = block.getChildBlock('history') %}
 {% set orders = history.getOrders() %}
+{% set cancellation = block.getCancellation() %}
 {% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
 
 <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('My Orders') }}</h1>
@@ -26,6 +27,7 @@
                             {{ block.getBlockHtml('formkey')|raw }}
                             <button type="submit" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Reorder') }}</button>
                         </form>
+                        {% include 'Magento_Sales::account/cancel-order.twig' with { 'order': order, 'cancellation': cancellation } %}
                     </div>
                 </div>
             </li>

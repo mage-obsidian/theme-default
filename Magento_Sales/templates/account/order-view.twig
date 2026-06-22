@@ -14,6 +14,9 @@
    routes when the handle does not set them. #}
 {% set route_prefix = block.getData('route_prefix')|default('sales/order') %}
 {% set is_guest = block.getData('is_guest')|default(false) %}
+{# Order cancellation (2.4.8) is customer-only and config-gated; the handle only
+   sets `cancellation` on the customer view, not guest/print. #}
+{% set cancellation = block.getCancellation() %}
 
 <div class="flex flex-wrap items-start justify-between gap-4">
     <div class="flex flex-col gap-1">
@@ -88,6 +91,9 @@
         <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Reorder') }}</button>
     </form>
     <a href="{{ block.getUrl(route_prefix ~ '/print', {'order_id': order.getId()})|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Print Order') }}</a>
+    {% if not is_guest %}
+        {% include 'Magento_Sales::account/cancel-order.twig' %}
+    {% endif %}
     {% if is_guest %}
         <a href="{{ block.getUrl('sales/guest/form')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Back to Order Lookup') }}</a>
     {% else %}
