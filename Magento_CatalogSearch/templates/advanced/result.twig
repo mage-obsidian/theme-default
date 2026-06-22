@@ -1,0 +1,41 @@
+{# Advanced search results. `block` is the core Advanced\Result: match count, the
+   human-readable criteria (left/right columns) and the product list (reused from
+   normal search). No JS. #}
+{% set count = block.getResultCount() %}
+{% set criterias = block.getSearchCriterias() %}
+
+<div class="mx-auto w-full max-w-[1320px] px-4 py-10 md:px-8">
+    <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-ink-soft">{{ __('Advanced Search') }}</p>
+    <h1 class="mt-2 font-display text-h3 leading-tight text-ink">{{ __('Search Results') }}</h1>
+
+    {% if count %}
+        <p class="mt-2 font-mono text-sm text-ink-soft">{{ __('%1 item(s) were found using the following search criteria', count) }}</p>
+    {% else %}
+        <div role="alert" class="mt-6 rounded-edge border border-ash-200 bg-alabaster-raised px-4 py-3 text-sm text-ink-soft">
+            {{ __("We can't find any items matching these search criteria.") }}
+            <a href="{{ block.getFormUrl()|escape_url }}" class="text-accent underline underline-offset-4">{{ __('Modify your search.') }}</a>
+        </div>
+    {% endif %}
+
+    {% set hasCriteria = (criterias.left is defined and criterias.left) or (criterias.right is defined and criterias.right) %}
+    {% if hasCriteria %}
+        <dl class="mt-6 flex flex-wrap gap-x-8 gap-y-2 border-y border-ash-200 py-4 text-sm">
+            {% for side in ['left', 'right'] %}
+                {% for criteria in criterias[side]|default([]) %}
+                    <div class="flex gap-1.5">
+                        <dt class="font-mono text-xs uppercase tracking-[0.12em] text-ash-500">{{ __(criteria.name) }}:</dt>
+                        <dd class="text-ink">{{ criteria.value }}</dd>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </dl>
+    {% endif %}
+
+    {% if count %}
+        <div class="mt-8">{{ block.getProductListHtml()|raw }}</div>
+        <p class="mt-6 font-mono text-xs text-ink-soft">
+            {{ __("Don't see what you're looking for?") }}
+            <a href="{{ block.getFormUrl()|escape_url }}" class="text-accent underline underline-offset-4">{{ __('Modify your search.') }}</a>
+        </p>
+    {% endif %}
+</div>
