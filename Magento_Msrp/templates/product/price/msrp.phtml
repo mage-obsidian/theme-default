@@ -1,0 +1,38 @@
+<?php
+/**
+ * MAP (Minimum Advertised Price) price render for MageObsidian.
+ *
+ * The native template drives its "Click for price" popup through RequireJS plus
+ * inline secureRenderer scripts, neither of which runs in the modern stack (the
+ * inline scripts leak as visible text). This re-expresses it with a native
+ * <details> disclosure: the advertised price shows, and the real price is
+ * revealed on gesture with zero JavaScript — accessible and progressive.
+ *
+ * @var \Magento\Msrp\Pricing\Render\PriceBox $block
+ */
+
+/** @var \Magento\Msrp\Pricing\Price\MsrpPriceInterface $priceType */
+$priceType = $block->getPrice();
+$product = $block->getSaleableItem();
+$amount = $block->getMsrpPriceCalculator()->getMsrpPriceValue($product);
+
+$msrpPrice = $block->renderAmount(
+    $priceType->getCustomAmount($amount),
+    ['include_container' => false, 'skip_adjustments' => true]
+);
+?>
+<?php if ($amount): ?>
+    <span class="msrp inline-flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span class="msrp__advertised old-price text-ink-soft line-through"><?= /* @noEscape */ $msrpPrice ?></span>
+        <?php if ($priceType->isShowPriceOnGesture()): ?>
+            <details class="msrp__reveal">
+                <summary class="cursor-pointer font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 hover:underline">
+                    <?= $block->escapeHtml(__('Click for price')) ?>
+                </summary>
+                <span class="msrp__real mt-1 block text-ink"><?= /* @noEscape */ $block->getRealPriceHtml() ?></span>
+            </details>
+        <?php else: ?>
+            <span class="msrp__message text-ink-soft"><?= $block->escapeHtml($priceType->getMsrpPriceMessage()) ?></span>
+        <?php endif; ?>
+    </span>
+<?php endif; ?>
