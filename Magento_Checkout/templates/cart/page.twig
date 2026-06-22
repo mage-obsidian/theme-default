@@ -65,6 +65,11 @@
                                         </button>
                                     </div>
 
+                                    {% if item.configureUrl %}
+                                        <a href="{{ item.configureUrl|escape_url }}"
+                                           class="text-sm text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Edit') }}</a>
+                                    {% endif %}
+
                                     <button
                                         type="submit"
                                         formaction="{{ block.getUrl('checkout/cart/delete')|escape_url }}"

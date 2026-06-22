@@ -30,9 +30,11 @@
     uenc: view.getUenc(),
     initialPrice: view.formatPrice(view.getFinalPrice()),
     initialPriceAmount: view.getFinalPrice(),
+    preconfigured: view.getPreconfiguredSuperAttribute(),
+    initialQty: view.getPreconfiguredQty(),
     labels: {
         chooseFor: __('Choose %1'),
-        addToCart: __('Add to cart'),
+        addToCart: view.getSubmitLabel(),
         qty: __('Qty'),
         selectOptions: __('Select the options above'),
         unavailable: __('This combination is unavailable'),
