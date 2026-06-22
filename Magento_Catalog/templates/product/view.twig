@@ -85,6 +85,31 @@
                 </button>
             </form>
 
+            {# Price-drop / back-in-stock notify links (Magento_ProductAlert VM
+               self-gates each on the enable flag and product applicability). #}
+            {% set productAlert = block.getProductAlert() %}
+            {% if productAlert and productAlert.isPriceAllowed() %}
+                <a href="{{ productAlert.getPriceUrl()|escape_url }}" class="pdp__alert mt-3 inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">
+                    <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('bell', 'outline', '24')|raw }}</span>
+                    {{ __('Notify me when the price drops') }}
+                </a>
+            {% endif %}
+            {% if productAlert and productAlert.isStockAllowed() %}
+                <a href="{{ productAlert.getStockUrl()|escape_url }}" class="pdp__alert mt-3 inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">
+                    <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('bell-alert', 'outline', '24')|raw }}</span>
+                    {{ __('Notify me when this product is in stock') }}
+                </a>
+            {% endif %}
+
+            {# Email to a Friend (Magento_SendFriend; VM self-gates on the enable flag). #}
+            {% set sendfriend = block.getSendfriend() %}
+            {% if sendfriend and sendfriend.isAllowed() and sendfriend.getSendUrl() %}
+                <a href="{{ sendfriend.getSendUrl()|escape_url }}" class="pdp__sendfriend mt-3 inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">
+                    <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('envelope', 'outline', '24')|raw }}</span>
+                    {{ __('Email to a Friend') }}
+                </a>
+            {% endif %}
+
             {% set attributes = block.getChildBlock('product_attributes') ? block.getChildBlock('product_attributes').getAdditionalData() : [] %}
             {% if attributes is not empty %}
                 <section class="pdp__specs mt-12 border-t border-ash-200 pt-8" aria-labelledby="pdp-specs-title">
