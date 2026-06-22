@@ -1,0 +1,4 @@
+{# Row total for an order item in the confirmation email. Mirrors
+   email/items/price/row.phtml. #}
+{% set item = block.getItem() %}
+{{ item.getOrder().formatPrice(item.getRowTotal())|raw }}

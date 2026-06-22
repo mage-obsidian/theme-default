@@ -1,0 +1,20 @@
+{# Invoice email items. Mirrors Magento_Sales::email/invoice/items.phtml. #}
+{% set invoice = block.getInvoice() %}
+{% set order = block.getOrder() %}
+{% if invoice and order %}
+    <table class="email-items">
+        <thead>
+            <tr>
+                <th class="item-info">{{ __('Items') }}</th>
+                <th class="item-qty">{{ __('Qty') }}</th>
+                <th class="item-subtotal">{{ __('Subtotal') }}</th>
+            </tr>
+        </thead>
+        {% for item in invoice.getAllItems() %}
+            {% if not item.getOrderItem().getParentItem() %}
+                <tbody>{{ block.getItemHtml(item)|raw }}</tbody>
+            {% endif %}
+        {% endfor %}
+        <tfoot class="order-totals">{{ child_html('invoice_totals')|raw }}</tfoot>
+    </table>
+{% endif %}

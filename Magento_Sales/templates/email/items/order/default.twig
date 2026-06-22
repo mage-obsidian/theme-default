@@ -1,0 +1,24 @@
+{# Order item row for the confirmation email. Mirrors
+   email/items/order/default.phtml; keeps the email CSS classes. `block` is the
+   core DefaultOrder renderer. Per-item gift messages: Gift Message wave. #}
+{% set item = block.getItem() %}
+{% set options = block.getItemOptions() %}
+<tr>
+    <td class="item-info{{ options ? ' has-extra' : '' }}">
+        <p class="product-name">{{ item.getName() }}</p>
+        <p class="sku">{{ __('SKU') }}: {{ block.getSku(item) }}</p>
+        {% if options %}
+            <dl class="item-options">
+                {% for option in options %}
+                    <dt><strong><em>{{ option.label }}</em></strong></dt>
+                    <dd>{{ option.value|nl2br }}</dd>
+                {% endfor %}
+            </dl>
+        {% endif %}
+        {% set addInfo = block.getProductAdditionalInformationBlock() %}
+        {% if addInfo %}{{ addInfo.setItem(item).toHtml()|raw }}{% endif %}
+        {{ item.getDescription() }}
+    </td>
+    <td class="item-qty">{{ item.getQtyOrdered() + 0 }}</td>
+    <td class="item-price">{{ block.getItemPrice(item)|raw }}</td>
+</tr>

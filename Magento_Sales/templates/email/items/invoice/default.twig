@@ -1,0 +1,22 @@
+{# Invoice item row for the email. Mirrors email/items/invoice/default.phtml. #}
+{% set item = block.getItem() %}
+{% set options = block.getItemOptions() %}
+<tr>
+    <td class="item-info{{ options ? ' has-extra' : '' }}">
+        <p class="product-name">{{ item.getName() }}</p>
+        <p class="sku">{{ __('SKU') }}: {{ block.getSku(item) }}</p>
+        {% if options %}
+            <dl>
+                {% for option in options %}
+                    <dt><strong><em>{{ option.label }}</em></strong></dt>
+                    <dd>{{ option.value|nl2br }}</dd>
+                {% endfor %}
+            </dl>
+        {% endif %}
+        {% set addInfo = block.getProductAdditionalInformationBlock() %}
+        {% if addInfo %}{{ addInfo.setItem(item.getOrderItem()).toHtml()|raw }}{% endif %}
+        {{ item.getDescription() }}
+    </td>
+    <td class="item-qty">{{ item.getQty() + 0 }}</td>
+    <td class="item-price">{{ block.getItemPrice(item.getOrderItem())|raw }}</td>
+</tr>

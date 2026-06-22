@@ -1,0 +1,19 @@
+{# Shipment email items. Mirrors Magento_Sales::email/shipment/items.phtml. No
+   price column on a shipment. #}
+{% set shipment = block.getShipment() %}
+{% set order = block.getOrder() %}
+{% if shipment and order %}
+    <table class="email-items">
+        <thead>
+            <tr>
+                <th class="item-info">{{ __('Items') }}</th>
+                <th class="item-qty">{{ __('Qty') }}</th>
+            </tr>
+        </thead>
+        {% for item in shipment.getAllItems() %}
+            {% if not item.getOrderItem().getParentItem() %}
+                <tbody>{{ block.getItemHtml(item)|raw }}</tbody>
+            {% endif %}
+        {% endfor %}
+    </table>
+{% endif %}

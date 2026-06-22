@@ -1,0 +1,22 @@
+{# Order confirmation email items. Mirrors Magento_Sales::email/items.phtml,
+   keeping the email CSS classes (styled by the transactional email, not the
+   design system — no Tailwind/islands in mail). `block` is the core Email\Items
+   block. Gift messages are handled in the Gift Message wave. #}
+{% set order = block.getOrder() %}
+{% if order %}
+    <table class="email-items">
+        <thead>
+            <tr>
+                <th class="item-info">{{ __('Items') }}</th>
+                <th class="item-qty">{{ __('Qty') }}</th>
+                <th class="item-price">{{ __('Price') }}</th>
+            </tr>
+        </thead>
+        {% for item in order.getAllItems() %}
+            {% if not item.getParentItem() %}
+                <tbody>{{ block.getItemHtml(item)|raw }}</tbody>
+            {% endif %}
+        {% endfor %}
+        <tfoot class="order-totals">{{ child_html('order_totals')|raw }}</tfoot>
+    </table>
+{% endif %}

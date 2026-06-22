@@ -1,0 +1,28 @@
+{# Tracking numbers for the shipment email. Mirrors
+   Magento_Sales::email/shipment/track.phtml. #}
+{% set shipment = block.getShipment() %}
+{% set order = block.getOrder() %}
+{% if shipment and order %}
+    {% set tracks = shipment.getTracksCollection() %}
+    {% if tracks %}
+        <br />
+        <table class="shipment-track">
+            <thead>
+                <tr>
+                    <th>{{ __('Shipped By') }}</th>
+                    <th>{{ __('Tracking Number') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for track in tracks %}
+                    <tr>
+                        <td>{{ track.getTitle() }}:</td>
+                        <td>
+                            <a href="{{ block.getTrackingUrl().getUrl(track)|escape_url }}" target="_blank">{{ track.getNumber() }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endif %}
