@@ -1,0 +1,39 @@
+<?php
+/**
+ * WEEE / Fixed Product Tax price adjustment for MageObsidian.
+ *
+ * The native template keeps the FPT label only in data-label, expecting the core
+ * Weee JS (suppressed here) to surface it. This renders the label as visible text
+ * next to the amount so the fee reads correctly without JavaScript, keeping the
+ * data-* hooks intact for any progressive enhancement.
+ *
+ * @var \Magento\Weee\Pricing\Render\Adjustment $block
+ */
+$taxDisplay = $block->getTaxDisplayConfig();
+?>
+<?php if ($block->showInclDescr() || $block->showExclDescrIncl()) : ?>
+    <?php foreach ($block->getWeeeTaxAttributes() as $weeeTaxAttribute) : ?>
+        <?php $attributeName = $block->escapeHtml($block->renderWeeeTaxAttributeName($weeeTaxAttribute)); ?>
+        <?php if ($taxDisplay == \Magento\Tax\Model\Config::DISPLAY_TYPE_EXCLUDING_TAX) : ?>
+            <span class="weee ml-2 font-mono text-xs text-ink-soft" data-price-type="weee"
+                  data-label="<?= /* @noEscape */ $attributeName ?>"><?= /* @noEscape */ $attributeName ?>:
+                <?= /* @noEscape */ $block->renderWeeeTaxAttributeWithoutTax($weeeTaxAttribute) ?></span>
+        <?php elseif ($taxDisplay == \Magento\Tax\Model\Config::DISPLAY_TYPE_BOTH) : ?>
+            <span class="weee ml-2 font-mono text-xs text-ink-soft" data-price-type="weee"
+                  data-label="<?= /* @noEscape */ $attributeName ?>"><?= /* @noEscape */ $attributeName ?>
+                <?= $block->escapeHtml(__('Incl. Tax')) ?>:
+                <?= /* @noEscape */ $block->renderWeeeTaxAttributeWithTax($weeeTaxAttribute) ?></span>
+        <?php else : ?>
+            <span class="weee ml-2 font-mono text-xs text-ink-soft" data-price-type="weee"
+                  data-label="<?= /* @noEscape */ $attributeName ?>"><?= /* @noEscape */ $attributeName ?>:
+                <?= /* @noEscape */ $block->renderWeeeTaxAttributeWithTax($weeeTaxAttribute) ?></span>
+        <?php endif; ?>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+<?php if ($block->showExclDescrIncl()) : ?>
+    <span class="price-final price-final_price ml-2" data-price-type="weeePrice"
+          data-price-amount="<?= /* @noEscape */ $block->getRawFinalAmount() ?>"
+          data-label="<?= $block->escapeHtmlAttr(__('Final Price')) ?>"><?= $block->escapeHtml(__('Final Price')) ?>:
+        <?= /* @noEscape */ $block->getFinalAmount() ?></span>
+<?php endif; ?>

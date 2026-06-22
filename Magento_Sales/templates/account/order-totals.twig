@@ -8,6 +8,13 @@
 {% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
 {% set taxBreakdown = block.getTaxBreakdown() %}
 {% set taxRates = taxBreakdown and taxBreakdown.isFullSummary() ? taxBreakdown.getRates(order) : [] %}
+{# Fixed Product Tax (WEEE): the order carries no FPT column, so sum the line
+   amounts to show it as its own total (otherwise the FPT silently inflates the
+   grand total). 0 for stores without WEEE — the row is skipped. #}
+{% set fptTotal = 0 %}
+{% for lineItem in order.getAllVisibleItems() %}
+    {% set fptTotal = fptTotal + lineItem.getWeeeTaxAppliedRowAmount() %}
+{% endfor %}
 <table class="w-full max-w-sm text-sm">
     <caption class="sr-only">{{ __('Order Totals') }}</caption>
     {% for total in block.getTotals() %}
@@ -25,6 +32,12 @@
                     <td class="py-2 text-right">{{ order.formatPrice(order.getTaxAmount())|raw }}</td>
                 </tr>
             {% endif %}
+        {% endif %}
+        {% if total.getCode() == 'grand_total' and fptTotal > 0 %}
+            <tr class="text-ink-soft">
+                <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Fixed Product Tax') }}</th>
+                <td class="py-2 text-right">{{ order.formatPrice(fptTotal)|raw }}</td>
+            </tr>
         {% endif %}
         <tr class="{{ total.getCode() == 'grand_total' ? 'border-t border-ash-300 font-display text-base text-ink' : 'text-ink-soft' }}">
             <th scope="row" class="py-2 pr-6 text-left font-normal {{ total.getCode() == 'grand_total' ? '' : labelClass }}">{{ total.getLabel() }}</th>

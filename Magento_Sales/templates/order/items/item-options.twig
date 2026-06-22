@@ -8,7 +8,9 @@
 {% set children = item_options.getChildren(item) %}
 {% set downloadable = block.getDownloadableLinks() %}
 {% set links = downloadable ? downloadable.getLinks(item) : [] %}
-{% if options is not empty or children is not empty or links is not empty %}
+{# Fixed Product Tax (WEEE) applied to the line; hidden on shipments (no price). #}
+{% set fpt = show_price|default(true) ? item.getWeeeTaxAppliedRowAmount() : 0 %}
+{% if options is not empty or children is not empty or links is not empty or fpt > 0 %}
     <dl class="mt-1.5 space-y-0.5 text-xs text-ink-soft">
         {% for option in options %}
             <div class="flex gap-1.5">
@@ -26,6 +28,12 @@
             <div class="flex gap-1.5">
                 <dt class="text-ash-500">{{ downloadable.getTitle() }}:</dt>
                 <dd>{{ links|join(', ') }}</dd>
+            </div>
+        {% endif %}
+        {% if fpt > 0 %}
+            <div class="flex gap-1.5">
+                <dt class="text-ash-500">{{ __('Fixed Product Tax') }}:</dt>
+                <dd>{{ order.formatPrice(fpt)|raw }}</dd>
             </div>
         {% endif %}
     </dl>

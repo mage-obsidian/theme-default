@@ -9,6 +9,11 @@
 {% set taxRates = taxBreakdown and taxBreakdown.isFullSummary() ? taxBreakdown.getRates(document) : [] %}
 {% set adjPositive = document.getAdjustmentPositive() %}
 {% set adjNegative = document.getAdjustmentNegative() %}
+{# Fixed Product Tax (WEEE) summed off the document's own lines (no FPT column). #}
+{% set fptTotal = 0 %}
+{% for lineItem in document.getAllItems() %}
+    {% set fptTotal = fptTotal + lineItem.getWeeeTaxAppliedRowAmount() %}
+{% endfor %}
 <table class="w-full max-w-sm text-sm">
     <caption class="sr-only">{{ grand_label|default(__('Totals')) }}</caption>
     <tr class="text-ink-soft">
@@ -53,6 +58,12 @@
                 <td class="py-2 text-right">{{ order.formatPrice(document.getTaxAmount())|raw }}</td>
             </tr>
         {% endif %}
+    {% endif %}
+    {% if fptTotal > 0 %}
+        <tr class="text-ink-soft">
+            <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Fixed Product Tax') }}</th>
+            <td class="py-2 text-right">{{ order.formatPrice(fptTotal)|raw }}</td>
+        </tr>
     {% endif %}
     <tr class="border-t border-ash-300 font-display text-base text-ink">
         <th scope="row" class="py-2 pr-6 text-left font-normal">{{ grand_label|default(__('Grand Total')) }}</th>
