@@ -31,7 +31,8 @@
             view: view,
             options: optionsBlock.getOptions(),
             config: optionsBlock.getJsonConfig(),
-            years: view.getOptionYears()
+            years: view.getOptionYears(),
+            preselected: view.getPreconfiguredOptions()
         } %}
         <div class="pdp__options-total font-mono text-lg text-ink" aria-live="polite">
             {{ __('Total') }}: <span data-options-total>{{ view.formatPrice(view.getFinalPrice()) }}</span>

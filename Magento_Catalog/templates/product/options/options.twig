@@ -10,17 +10,20 @@
   Shared by the simple form and the configurable island (one renderer, two hosts).
   `view` is the ProductView ViewModel (plain price formatting + year range);
   `options` are the core option models; `config` is the encoded price JSON.
+  `preselected` (optionId => saved value) pre-fills fields when reconfiguring a
+  cart item; empty on a normal product view, so the PDP is unchanged.
 #}
-{% macro select_range(name, from, to, label, pad) %}
+{% macro select_range(name, from, to, label, pad, selected) %}
     <select name="{{ name }}" aria-label="{{ label }}" data-option-input
             class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
         <option value="">{{ label }}</option>
         {% for n in range(from, to) %}
-            <option value="{{ n }}">{{ pad and n < 10 ? '0' ~ n : n }}</option>
+            <option value="{{ n }}"{% if selected is not null and selected == n %} selected{% endif %}>{{ pad and n < 10 ? '0' ~ n : n }}</option>
         {% endfor %}
     </select>
 {% endmacro %}
 {% import _self as dateparts %}
+{% set preselected = preselected|default({}) %}
 <div class="pdp__options mt-8 flex flex-col gap-6" data-product-options>
     <script type="application/json" data-options-config>{{ config|raw }}</script>
 
@@ -28,6 +31,7 @@
         {% set id = option.getId() %}
         {% set type = option.getType() %}
         {% set required = option.getIsRequire() %}
+        {% set saved = preselected[id]|default(null) %}
         <fieldset class="pdp__option border-0 p-0" data-option data-option-id="{{ id }}"
                   data-option-type="{{ type }}"{% if required %} data-required{% endif %}>
             <legend id="opt-legend-{{ id }}" class="pdp__option-label font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">
@@ -37,6 +41,7 @@
                 {% if type == 'field' %}
                     <input type="text" name="options[{{ id }}]" id="option-{{ id }}" data-option-input
                            aria-labelledby="opt-legend-{{ id }}"
+                           {% if saved is not null %}value="{{ saved }}"{% endif %}
                            {% if option.getMaxCharacters() %}maxlength="{{ option.getMaxCharacters() }}"{% endif %}
                            {% if required %}required aria-required="true"{% endif %}
                            class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
@@ -46,7 +51,7 @@
                               aria-labelledby="opt-legend-{{ id }}"
                               {% if option.getMaxCharacters() %}maxlength="{{ option.getMaxCharacters() }}"{% endif %}
                               {% if required %}required aria-required="true"{% endif %}
-                              class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none"></textarea>
+                              class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">{% if saved is not null %}{{ saved }}{% endif %}</textarea>
 
                 {% elseif type == 'drop_down' %}
                     <select name="options[{{ id }}]" id="option-{{ id }}" data-option-input
@@ -56,7 +61,7 @@
                         <option value="">{{ __('-- Please Select --') }}</option>
                         {% for value in option.getValues() %}
                             {% set amount = value.getPrice(true) %}
-                            <option value="{{ value.getId() }}">{{ value.getTitle() }}{% if amount > 0 %} (+{{ view.formatPrice(amount) }}){% endif %}</option>
+                            <option value="{{ value.getId() }}"{% if saved is not null and saved == value.getId() %} selected{% endif %}>{{ value.getTitle() }}{% if amount > 0 %} (+{{ view.formatPrice(amount) }}){% endif %}</option>
                         {% endfor %}
                     </select>
 
@@ -64,13 +69,14 @@
                     <div role="radiogroup" aria-label="{{ option.getTitle() }}" class="flex flex-col gap-2">
                         {% if not required %}
                             <label class="flex items-center gap-2 text-sm text-ink">
-                                <input type="radio" name="options[{{ id }}]" value="" data-option-input checked> {{ __('None') }}
+                                <input type="radio" name="options[{{ id }}]" value="" data-option-input{% if saved is null %} checked{% endif %}> {{ __('None') }}
                             </label>
                         {% endif %}
                         {% for value in option.getValues() %}
                             {% set amount = value.getPrice(true) %}
                             <label class="flex items-center gap-2 text-sm text-ink">
                                 <input type="radio" name="options[{{ id }}]" value="{{ value.getId() }}" data-option-input
+                                       {% if saved is not null and saved == value.getId() %}checked{% endif %}
                                        {% if required %}required{% endif %}>
                                 {{ value.getTitle() }}{% if amount > 0 %} <span class="text-ink-soft">+{{ view.formatPrice(amount) }}</span>{% endif %}
                             </label>
@@ -82,7 +88,8 @@
                         {% for value in option.getValues() %}
                             {% set amount = value.getPrice(true) %}
                             <label class="flex items-center gap-2 text-sm text-ink">
-                                <input type="checkbox" name="options[{{ id }}][]" value="{{ value.getId() }}" data-option-input>
+                                <input type="checkbox" name="options[{{ id }}][]" value="{{ value.getId() }}" data-option-input
+                                       {% if saved is iterable and value.getId() in saved %}checked{% endif %}>
                                 {{ value.getTitle() }}{% if amount > 0 %} <span class="text-ink-soft">+{{ view.formatPrice(amount) }}</span>{% endif %}
                             </label>
                         {% endfor %}
@@ -95,28 +102,29 @@
                             class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
                         {% for value in option.getValues() %}
                             {% set amount = value.getPrice(true) %}
-                            <option value="{{ value.getId() }}">{{ value.getTitle() }}{% if amount > 0 %} (+{{ view.formatPrice(amount) }}){% endif %}</option>
+                            <option value="{{ value.getId() }}"{% if saved is iterable and value.getId() in saved %} selected{% endif %}>{{ value.getTitle() }}{% if amount > 0 %} (+{{ view.formatPrice(amount) }}){% endif %}</option>
                         {% endfor %}
                     </select>
 
                 {% elseif type in ['date', 'date_time', 'time'] %}
+                    {% set d = saved is iterable ? saved : {} %}
                     <div class="flex flex-wrap gap-2">
                         {% if type in ['date', 'date_time'] %}
-                            {{ dateparts.select_range('options[' ~ id ~ '][month]', 1, 12, __('Month'), true) }}
-                            {{ dateparts.select_range('options[' ~ id ~ '][day]', 1, 31, __('Day'), true) }}
+                            {{ dateparts.select_range('options[' ~ id ~ '][month]', 1, 12, __('Month'), true, d.month|default(null)) }}
+                            {{ dateparts.select_range('options[' ~ id ~ '][day]', 1, 31, __('Day'), true, d.day|default(null)) }}
                             <select name="options[{{ id }}][year]" aria-label="{{ __('Year') }}" data-option-input
                                     class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
                                 <option value="">{{ __('Year') }}</option>
-                                {% for year in years %}<option value="{{ year }}">{{ year }}</option>{% endfor %}
+                                {% for year in years %}<option value="{{ year }}"{% if d.year is defined and d.year == year %} selected{% endif %}>{{ year }}</option>{% endfor %}
                             </select>
                         {% endif %}
                         {% if type in ['time', 'date_time'] %}
-                            {{ dateparts.select_range('options[' ~ id ~ '][hour]', 1, 12, __('Hour'), true) }}
-                            {{ dateparts.select_range('options[' ~ id ~ '][minute]', 0, 59, __('Minute'), true) }}
+                            {{ dateparts.select_range('options[' ~ id ~ '][hour]', 1, 12, __('Hour'), true, d.hour|default(null)) }}
+                            {{ dateparts.select_range('options[' ~ id ~ '][minute]', 0, 59, __('Minute'), true, d.minute|default(null)) }}
                             <select name="options[{{ id }}][day_part]" aria-label="{{ __('AM/PM') }}" data-option-input
                                     class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
-                                <option value="am">{{ __('AM') }}</option>
-                                <option value="pm">{{ __('PM') }}</option>
+                                <option value="am"{% if d.day_part|default('') == 'am' %} selected{% endif %}>{{ __('AM') }}</option>
+                                <option value="pm"{% if d.day_part|default('') == 'pm' %} selected{% endif %}>{{ __('PM') }}</option>
                             </select>
                         {% endif %}
                     </div>
