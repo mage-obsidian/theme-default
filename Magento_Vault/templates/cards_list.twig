@@ -1,0 +1,50 @@
+{# Account "Stored Payment Methods" page. `stored` is the StoredCards ViewModel;
+   it reads each token's detail JSON so rows render without the provider's KO card
+   renderer. The delete form POSTs natively to the vault delete controller, which
+   redirects back to this list, so removal works without JS. #}
+{% set stored = block.getStoredCards() %}
+{% set cards = stored.getCards() %}
+<section>
+    <h1 class="font-display text-3xl tracking-[0.06em] text-ink">{{ __('Stored Payment Methods') }}</h1>
+
+    {% if cards is empty %}
+        <p class="mt-6 rounded-edge border border-ash-200 bg-alabaster-raised px-4 py-3 text-sm text-ink-soft">{{ __('You have no stored payment methods.') }}</p>
+    {% else %}
+        <div class="mt-8 overflow-x-auto rounded-edge border border-ash-200">
+            <table class="w-full text-left text-sm">
+                <caption class="sr-only">{{ __('Stored Payment Methods') }}</caption>
+                <thead class="border-b border-ash-200 font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
+                    <tr>
+                        <th class="px-4 py-3" scope="col">{{ __('Card Number') }}</th>
+                        <th class="px-4 py-3" scope="col">{{ __('Expiration Date') }}</th>
+                        <th class="px-4 py-3" scope="col">{{ __('Type') }}</th>
+                        <th class="px-4 py-3" scope="col"><span class="sr-only">{{ __('Actions') }}</span></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-ash-200">
+                    {% for card in cards %}
+                        <tr>
+                            <td class="px-4 py-4 align-middle text-ink">
+                                <span class="text-ink-soft">{{ __('ending') }}</span> {{ card.last4 }}
+                            </td>
+                            <td class="px-4 py-4 align-middle text-ink-soft">{{ card.expiration }}</td>
+                            <td class="px-4 py-4 align-middle">
+                                <span class="inline-flex items-center gap-2 text-ink">
+                                    {{ hero_icon('credit-card', 'outline', '24') }}
+                                    {{ card.typeLabel }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-4 align-middle text-right">
+                                <form action="{{ stored.getDeleteUrl()|escape_url }}" method="post" class="inline">
+                                    {{ block.getBlockHtml('formkey')|raw }}
+                                    <input type="hidden" name="public_hash" value="{{ card.publicHash }}">
+                                    <button type="submit" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Delete') }}</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</section>
