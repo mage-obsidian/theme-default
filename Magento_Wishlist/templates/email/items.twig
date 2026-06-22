@@ -1,0 +1,33 @@
+{# Wish-list items for the "Share Wish List" email. `block` is the core
+   Share\Email\Items block (item collection + catalog image helper), reused as a
+   data source. Email clients don't load the site stylesheet, so styling is inline
+   and the markup is a plain table — no Tailwind, no JS, absolute URLs from core. #}
+<table style="width:100%;border-collapse:collapse;">
+    <tbody>
+    {% for item in block.getWishlistItems() %}
+        {% set product = item.getProduct() %}
+        {% set thumbnail = block.getProductForThumbnail(item) %}
+        <tr>
+            <td style="padding:12px 16px 12px 0;vertical-align:top;width:96px;">
+                <a href="{{ block.getProductUrl(item)|escape_url }}">
+                    {{ block.getImage(thumbnail, 'product_small_image').toHtml()|raw }}
+                </a>
+            </td>
+            <td style="padding:12px 0;vertical-align:top;">
+                <a href="{{ block.getProductUrl(item)|escape_url }}" style="color:#16130f;text-decoration:none;font-weight:bold;">
+                    {{ product.getName() }}
+                </a>
+                {% if block.hasDescription(item) %}
+                    <p style="margin:8px 0 0;color:#6b6258;font-style:italic;">
+                        <strong style="font-style:normal;">{{ __('Comment') }}:</strong>
+                        {{ block.getEscapedDescription(item)|raw }}
+                    </p>
+                {% endif %}
+                <p style="margin:8px 0 0;">
+                    <a href="{{ block.getProductUrl(item)|escape_url }}" style="color:#b08442;text-decoration:underline;">{{ __('View Product') }}</a>
+                </p>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
