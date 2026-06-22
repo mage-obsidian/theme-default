@@ -30,3 +30,6 @@
         <a href="{{ block.getUrl('customer/address')|escape_url }}" class="mt-4 inline-block font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('Manage Addresses') }}</a>
     </section>
 </div>
+
+{# Extension slot: modules add dashboard widgets here (e.g. Sales' recent orders). #}
+{{ child_html('recent_orders')|raw }}

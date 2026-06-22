@@ -1,0 +1,54 @@
+{# Recent orders on the account dashboard. `block` is the core Order\Recent block
+   (getOrders, getViewUrl, getReorderUrl, formatDate). Reorder is a native POST
+   form; View Order is a GET link. No JS. #}
+{% set orders = block.getOrders() %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+
+<section class="mt-8">
+    <div class="flex items-center justify-between gap-4">
+        <h2 class="font-display text-lg text-ink">{{ __('Recent Orders') }}</h2>
+        {% if orders|length > 0 %}
+            <a href="{{ block.getUrl('sales/order/history')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('View All') }}</a>
+        {% endif %}
+    </div>
+
+    {% if orders|length > 0 %}
+        <div class="mt-4 overflow-x-auto">
+            <table class="w-full border-collapse text-sm">
+                <caption class="sr-only">{{ __('Recent Orders') }}</caption>
+                <thead>
+                    <tr class="border-b border-ash-300 text-left {{ labelClass }}">
+                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Order #') }}</th>
+                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Date') }}</th>
+                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Ship To') }}</th>
+                        <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Order Total') }}</th>
+                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Status') }}</th>
+                        <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Action') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr class="border-b border-ash-100 align-top">
+                            <td class="py-3 pr-4 text-ink">{{ order.getRealOrderId() }}</td>
+                            <td class="py-3 pr-4 text-ink-soft">{{ block.formatDate(order.getCreatedAt()) }}</td>
+                            <td class="py-3 pr-4 text-ink-soft">{{ order.getShippingAddress() ? order.getShippingAddress().getName() : '' }}</td>
+                            <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(order.getGrandTotal())|raw }}</td>
+                            <td class="py-3 pr-4 text-ink-soft">{{ order.getStatusLabel() }}</td>
+                            <td class="py-3 text-right">
+                                <div class="flex items-center justify-end gap-4">
+                                    <a href="{{ block.getViewUrl(order)|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('View Order') }}</a>
+                                    <form action="{{ block.getReorderUrl(order)|escape_url }}" method="post" class="inline">
+                                        {{ block.getBlockHtml('formkey')|raw }}
+                                        <button type="submit" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Reorder') }}</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="mt-4 text-sm text-ink-soft">{{ __('You have placed no orders.') }}</p>
+    {% endif %}
+</section>
