@@ -1,0 +1,76 @@
+{# Multishipping step 2 — a shipping method per destination address. `block` is
+   the native Checkout\Shipping block (rates grouped by carrier per address). The
+   radios POST natively to the shipping controller. #}
+<section class="mx-auto w-full max-w-[1100px] px-4 py-10 md:px-8">
+    <h1 class="font-display text-3xl tracking-[0.06em] text-ink">{{ __('Select Shipping Method') }}</h1>
+
+    <form action="{{ block.getPostActionUrl()|escape_url }}" method="post" class="mt-8 flex flex-col gap-8">
+        {{ block.getBlockHtml('formkey')|raw }}
+        {% for index, address in block.getAddresses() %}
+            <article class="rounded-edge border border-ash-200 p-6">
+                <h2 class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Address %1 of %2', index + 1, block.getAddressCount()) }}</h2>
+
+                <div class="mt-4 grid gap-6 md:grid-cols-2">
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-mono text-xs uppercase tracking-[0.12em] text-ink">{{ __('Shipping To') }}</h3>
+                            <a href="{{ block.getAddressEditUrl(address)|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Change') }}</a>
+                        </div>
+                        <address class="mt-2 text-sm not-italic text-ink-soft">{{ address.format('html')|raw }}</address>
+                    </div>
+
+                    <div>
+                        <h3 class="font-mono text-xs uppercase tracking-[0.12em] text-ink">{{ __('Shipping Method') }}</h3>
+                        {% set rateGroups = block.getShippingRates(address) %}
+                        {% if not rateGroups %}
+                            <p class="mt-2 text-sm text-ink-soft">{{ __('Sorry, no quotes are available for this order right now.') }}</p>
+                        {% else %}
+                            <div class="mt-3 flex flex-col gap-4">
+                                {% for code, rates in rateGroups %}
+                                    <fieldset>
+                                        <legend class="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink-soft">{{ block.getCarrierName(code) }}</legend>
+                                        <div class="mt-2 flex flex-col gap-2" role="radiogroup" aria-label="{{ block.getCarrierName(code)|escape_html_attr }}">
+                                            {% for rate in rates %}
+                                                {% if rate.getErrorMessage() %}
+                                                    <p class="text-sm text-sale">{{ rate.getCarrierTitle() }}: {{ rate.getErrorMessage() }}</p>
+                                                {% else %}
+                                                    {% set rid = 's_method_' ~ address.getId() ~ '_' ~ rate.getCode() %}
+                                                    <label for="{{ rid }}" class="flex cursor-pointer items-center justify-between gap-4 rounded-edge border border-ash-300 px-3 py-2 transition-colors hover:border-ink">
+                                                        <span class="flex items-center gap-3 text-sm text-ink">
+                                                            <input type="radio" id="{{ rid }}" name="shipping_method[{{ address.getId() }}]" value="{{ rate.getCode()|escape_html_attr }}"
+                                                                   class="h-4 w-4 accent-ink"
+                                                                   {{ rate.getCode() == block.getAddressShippingMethod(address) ? 'checked' : '' }}>
+                                                            {{ rate.getMethodTitle() }}
+                                                        </span>
+                                                        <span class="font-mono text-sm text-ink">{{ block.getShippingPrice(address, rate.getPrice(), true)|raw }}</span>
+                                                    </label>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </fieldset>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mt-6 border-t border-ash-200 pt-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-mono text-xs uppercase tracking-[0.12em] text-ink">{{ __('Items') }}</h3>
+                        <a href="{{ block.getItemsEditUrl(address)|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Edit Items') }}</a>
+                    </div>
+                    <ul class="mt-2 text-sm text-ink-soft">
+                        {% for item in block.getAddressItems(address) %}
+                            <li>{{ item.getQuoteItem().getName() }} <span class="text-ash-500">× {{ item.getQty() }}</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </article>
+        {% endfor %}
+
+        <div class="flex items-center justify-between gap-4">
+            <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Select Addresses') }}</a>
+            <button type="submit" class="inline-flex items-center justify-center rounded-edge bg-ink px-6 py-3 font-mono text-xs uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800">{{ __('Continue to Billing Information') }}</button>
+        </div>
+    </form>
+</section>

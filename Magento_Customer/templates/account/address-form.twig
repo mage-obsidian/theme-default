@@ -27,6 +27,11 @@
        attribute) so the braces/quotes survive the engine's HTML autoescape. #}
     <script type="application/json" data-region-json>{{ edit.getRegionProvider().getRegionJson()|raw }}</script>
     {{ block.getBlockHtml('formkey')|raw }}
+    {# Return URLs seeded by the controller (e.g. multishipping sets these so the
+       save returns into its flow); without them formPost falls back to the
+       address book. #}
+    <input type="hidden" name="success_url" value="{{ edit.getSuccessUrl()|escape_url }}">
+    <input type="hidden" name="error_url" value="{{ edit.getErrorUrl()|escape_url }}">
 
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div class="flex flex-col gap-2">

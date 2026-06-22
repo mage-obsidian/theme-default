@@ -1,0 +1,27 @@
+{# Multishipping billing-address picker. `block` is the native Address\Select
+   block (the customer's address book). Edit / Select / Add-new are native links;
+   the no-JS "Add New Address" link uses the block's add-new URL directly. #}
+<section class="mx-auto w-full max-w-[760px] px-4 py-10 md:px-8">
+    <h1 class="font-display text-3xl tracking-[0.06em] text-ink">{{ __('Change Billing Address') }}</h1>
+
+    <ul class="mt-8 flex flex-col gap-4">
+        {% for address in block.getAddress() %}
+            <li class="rounded-edge border border-ash-200 p-5">
+                <address class="text-sm not-italic text-ink-soft">
+                    {{ block.getAddressAsHtml(address)|raw }}
+                    {% if block.isAddressDefaultBilling(address) %}<br><strong class="text-ink">{{ __('Default Billing') }}</strong>{% endif %}
+                    {% if block.isAddressDefaultShipping(address) %}<br><strong class="text-ink">{{ __('Default Shipping') }}</strong>{% endif %}
+                </address>
+                <div class="mt-4 flex items-center gap-4">
+                    <a href="{{ block.getEditAddressUrl(address)|escape_url }}" class="text-sm text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Edit Address') }}</a>
+                    <a href="{{ block.getSetAddressUrl(address)|escape_url }}" class="inline-flex items-center justify-center rounded-edge bg-ink px-5 py-2 font-mono text-xs uppercase tracking-[0.14em] text-alabaster transition-colors hover:bg-obsidian-800">{{ __('Select Address') }}</a>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <div class="mt-8 flex items-center justify-between gap-4">
+        <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Billing Information') }}</a>
+        <a href="{{ block.getAddNewUrl()|escape_url }}" class="rounded-edge border border-ash-300 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:border-ink hover:text-ink">{{ __('Add New Address') }}</a>
+    </div>
+</section>

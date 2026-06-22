@@ -1,0 +1,49 @@
+{# Multishipping step 3 — billing address + payment method. `block` is the native
+   Checkout\Billing block; `checkout_data` (DataProviders\Billing) formats the
+   billing address. The Knockout payment UI is dropped — offline methods are plain
+   radios (with any per-method instruction child) that POST to the billing
+   controller. Continue is a real submit so it works without JS. #}
+{% set data = block.getCheckoutData() %}
+<section class="mx-auto w-full max-w-[760px] px-4 py-10 md:px-8">
+    <h1 class="font-display text-3xl tracking-[0.06em] text-ink">{{ __('Billing Information') }}</h1>
+
+    <form action="{{ block.getPostActionUrl()|escape_url }}" method="post" class="mt-8 flex flex-col gap-8">
+        {{ block.getBlockHtml('formkey')|raw }}
+        <section class="rounded-edge border border-ash-200 p-6">
+            <div class="flex items-center justify-between">
+                <h2 class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Billing Address') }}</h2>
+                <a href="{{ block.getSelectAddressUrl()|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Change') }}</a>
+            </div>
+            <address class="mt-3 text-sm not-italic text-ink-soft">{{ data.getAddressHtml(block.getAddress())|raw }}</address>
+        </section>
+
+        <fieldset class="rounded-edge border border-ash-200 p-6">
+            <legend class="px-2 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Payment Method') }}</legend>
+            {{ block.getChildHtml('payment_methods_before')|raw }}
+            {% set methods = block.getMethods() %}
+            <div class="mt-2 flex flex-col gap-3" role="radiogroup" aria-label="{{ __('Payment Method')|escape_html_attr }}">
+                {% for method in methods %}
+                    {% set code = method.getCode() %}
+                    {% set checked = block.getSelectedMethodCode() == code %}
+                    <div class="rounded-edge border px-4 py-3 {{ checked ? 'border-ink bg-alabaster-raised' : 'border-ash-300' }}">
+                        <label for="p_method_{{ code }}" class="flex cursor-pointer items-center gap-3 text-sm text-ink">
+                            <input type="radio" id="p_method_{{ code }}" name="payment[method]" value="{{ code|escape_html_attr }}"
+                                   class="h-4 w-4 accent-ink" {{ checked or methods|length == 1 ? 'checked' : '' }}>
+                            {{ method.getTitle() }}
+                        </label>
+                        {% set methodHtml = block.getChildHtml('payment.method.' ~ code) %}
+                        {% if methodHtml %}
+                            <div class="mt-3 pl-7 text-sm text-ink-soft">{{ methodHtml|raw }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            {{ block.getChildHtml('payment_methods_after')|raw }}
+        </fieldset>
+
+        <div class="flex items-center justify-between gap-4">
+            <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Shipping Information') }}</a>
+            <button type="submit" class="inline-flex items-center justify-center rounded-edge bg-ink px-6 py-3 font-mono text-xs uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800">{{ __('Go to Review Your Order') }}</button>
+        </div>
+    </form>
+</section>

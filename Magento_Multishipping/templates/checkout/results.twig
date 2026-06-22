@@ -1,0 +1,55 @@
+{# Multishipping partial-failure results. `block` is the native Checkout\Results
+   block: which addresses ordered successfully and which failed (with errors). #}
+{% set orderIds = block.getOrderIds() %}
+<section class="mx-auto w-full max-w-[760px] px-4 py-16 md:px-8">
+    <p class="text-ink-soft">
+        {% if orderIds %}{{ __('Not all items were included.') }} {% endif %}
+        {{ __('For details, see') }} <a href="#failed" class="underline underline-offset-4 hover:text-accent">{{ __('Failed to Order') }}</a> {{ __('section below') }}.
+    </p>
+
+    {% if orderIds %}
+        <h2 class="mt-10 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Successfully Ordered') }}</h2>
+        <ul class="mt-4 flex flex-col gap-4">
+            {% for orderId, incrementId in orderIds %}
+                <li class="rounded-edge border border-ash-200 p-4">
+                    <a href="{{ block.getViewOrderUrl(orderId)|escape_url }}" class="font-mono text-ink underline underline-offset-4 hover:text-accent">{{ incrementId }}</a>
+                    {% set shippingAddress = block.getOrderShippingAddress(orderId) %}
+                    <p class="mt-1 text-sm text-ink-soft">
+                        {% if shippingAddress %}
+                            <span class="font-mono text-xs uppercase tracking-[0.12em] text-ash-500">{{ __('Ship to:') }}</span>
+                            {{ block.formatOrderShippingAddress(shippingAddress) }}
+                        {% else %}
+                            {{ __('No shipping required.') }}
+                        {% endif %}
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h2 id="failed" class="mt-10 font-mono text-xs uppercase tracking-[0.14em] text-sale">{{ __('Failed to Order') }}</h2>
+    <p class="mt-3 rounded-edge border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+        {{ __('To purchase these items: Return to the') }}
+        <a href="{{ block.getUrl('multishipping/checkout/overview')|escape_url }}" class="underline underline-offset-4">{{ __('Review page in Checkout') }}</a>,
+        {{ __('resolve any errors, and place a new order.') }}
+    </p>
+
+    {% set failed = block.getFailedAddresses() %}
+    {% if failed %}
+        <ul class="mt-4 flex flex-col gap-3">
+            {% for address in failed %}
+                <li class="rounded-edge border border-ash-200 p-4 text-sm">
+                    <p class="text-ink-soft">
+                        {% if block.isShippingAddress(address) %}
+                            <span class="font-mono text-xs uppercase tracking-[0.12em] text-ash-500">{{ __('Ship to:') }}</span>
+                            {{ block.formatQuoteShippingAddress(address) }}
+                        {% else %}
+                            {{ __('No shipping required.') }}
+                        {% endif %}
+                    </p>
+                    <p class="mt-1 text-sale"><span class="font-mono text-xs uppercase tracking-[0.12em]">{{ __('Error:') }}</span> {{ block.getAddressError(address)|raw }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</section>

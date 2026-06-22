@@ -12,6 +12,7 @@
 {% set giftOptions = block.getGiftOptions() %}
 {% set checkoutConfig = block.getCheckoutConfig().getConfig() %}
 {% set directory = block.getDirectoryData().getData() %}
+{% set multishippingLink = block.getMultishippingLink() %}
 <div
     data-cart-root
     data-update-url="{{ block.getUrl('checkout/sidebar/updateItemQty')|escape_url }}"
@@ -116,6 +117,11 @@
                     <a href="{{ block.getUrl('checkout')|escape_url }}" class="mt-6 inline-flex w-full items-center justify-center rounded-edge bg-ink px-5 py-3.5 font-mono text-xs uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800">
                         {{ __('Proceed to checkout') }}
                     </a>
+                    {% if multishippingLink and multishippingLink.isAvailable() %}
+                        <a href="{{ multishippingLink.getCheckoutUrl()|escape_url }}" class="mt-3 inline-flex w-full items-center justify-center font-mono text-xs uppercase tracking-[0.14em] text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">
+                            {{ __('Check Out with Multiple Addresses') }}
+                        </a>
+                    {% endif %}
                 </div>
                 {{ child_html('coupon') }}
             </aside>

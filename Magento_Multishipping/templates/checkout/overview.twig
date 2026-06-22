@@ -1,0 +1,112 @@
+{# Multishipping step 4 — review and place the orders. `block` is the native
+   Checkout\Overview block; `checkout_data` (DataProviders\Overview) surfaces
+   per-address errors and anchors. Item rows, per-address totals and the payment
+   recap are rendered from the block; the form POSTs natively to place the orders.
+   Totals use the engine `price` filter (store currency). #}
+{% set data = block.getCheckoutData() %}
+<section class="mx-auto w-full max-w-[1100px] px-4 py-10 md:px-8">
+    <h1 class="font-display text-3xl tracking-[0.06em] text-ink">{{ __('Review Order') }}</h1>
+
+    {% for addressId, error in data.getAddressErrors() %}
+        <p role="alert" class="mt-4 rounded-edge border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">{{ error }}</p>
+    {% endfor %}
+
+    <form action="{{ block.getPostActionUrl()|escape_url }}" method="post" class="mt-8 flex flex-col gap-8">
+        {{ block.getBlockHtml('formkey')|raw }}
+
+        <section class="rounded-edge border border-ash-200 p-6">
+            <h2 class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Billing Information') }}</h2>
+            <div class="mt-4 grid gap-6 md:grid-cols-2">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-mono text-xs uppercase tracking-[0.12em] text-ink">{{ __('Billing Address') }}</h3>
+                        <a href="{{ block.getEditBillingAddressUrl(block.getBillingAddress())|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Change') }}</a>
+                    </div>
+                    <address class="mt-2 text-sm not-italic text-ink-soft">{{ block.getBillingAddress().format('html')|raw }}</address>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-mono text-xs uppercase tracking-[0.12em] text-ink">{{ __('Payment Method') }}</h3>
+                        <a href="{{ block.getEditBillingUrl()|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Change') }}</a>
+                    </div>
+                    <div class="mt-2 text-sm text-ink-soft">{{ block.getPaymentHtml()|raw }}</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Shipping Information') }}</h2>
+            <div class="mt-4 flex flex-col gap-6">
+                {% for index, address in block.getShippingAddresses() %}
+                    <article class="rounded-edge border border-ash-200 p-6" id="{{ data.getAddressAnchorName(address.getId()) }}">
+                        <h3 class="font-mono text-xs uppercase tracking-[0.12em] text-ink">{{ __('Address %1 of %2', index + 1, block.getShippingAddressCount()) }}</h3>
+                        {% if data.getAddressError(address) %}
+                            <p class="mt-2 text-sm text-sale">{{ data.getAddressError(address) }}</p>
+                        {% endif %}
+
+                        <div class="mt-4 grid gap-6 md:grid-cols-2">
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink-soft">{{ __('Shipping To') }}</h4>
+                                    <a href="{{ block.getEditShippingAddressUrl(address)|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Change') }}</a>
+                                </div>
+                                <address class="mt-2 text-sm not-italic text-ink-soft">{{ address.format('html')|raw }}</address>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <h4 class="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink-soft">{{ __('Shipping Method') }}</h4>
+                                    <a href="{{ block.getEditShippingUrl()|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Change') }}</a>
+                                </div>
+                                {% set rate = block.getShippingAddressRate(address) %}
+                                {% if rate %}
+                                    <p class="mt-2 text-sm text-ink-soft">{{ rate.getCarrierTitle() }} ({{ rate.getMethodTitle() }}) — {{ block.getShippingPriceInclTax(address)|raw }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mt-4 overflow-x-auto border-t border-ash-200 pt-4">
+                            <table class="w-full text-left text-sm">
+                                <thead class="font-mono text-[0.7rem] uppercase tracking-[0.1em] text-ink-soft">
+                                    <tr>
+                                        <th class="py-2" scope="col">{{ __('Item') }}</th>
+                                        <th class="py-2 text-center" scope="col">{{ __('Qty') }}</th>
+                                        <th class="py-2 text-right" scope="col">{{ __('Subtotal') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-ash-200">
+                                    {% for item in block.getShippingAddressItems(address) %}
+                                        <tr>
+                                            <td class="py-2 text-ink">{{ item.getName() }}</td>
+                                            <td class="py-2 text-center text-ink-soft">{{ (item.getQty() * 1) }}</td>
+                                            <td class="py-2 text-right font-mono text-ink">{{ item.getRowTotal()|price }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="mt-3 [&_td]:py-1 [&_td]:text-sm [&_.mark]:text-ink-soft [&_.amount]:text-right [&_.amount]:font-mono [&_.amount]:text-ink">
+                                {{ block.renderTotals(block.getShippingAddressTotals(address))|raw }}
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        {{ block.getChildHtml('items_after')|raw }}
+
+        <div class="rounded-edge border border-ash-200 bg-alabaster-raised p-6">
+            {{ block.getChildHtml('agreements')|raw }}
+            <div class="flex items-center justify-between gap-4">
+                <span class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Grand Total') }}</span>
+                <span class="font-display text-2xl text-ink">{{ block.getTotal()|price }}</span>
+            </div>
+            <div class="mt-6 flex items-center justify-between gap-4">
+                <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Billing Information') }}</a>
+                <span class="flex items-center gap-3">
+                    {{ block.getChildHtml('captcha')|raw }}
+                    <button type="submit" class="inline-flex items-center justify-center rounded-edge bg-ink px-8 py-3 font-mono text-xs uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800">{{ __('Place Order') }}</button>
+                </span>
+            </div>
+        </div>
+    </form>
+</section>

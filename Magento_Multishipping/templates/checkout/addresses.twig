@@ -1,0 +1,67 @@
+{# Multishipping step 1 — assign each item (and qty) to a shipping address.
+   `block` is the native Checkout\Addresses block (data source). The form POSTs to
+   the native controller; the submit buttons carry the `continue` / `new_address`
+   flags as their own name/value so the flow works without JS (the Knockout flag
+   toggling is dropped). The per-item address picker is the block's native select. #}
+<section class="mx-auto w-full max-w-[1100px] px-4 py-10 md:px-8">
+    <h1 class="font-display text-3xl tracking-[0.06em] text-ink">{{ __('Ship to Multiple Addresses') }}</h1>
+    <p class="mt-2 text-sm text-ink-soft">{{ __('Please select a shipping address for applicable items.') }}</p>
+
+    <form action="{{ block.getPostActionUrl()|escape_url }}" method="post" class="mt-8">
+        {{ block.getBlockHtml('formkey')|raw }}
+        <div class="overflow-x-auto rounded-edge border border-ash-200">
+            <table class="w-full text-left text-sm">
+                <thead class="border-b border-ash-200 font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
+                    <tr>
+                        <th class="px-4 py-3" scope="col">{{ __('Product') }}</th>
+                        <th class="px-4 py-3" scope="col">{{ __('Qty') }}</th>
+                        <th class="px-4 py-3" scope="col">{{ __('Send To') }}</th>
+                        <th class="px-4 py-3" scope="col"><span class="sr-only">{{ __('Actions') }}</span></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-ash-200">
+                    {% for index, item in block.getItems() %}
+                        {% if item.getQuoteItem() %}
+                            <tr>
+                                <td class="px-4 py-4 align-top text-ink">{{ item.getQuoteItem().getName() }}</td>
+                                <td class="px-4 py-4 align-top">
+                                    <label class="sr-only" for="ship-{{ index }}-{{ item.getQuoteItemId() }}-qty">{{ __('Qty') }}</label>
+                                    <input type="number" min="0" size="2"
+                                           id="ship-{{ index }}-{{ item.getQuoteItemId() }}-qty"
+                                           name="ship[{{ index }}][{{ item.getQuoteItemId() }}][qty]"
+                                           value="{{ item.getQty() }}"
+                                           class="h-10 w-16 rounded-edge border border-ash-300 bg-transparent px-2 text-center font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                                </td>
+                                <td class="px-4 py-4 align-top">
+                                    {% if item.getProduct().getIsVirtual() %}
+                                        <span class="text-ink-soft">{{ __('A shipping selection is not applicable.') }}</span>
+                                    {% else %}
+                                        <label class="sr-only" for="ship_{{ index }}_{{ item.getQuoteItemId() }}_address">{{ __('Send To') }}</label>
+                                        <div class="[&_select]:h-10 [&_select]:rounded-edge [&_select]:border [&_select]:border-ash-300 [&_select]:bg-transparent [&_select]:px-2 [&_select]:text-sm [&_select]:text-ink">
+                                            {{ block.getAddressesHtmlSelect(item, index)|raw }}
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td class="px-4 py-4 align-top text-right">
+                                    <a href="{{ block.getItemDeleteUrl(item)|escape_url }}" class="text-sm text-ash-500 underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Remove item') }}</a>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="flex flex-wrap items-center gap-4">
+                <button type="submit" name="new_address" value="1" class="rounded-edge border border-ash-300 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:border-ink hover:text-ink">{{ __('Enter a New Address') }}</button>
+                <button type="submit" name="continue" value="0" class="rounded-edge border border-ash-300 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:border-ink hover:text-ink">{{ __('Update Qty & Addresses') }}</button>
+                <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Shopping Cart') }}</a>
+            </div>
+            <button type="submit" name="continue" value="1" {{ block.isContinueDisabled() ? 'disabled' : '' }}
+                    class="inline-flex items-center justify-center rounded-edge bg-ink px-6 py-3 font-mono text-xs uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800 disabled:opacity-50">
+                {{ __('Go to Shipping Information') }}
+            </button>
+        </div>
+    </form>
+</section>
