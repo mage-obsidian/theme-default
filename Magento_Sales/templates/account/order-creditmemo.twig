@@ -1,0 +1,80 @@
+{# Customer credit memo (refund) view. Data source: `creditmemo`
+   (Sales\Block\Order\Creditmemo) giving the order and its credit memo
+   collection; `info` for addresses. One styled table per refund, mirroring
+   order/creditmemo/items.phtml. No JS. #}
+{% set creditmemoBlock = block.getChildBlock('creditmemo') %}
+{% set info = block.getChildBlock('info') %}
+{% set order = creditmemoBlock.getOrder() %}
+{% set billing = order.getBillingAddress() %}
+{% set shipping = order.getShippingAddress() %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+{% set cardClass = 'rounded-edge border border-ash-200 p-6' %}
+
+<div class="flex flex-wrap items-start justify-between gap-4">
+    <div class="flex flex-col gap-1">
+        <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Order') }} #{{ order.getRealOrderId() }}</h1>
+        <span class="text-sm text-ink-soft">{{ order.getCreatedAt()|date_format('long') }}</span>
+    </div>
+    <span class="inline-flex items-center rounded-full border border-ash-300 px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink">{{ order.getStatusLabel() }}</span>
+</div>
+
+{% include 'Magento_Sales::order/info/links.twig' with { 'order_id': order.getId(), 'current': 'creditmemo' } %}
+
+{% for creditmemo in order.getCreditmemosCollection() %}
+    <section class="mt-8">
+        <h2 class="font-display text-lg text-ink">{{ __('Refund #%1', creditmemo.getIncrementId()) }}</h2>
+        <div class="mt-4 overflow-x-auto">
+            <table class="w-full border-collapse text-sm">
+                <caption class="sr-only">{{ __('Items Refunded') }}</caption>
+                <thead>
+                    <tr class="border-b border-ash-300 text-left {{ labelClass }}">
+                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Product') }}</th>
+                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('SKU') }}</th>
+                        <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Price') }}</th>
+                        <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Qty') }}</th>
+                        <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Subtotal') }}</th>
+                        <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Discount') }}</th>
+                        <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Row Total') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in creditmemo.getAllItems() %}
+                        {% if not item.getOrderItem().getParentItem() %}
+                            <tr class="border-b border-ash-100 align-top">
+                                <td class="py-3 pr-4 text-ink">{{ item.getName() }}</td>
+                                <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
+                                <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getPrice())|raw }}</td>
+                                <td class="py-3 pr-4 text-right text-ink">{{ item.getQty()|round }}</td>
+                                <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getRowTotal())|raw }}</td>
+                                <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getDiscountAmount())|raw }}</td>
+                                <td class="py-3 text-right text-ink">{{ order.formatPrice(item.getRowTotal() - item.getDiscountAmount() + item.getTaxAmount())|raw }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4 flex justify-end">
+            {% include 'Magento_Sales::order/document-totals.twig' with { 'document': creditmemo, 'order': order, 'grand_label': __('Refund Total') } %}
+        </div>
+    </section>
+{% endfor %}
+
+<div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
+    {% if billing %}
+        <section class="{{ cardClass }}">
+            <h2 class="{{ labelClass }}">{{ __('Billing Address') }}</h2>
+            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(billing)|raw }}</address>
+        </section>
+    {% endif %}
+    {% if shipping %}
+        <section class="{{ cardClass }}">
+            <h2 class="{{ labelClass }}">{{ __('Shipping Address') }}</h2>
+            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(shipping)|raw }}</address>
+        </section>
+    {% endif %}
+</div>
+
+<div class="mt-10 print:hidden">
+    <a href="{{ block.getUrl('sales/order/history')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Back to My Orders') }}</a>
+</div>

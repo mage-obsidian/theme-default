@@ -1,0 +1,26 @@
+{# Cross-navigation between an order and its sub-documents, mirroring Magento's
+   sales.order.info.links. `order_id` and `current` come from the including
+   template. All four links always render: core shows them and the controllers
+   redirect back to the order when a document type is empty. #}
+{% set order_id = order_id|default(null) %}
+{% set current = current|default('view') %}
+{% set tabs = [
+    { 'key': 'view',       'path': 'sales/order/view',       'label': __('Items Ordered') },
+    { 'key': 'invoice',    'path': 'sales/order/invoice',    'label': __('Invoices') },
+    { 'key': 'shipment',   'path': 'sales/order/shipment',   'label': __('Order Shipments') },
+    { 'key': 'creditmemo', 'path': 'sales/order/creditmemo', 'label': __('Refunds') }
+] %}
+<nav class="order-links mt-8 border-b border-ash-200 print:hidden" aria-label="{{ __('Order navigation')|escape_html_attr }}">
+    <ul class="-mb-px flex flex-wrap gap-6">
+        {% for tab in tabs %}
+            <li>
+                {% if tab.key == current %}
+                    <span aria-current="page" class="inline-block border-b-2 border-ink pb-3 font-mono text-xs uppercase tracking-[0.14em] text-ink">{{ tab.label }}</span>
+                {% else %}
+                    <a href="{{ block.getUrl(tab.path, { 'order_id': order_id })|escape_url }}"
+                       class="inline-block border-b-2 border-transparent pb-3 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:border-ash-300 hover:text-ink">{{ tab.label }}</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</nav>

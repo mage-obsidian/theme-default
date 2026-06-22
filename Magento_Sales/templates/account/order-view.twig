@@ -18,6 +18,8 @@
     <span class="inline-flex items-center rounded-full border border-ash-300 px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink">{{ order.getStatusLabel() }}</span>
 </div>
 
+{% include 'Magento_Sales::order/info/links.twig' with { 'order_id': order.getId(), 'current': 'view' } %}
+
 <div class="mt-8 overflow-x-auto">
     <table class="w-full border-collapse text-sm">
         <caption class="sr-only">{{ __('Items Ordered') }}</caption>

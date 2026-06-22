@@ -1,0 +1,49 @@
+{# Per-document totals for an invoice or credit memo, read straight off the
+   document's own amounts (subtotal, discount, shipping, tax, adjustments, grand
+   total) so each document shows its real figures rather than the order's. The
+   adjustment lines resolve to null for invoices (Magento model magic getters) and
+   are skipped by the zero guard. Tax-rate breakdown is Track C. #}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+{% set adjPositive = document.getAdjustmentPositive() %}
+{% set adjNegative = document.getAdjustmentNegative() %}
+<table class="w-full max-w-sm text-sm">
+    <caption class="sr-only">{{ grand_label|default(__('Totals')) }}</caption>
+    <tr class="text-ink-soft">
+        <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Subtotal') }}</th>
+        <td class="py-2 text-right">{{ order.formatPrice(document.getSubtotal())|raw }}</td>
+    </tr>
+    {% if document.getDiscountAmount() != 0 %}
+        <tr class="text-ink-soft">
+            <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Discount') }}</th>
+            <td class="py-2 text-right">{{ order.formatPrice(document.getDiscountAmount())|raw }}</td>
+        </tr>
+    {% endif %}
+    {% if document.getShippingAmount() != 0 %}
+        <tr class="text-ink-soft">
+            <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Shipping & Handling') }}</th>
+            <td class="py-2 text-right">{{ order.formatPrice(document.getShippingAmount())|raw }}</td>
+        </tr>
+    {% endif %}
+    {% if adjPositive is not null and adjPositive != 0 %}
+        <tr class="text-ink-soft">
+            <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Adjustment Refund') }}</th>
+            <td class="py-2 text-right">{{ order.formatPrice(adjPositive)|raw }}</td>
+        </tr>
+    {% endif %}
+    {% if adjNegative is not null and adjNegative != 0 %}
+        <tr class="text-ink-soft">
+            <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Adjustment Fee') }}</th>
+            <td class="py-2 text-right">{{ order.formatPrice(adjNegative)|raw }}</td>
+        </tr>
+    {% endif %}
+    {% if document.getTaxAmount() != 0 %}
+        <tr class="text-ink-soft">
+            <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Tax') }}</th>
+            <td class="py-2 text-right">{{ order.formatPrice(document.getTaxAmount())|raw }}</td>
+        </tr>
+    {% endif %}
+    <tr class="border-t border-ash-300 font-display text-base text-ink">
+        <th scope="row" class="py-2 pr-6 text-left font-normal">{{ grand_label|default(__('Grand Total')) }}</th>
+        <td class="py-2 text-right">{{ order.formatPrice(document.getGrandTotal())|raw }}</td>
+    </tr>
+</table>
