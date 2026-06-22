@@ -1,0 +1,28 @@
+{# Guest "Orders and Returns" lookup. The form is a Vue island (toggles the
+   Email/ZIP identifier and POSTs natively to sales/guest/view). Data comes from
+   the OrdersReturnsForm ViewModel (block argument `orders_returns`): the action
+   URL and the server-primed form key the controller validates. #}
+{% set view = block.getOrdersReturns() %}
+
+<div class="mx-auto max-w-xl">
+    <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Orders and Returns') }}</h1>
+    <p class="mt-2 text-sm text-ink-soft">{{ __('Enter your order details to view its status, invoices and shipments.') }}</p>
+
+    <div class="mt-8">
+        {{ render_vue('MageObsidian_Sales::sales/OrdersReturnsForm', {
+            action: view.getActionUrl(),
+            formKey: view.getFormKey(),
+            labels: {
+                legend: __('Order Information'),
+                orderId: __('Order ID'),
+                lastName: __('Billing Last Name'),
+                findBy: __('Find Order By'),
+                email: __('Email'),
+                zip: __('Billing ZIP Code'),
+                emailOption: __('Email Address'),
+                zipOption: __('ZIP Code'),
+                submit: __('Continue')
+            }
+        }, true) }}
+    </div>
+</div>

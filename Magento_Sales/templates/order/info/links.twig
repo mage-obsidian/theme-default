@@ -4,11 +4,12 @@
    redirect back to the order when a document type is empty. #}
 {% set order_id = order_id|default(null) %}
 {% set current = current|default('view') %}
+{% set route_prefix = route_prefix|default('sales/order') %}
 {% set tabs = [
-    { 'key': 'view',       'path': 'sales/order/view',       'label': __('Items Ordered') },
-    { 'key': 'invoice',    'path': 'sales/order/invoice',    'label': __('Invoices') },
-    { 'key': 'shipment',   'path': 'sales/order/shipment',   'label': __('Order Shipments') },
-    { 'key': 'creditmemo', 'path': 'sales/order/creditmemo', 'label': __('Refunds') }
+    { 'key': 'view',       'path': route_prefix ~ '/view',       'label': __('Items Ordered') },
+    { 'key': 'invoice',    'path': route_prefix ~ '/invoice',    'label': __('Invoices') },
+    { 'key': 'shipment',   'path': route_prefix ~ '/shipment',   'label': __('Order Shipments') },
+    { 'key': 'creditmemo', 'path': route_prefix ~ '/creditmemo', 'label': __('Refunds') }
 ] %}
 <nav class="order-links mt-8 border-b border-ash-200 print:hidden" aria-label="{{ __('Order navigation')|escape_html_attr }}">
     <ul class="-mb-px flex flex-wrap gap-6">
