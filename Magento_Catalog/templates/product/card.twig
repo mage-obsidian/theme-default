@@ -56,8 +56,8 @@
         <div class="product-card__price font-mono text-sm text-ink">{{ block.getProductPrice(product)|raw }}</div>
 
         <div class="product-card__action mt-2">
-            {% if block.getCard().isQuickAdd(product) %}
-                {% set post = block.getAddToCartPostParams(product) %}
+            {% set post = block.getCard().isQuickAdd(product) ? block.getCard().getAddToCartPostParams(product) : {} %}
+            {% if post.action is defined %}
                 <form data-add-to-cart action="{{ post.action|escape_url }}" method="post">
                     <input type="hidden" name="product" value="{{ post.data.product }}">
                     <input type="hidden" name="uenc" value="{{ post.data.uenc }}">
