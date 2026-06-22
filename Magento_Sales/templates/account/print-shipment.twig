@@ -8,6 +8,7 @@
    block's getShipment (registry) and address/item helpers do not need it. #}
 {% set printBlock = block.getChildBlock('print') %}
 {% set order = printBlock.getOrder() %}
+{% set itemOptions = block.getItemOptions() %}
 {% set single = printBlock.getShipment() %}
 {% set shipments = single ? [single] : order.getShipmentsCollection() %}
 {% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
@@ -44,7 +45,10 @@
                     {% for item in printBlock.getShipmentItems(shipment) %}
                         {% if not item.getOrderItem().getParentItem() %}
                             <tr class="border-b border-ash-100 align-top">
-                                <td class="py-3 pr-4 text-ink">{{ item.getName() }}</td>
+                                <td class="py-3 pr-4 text-ink">
+                                    {{ item.getName() }}
+                                    {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order, show_price: false } %}
+                                </td>
                                 <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
                                 <td class="py-3 text-right text-ink">{{ item.getQty()|round }}</td>
                             </tr>

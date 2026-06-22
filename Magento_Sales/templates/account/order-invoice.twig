@@ -2,11 +2,12 @@
    giving the order and its invoice collection; `info` (Order\Info) for the
    formatted addresses. One styled table per invoice, mirroring
    order/invoice/items.phtml. Item line fidelity matches order-view
-   (name/SKU/price/qty/subtotal); per-type options and tax breakdown live in
-   Tracks B/C. No JS. #}
+   (name/SKU/price/qty/subtotal + per-item options); tax breakdown lives in
+   Track C. No JS. #}
 {% set invoiceBlock = block.getChildBlock('invoice') %}
 {% set info = block.getChildBlock('info') %}
 {% set order = invoiceBlock.getOrder() %}
+{% set itemOptions = block.getItemOptions() %}
 {% set billing = order.getBillingAddress() %}
 {% set shipping = order.getShippingAddress() %}
 {% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
@@ -47,7 +48,10 @@
                     {% for item in invoice.getAllItems() %}
                         {% if not item.getOrderItem().getParentItem() %}
                             <tr class="border-b border-ash-100 align-top">
-                                <td class="py-3 pr-4 text-ink">{{ item.getName() }}</td>
+                                <td class="py-3 pr-4 text-ink">
+                                    {{ item.getName() }}
+                                    {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order } %}
+                                </td>
                                 <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
                                 <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getPrice())|raw }}</td>
                                 <td class="py-3 pr-4 text-right text-ink">{{ item.getQty()|round }}</td>

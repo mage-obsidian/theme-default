@@ -17,6 +17,7 @@
 {# Order cancellation (2.4.8) is customer-only and config-gated; the handle only
    sets `cancellation` on the customer view, not guest/print. #}
 {% set cancellation = block.getCancellation() %}
+{% set itemOptions = block.getItemOptions() %}
 
 <div class="flex flex-wrap items-start justify-between gap-4">
     <div class="flex flex-col gap-1">
@@ -44,7 +45,10 @@
             {% for item in items.getItems() %}
                 {% if not item.getParentItem() %}
                     <tr class="border-b border-ash-100 align-top">
-                        <td class="py-3 pr-4 text-ink">{{ item.getName() }}</td>
+                        <td class="py-3 pr-4 text-ink">
+                            {{ item.getName() }}
+                            {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order } %}
+                        </td>
                         <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
                         <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getPrice())|raw }}</td>
                         <td class="py-3 pr-4 text-right text-ink">{{ item.getQtyOrdered()|round }}</td>

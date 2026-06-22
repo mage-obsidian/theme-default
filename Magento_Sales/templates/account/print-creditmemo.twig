@@ -3,6 +3,7 @@
    print:hidden). #}
 {% set printBlock = block.getChildBlock('print') %}
 {% set order = printBlock.getOrder() %}
+{% set itemOptions = block.getItemOptions() %}
 {% set single = printBlock.getCreditmemo() %}
 {% set creditmemos = single ? [single] : order.getCreditmemosCollection() %}
 {% set billing = order.getBillingAddress() %}
@@ -36,7 +37,10 @@
                     {% for item in creditmemo.getAllItems() %}
                         {% if not item.getOrderItem().getParentItem() %}
                             <tr class="border-b border-ash-100 align-top">
-                                <td class="py-3 pr-4 text-ink">{{ item.getName() }}</td>
+                                <td class="py-3 pr-4 text-ink">
+                                    {{ item.getName() }}
+                                    {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order } %}
+                                </td>
                                 <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
                                 <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getPrice())|raw }}</td>
                                 <td class="py-3 pr-4 text-right text-ink">{{ item.getQty()|round }}</td>
