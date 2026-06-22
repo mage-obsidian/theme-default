@@ -10,7 +10,11 @@
 {% set links = downloadable ? downloadable.getLinks(item) : [] %}
 {# Fixed Product Tax (WEEE) applied to the line; hidden on shipments (no price). #}
 {% set fpt = show_price|default(true) ? item.getWeeeTaxAppliedRowAmount() : 0 %}
-{% if options is not empty or children is not empty or links is not empty or fpt > 0 %}
+{# Gift message per item: OPTIONAL VM contributed by MageObsidian_GiftMessage on
+   the order-view host blocks — absent (null) elsewhere. #}
+{% set giftMessage = block.getGiftMessage() %}
+{% set itemGift = giftMessage ? giftMessage.getItemMessage(item) : null %}
+{% if options is not empty or children is not empty or links is not empty or fpt > 0 or (itemGift and itemGift.message) %}
     <dl class="mt-1.5 space-y-0.5 text-xs text-ink-soft">
         {% for option in options %}
             <div class="flex gap-1.5">
@@ -34,6 +38,12 @@
             <div class="flex gap-1.5">
                 <dt class="text-ash-500">{{ __('Fixed Product Tax') }}:</dt>
                 <dd>{{ order.formatPrice(fpt)|raw }}</dd>
+            </div>
+        {% endif %}
+        {% if itemGift and itemGift.message %}
+            <div class="flex gap-1.5">
+                <dt class="text-ash-500">{{ __('Gift Message') }}:</dt>
+                <dd>{{ itemGift.message }}{% if itemGift.recipient %} ({{ __('To') }} {{ itemGift.recipient }}){% endif %}</dd>
             </div>
         {% endif %}
     </dl>

@@ -7,6 +7,8 @@
   shipping estimator is intentionally deferred to the checkout wave.
 #}
 {% set items = block.getCartItems().getItems() %}
+{% set wishlist = block.getWishlist() %}
+{% set giftOptions = block.getGiftOptions() %}
 <div
     data-cart-root
     data-update-url="{{ block.getUrl('checkout/sidebar/updateItemQty')|escape_url }}"
@@ -73,6 +75,16 @@
                                            class="text-sm text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Edit') }}</a>
                                     {% endif %}
 
+                                    {% if wishlist and wishlist.isAllowed() %}
+                                        <button
+                                            type="submit"
+                                            formaction="{{ wishlist.getMoveUrl()|escape_url }}"
+                                            name="item" value="{{ item.id }}"
+                                            data-cart-move data-item-id="{{ item.id }}" data-move-url="{{ wishlist.getMoveUrl()|escape_url }}"
+                                            class="text-sm text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline"
+                                        >{{ __('Move to wish list') }}</button>
+                                    {% endif %}
+
                                     <button
                                         type="submit"
                                         formaction="{{ block.getUrl('checkout/cart/delete')|escape_url }}"
@@ -109,6 +121,38 @@
         {{ child_html('crosssell') }}
     {% endif %}
 </div>
+
+{# Gift options live OUTSIDE the morphed cart region: the island mounts once and
+   posts straight to the gift-message REST endpoints, so a qty refresh never
+   destroys it. Gift messages have no no-JS path (neither does Luma — the API is
+   REST-only), hence the <noscript> note. #}
+{% if items is not empty and giftOptions and giftOptions.isAvailable() %}
+    {% set giftItems = [] %}
+    {% for item in items %}
+        {% set giftItems = giftItems|merge([{ id: item.id, name: item.name, message: giftOptions.getItemMessage(item.id) }]) %}
+    {% endfor %}
+    <div class="mx-auto w-full max-w-[1320px] px-4 md:px-8">
+        {{ render_vue('MageObsidian_GiftMessage::components/gift/GiftOptions', {
+            orderAllowed: giftOptions.isOrderAllowed(),
+            itemsAllowed: giftOptions.isItemsAllowed(),
+            endpoint: giftOptions.getEndpointConfig(),
+            orderMessage: giftOptions.getOrderMessage(),
+            items: giftItems,
+            panelLabel: __('Gift options'),
+            orderTitle: __('Gift message for the whole order'),
+            itemsTitle: __('Gift message per item'),
+            fromLabel: __('From'),
+            toLabel: __('To'),
+            messageLabel: __('Message'),
+            saveLabel: __('Save gift message'),
+            savedLabel: __('Saved'),
+            failLabel: __('Could not save gift message')
+        }) }}
+        <noscript>
+            <p class="mt-4 text-sm text-ink-soft">{{ __('Enable JavaScript to add a gift message.') }}</p>
+        </noscript>
+    </div>
+{% endif %}
 
 {# Progressive enhancer (outside the morphed region so a refresh never re-runs it).
    Without JS the native forms POST to the core cart controllers. #}
