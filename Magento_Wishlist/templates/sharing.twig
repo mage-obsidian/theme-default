@@ -1,0 +1,33 @@
+{# Wish list sharing form. `block` is the MageObsidian Template; `sharing` is the
+   core Customer\Sharing block (send URL, previously entered values, back URL).
+   Native POST to wishlist/index/send — the controller validates the emails. The
+   captcha child renders only when configured. No JS. #}
+{% set sharing = block.getChildBlock('sharing') %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+{% set fieldClass = 'w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2 text-sm text-ink focus:border-ink focus:outline-none' %}
+
+<h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Share Wish List') }}</h1>
+
+<form action="{{ sharing.getSendUrl()|escape_url }}" method="post" class="mt-8 flex max-w-xl flex-col gap-6">
+    {{ block.getBlockHtml('formkey')|raw }}
+    <div class="flex flex-col gap-2">
+        <label for="email_address" class="{{ labelClass }}">{{ __('Email addresses, separated by commas') }}</label>
+        <textarea id="email_address" name="emails" rows="4" required
+                  class="{{ fieldClass }}">{{ sharing.getEnteredData('emails') }}</textarea>
+    </div>
+    <div class="flex flex-col gap-2">
+        <label for="message" class="{{ labelClass }}">{{ __('Message') }}</label>
+        <textarea id="message" name="message" rows="5" class="{{ fieldClass }}">{{ sharing.getEnteredData('message') }}</textarea>
+    </div>
+    {{ block.getChildHtml('captcha')|raw }}
+    <div class="flex items-center gap-4">
+        <button type="submit"
+                class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">
+            {{ __('Share Wish List') }}
+        </button>
+        <a href="{{ sharing.getBackUrl()|escape_url }}"
+           class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">
+            {{ __('Back') }}
+        </a>
+    </div>
+</form>

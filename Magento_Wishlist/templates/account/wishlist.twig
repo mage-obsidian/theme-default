@@ -11,10 +11,13 @@
 <div class="flex flex-wrap items-center justify-between gap-4">
     <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('My Wish List') }}</h1>
     {% if items.getSize() > 0 %}
-        <form action="{{ block.getUrl('wishlist/index/allcart')|escape_url }}" method="post" class="inline">
-            {{ block.getBlockHtml('formkey')|raw }}
-            <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Add All to Cart') }}</button>
-        </form>
+        <div class="flex flex-wrap items-center gap-4">
+            <a href="{{ block.getUrl('wishlist/index/share')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Share Wish List') }}</a>
+            <form action="{{ block.getUrl('wishlist/index/allcart')|escape_url }}" method="post" class="inline">
+                {{ block.getBlockHtml('formkey')|raw }}
+                <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Add All to Cart') }}</button>
+            </form>
+        </div>
     {% endif %}
 </div>
 

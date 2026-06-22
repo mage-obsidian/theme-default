@@ -1,0 +1,60 @@
+{# Public shared wish list. `block` is the MageObsidian Template; `shared` is the
+   core Share\Wishlist block (shared item collection, owner, shared cart URLs).
+   Item add-to-cart is a native POST to wishlist/shared/cart; products that need
+   options link to the PDP instead (a direct POST would bounce to configure). No JS. #}
+{% set shared = block.getChildBlock('shared') %}
+{% set thumbnail = block.getThumbnail() %}
+{% set items = shared.getWishlistItems() %}
+{% set owner = shared.getWishlistCustomer() %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+
+<div class="mx-auto w-full max-w-[1320px] px-4 py-10 md:px-8">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <h1 class="font-display text-3xl tracking-[0.08em] text-ink">
+            {% if owner %}{{ owner.getFirstname() }} {{ owner.getLastname() }} — {% endif %}{{ __('Wish List') }}
+        </h1>
+        {% if shared.isSaleable() %}
+            <form action="{{ shared.getSharedAddAllToCartUrl()|escape_url }}" method="post" class="inline">
+                {{ block.getBlockHtml('formkey')|raw }}
+                <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Add All to Cart') }}</button>
+            </form>
+        {% endif %}
+    </div>
+
+    {% if items is empty %}
+        <p class="mt-8 text-sm text-ink-soft">{{ __('Wish List is empty now.') }}</p>
+    {% else %}
+        <ul class="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+            {% for item in items %}
+                {% set product = item.getProduct() %}
+                {% set img = thumbnail.get(product) %}
+                <li class="flex flex-col gap-3 rounded-edge border border-ash-200 p-4">
+                    <a href="{{ shared.getProductUrl(item)|escape_url }}" class="block overflow-hidden rounded-edge bg-ash-50">
+                        <img src="{{ img.url|escape_url }}" width="{{ img.width }}" height="{{ img.height }}" alt="{{ img.label|escape_html_attr }}" loading="lazy" class="h-auto w-full object-cover">
+                    </a>
+                    <a href="{{ shared.getProductUrl(item)|escape_url }}" class="text-sm text-ink underline-offset-4 transition-colors hover:text-accent hover:underline">{{ product.getName() }}</a>
+                    <span class="font-display text-lg text-ink">{{ product.getFinalPrice()|price }}</span>
+                    {% if shared.getEscapedDescription(item) %}
+                        <p class="text-xs italic text-ink-soft">{{ shared.getEscapedDescription(item)|raw }}</p>
+                    {% endif %}
+
+                    {% if not product.isSaleable() %}
+                        <span class="mt-auto {{ labelClass }} text-ash-500">{{ __('Out of stock') }}</span>
+                    {% elseif product.getTypeInstance().canConfigure(product) %}
+                        <a href="{{ shared.getProductUrl(item)|escape_url }}" class="mt-auto flex h-10 items-center justify-center rounded-edge bg-ink px-3 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('View Options') }}</a>
+                    {% else %}
+                        <form action="{{ block.getUrl('wishlist/shared/cart')|escape_url }}" method="post" class="mt-auto">
+                            {{ block.getBlockHtml('formkey')|raw }}
+                            <input type="hidden" name="item" value="{{ item.getId()|escape_html_attr }}">
+                            <button type="submit" class="h-10 w-full rounded-edge bg-ink px-3 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Add to Cart') }}</button>
+                        </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <div class="mt-10">
+        <a href="{{ shared.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Back') }}</a>
+    </div>
+</div>
