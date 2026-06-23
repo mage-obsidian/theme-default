@@ -1,9 +1,11 @@
 {#
   Layered navigation sidebar (category + search). `block` is the Navigation
   block; the State child carries the active filters. Every filter item is a
-  native link to the filtered URL — the whole sidebar works with no JS. On mobile
-  it collapses behind a "Filters" disclosure; on desktop the disclosure is forced
-  open via CSS (see .ln-disclosure in the catalog styles).
+  native link to the filtered URL — the whole sidebar works with no JS. The
+  disclosure is `open` by default: a closed <details> collapses its own box to
+  height 0 even when its content is forced visible via CSS, which would hide the
+  whole sidebar on desktop. On mobile the "Filters" <summary> toggle (shown
+  below 1024px) still lets it collapse.
 #}
 {% if block.canShowBlock() %}
     {% set state = block.getChildBlock('state') %}
@@ -11,7 +13,7 @@
     {% set filters = block.getFilters() %}
     {% set swatchVm = block.getSwatchViewModel() %}
 
-    <details class="ln-disclosure">
+    <details class="ln-disclosure" open>
         <summary class="ln-toggle">{{ __('Filters') }}</summary>
         <div class="ln-body">
             <nav class="ln" aria-label="{{ __('Shopping options')|escape_html_attr }}">
