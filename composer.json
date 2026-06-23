@@ -1,0 +1,16 @@
+{
+    "name": "mage-obsidian/theme-default",
+    "description": "MageObsidian Obsidian storefront theme: the default skin built on top of theme-base.",
+    "type": "magento2-theme",
+    "license": [
+        "MIT"
+    ],
+    "require": {
+        "mage-obsidian/theme-base": "^2.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ]
+    }
+}
