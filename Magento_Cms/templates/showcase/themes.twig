@@ -1,0 +1,44 @@
+{#
+  Two-layer theme architecture (docs/theme): a neutral platform layer and the
+  OBSIDIAN design layer on top. Two cards, each linking to its repository.
+#}
+{% set layers = [
+    {
+        icon: 'cube',
+        eyebrow: 'theme-base',
+        title: 'The platform layer',
+        desc: 'Build wiring and structural templates with no design tokens. Inherit from here to start a theme from a clean slate.',
+        link: 'https://github.com/mage-obsidian/theme-base'
+    },
+    {
+        icon: 'swatch',
+        eyebrow: 'default · OBSIDIAN',
+        title: 'The design layer',
+        desc: 'Design tokens and styled templates — the vitreous OBSIDIAN skin. Inherit from here to re-skin an existing storefront.',
+        link: 'https://github.com/mage-obsidian/theme-default'
+    }
+] %}
+<section class="showcase-bleed bg-alabaster" aria-labelledby="showcase-themes-heading">
+    <div class="mx-auto max-w-[1320px] px-6 py-20 md:px-8 md:py-28">
+        <p class="font-mono uppercase tracking-[0.3em] text-ink-soft" style="font-size:var(--text-eyebrow)">{{ __('Themes') }}</p>
+        <h2 id="showcase-themes-heading" class="mt-5 max-w-[20ch] font-display leading-[1.05] text-ink" style="font-size:var(--text-h2)">
+            {{ __('Two layers, clean inheritance') }}
+        </h2>
+        <div class="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
+            {% for l in layers %}
+                <a href="{{ l.link|escape_url }}" target="_blank" rel="noopener"
+                   class="group flex flex-col gap-5 rounded-edge border border-ash-300 bg-alabaster-raised p-9 transition-colors hover:border-ink">
+                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-edge border border-ash-300 text-accent [&>svg]:h-6 [&>svg]:w-6">
+                        {{ hero_icon(l.icon, 'outline', '24')|raw }}
+                    </span>
+                    <span class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-ink-soft">{{ l.eyebrow }}</span>
+                    <span class="font-display text-2xl leading-tight text-ink">{{ __(l.title) }}</span>
+                    <span class="font-body text-sm leading-relaxed text-ink-soft">{{ __(l.desc) }}</span>
+                    <span class="mt-1 inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-accent">
+                        {{ __('View on GitHub') }} <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+                    </span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>

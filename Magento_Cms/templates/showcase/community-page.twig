@@ -1,0 +1,23 @@
+{#
+  Sale slot, repurposed as the Open Source page — a page hero playing on the
+  "nothing to pay" angle, then the two-layer theme architecture and the community
+  band. The visible category <h1> is suppressed for this slot; this hero owns the
+  heading.
+#}
+<section class="showcase-bleed sheen relative isolate overflow-hidden bg-obsidian-950 text-on-obsidian">
+    <div class="relative z-10 mx-auto max-w-[1320px] px-6 py-24 md:px-8 md:py-36">
+        <p class="font-mono uppercase tracking-[0.3em] text-on-obsidian-soft" style="font-size:var(--text-eyebrow)">{{ __('Open Source') }}</p>
+        <h1 class="mt-6 max-w-[14ch] font-display font-semibold leading-[0.95]" style="font-size:var(--text-hero)">
+            {{ __('Open source, nothing to pay') }}
+        </h1>
+        <p class="mt-8 max-w-2xl font-body text-on-obsidian-soft" style="font-size:var(--text-lead)">
+            {{ __('MageObsidian is MIT-licensed and built in the open. Take the whole stack, re-skin it, extend it, ship it — no license fees, no lock-in.') }}
+        </p>
+        <a href="https://github.com/mage-obsidian" target="_blank" rel="noopener"
+           class="mt-10 inline-flex items-center gap-3 rounded-edge border border-on-obsidian/30 px-6 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] transition-colors duration-300 hover:border-on-obsidian hover:bg-on-obsidian hover:text-obsidian-950">
+            {{ __('View on GitHub') }} <span aria-hidden="true">→</span>
+        </a>
+    </div>
+</section>
+{% include 'Magento_Cms::showcase/themes.twig' %}
+{% include 'Magento_Cms::showcase/community.twig' %}

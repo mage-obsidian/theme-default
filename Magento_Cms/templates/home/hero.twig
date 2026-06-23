@@ -1,25 +1,28 @@
 {#
-  Full-bleed hero. CSS/type-driven (no binary asset) to stay versioned and on the
-  obsidian art direction: vitreous dark field, Bodoni display, the signature
-  `sheen` overlay. The CTA points at the first featured category, falling back to
-  the home URL when the catalog has none.
+  Home hero. CSS/type-driven (no binary asset) on the obsidian art direction:
+  vitreous dark field, Bodoni display, the signature `sheen` overlay. Frames the
+  framework pitch with two entry points — the docs and the source.
 #}
-{% set featured = block.getFeatured().getItems() %}
-{% set cta_url = featured|length ? (featured|first).url : block.getUrl('') %}
-<section class="sheen relative isolate overflow-hidden bg-obsidian-950 text-on-obsidian">
-    <div class="relative z-10 mx-auto max-w-[1320px] px-6 py-24 md:px-8 md:py-36">
+<section class="showcase-bleed sheen relative isolate overflow-hidden bg-obsidian-950 text-on-obsidian">
+    <div class="relative z-10 mx-auto max-w-[1320px] px-6 py-28 md:px-8 md:py-40">
         <p class="font-mono uppercase tracking-[0.3em] text-on-obsidian-soft" style="font-size:var(--text-eyebrow)">
-            {{ __('Autumn / Winter 25') }}
+            {{ __('Vite · TailwindCSS · Vue · Twig') }}
         </p>
-        <h1 class="mt-6 max-w-[12ch] font-display font-semibold leading-[0.95]" style="font-size:var(--text-hero)">
-            {{ __('The Vitreous Edit') }}
+        <h1 class="mt-6 max-w-[14ch] font-display font-semibold leading-[0.95]" style="font-size:var(--text-hero)">
+            {{ __('A modern frontend for Magento') }}
         </h1>
-        <p class="mt-8 max-w-xl font-body text-on-obsidian-soft" style="font-size:var(--text-lead)">
-            {{ __('Outerwear and tailoring cut along one clean line — a volcanic-glass palette, knife-clean seams, and nothing that doesn’t earn its place.') }}
+        <p class="mt-8 max-w-2xl font-body text-on-obsidian-soft" style="font-size:var(--text-lead)">
+            {{ __('MageObsidian replaces Magento’s legacy frontend with Vite, TailwindCSS, Vue islands and Twig — built on the native Layouts, Blocks and Templates you already know.') }}
         </p>
-        <a href="{{ cta_url|escape_url }}"
-           class="mt-10 inline-flex items-center gap-3 rounded-edge border border-on-obsidian/30 px-6 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] transition-colors duration-300 hover:border-on-obsidian hover:bg-on-obsidian hover:text-obsidian-950">
-            {{ __('Shop the edit') }} <span aria-hidden="true">→</span>
-        </a>
+        <div class="mt-10 flex flex-wrap items-center gap-4">
+            <a href="https://mage-obsidian.jeanmarcos.dev/" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-3 rounded-edge border border-on-obsidian bg-on-obsidian px-6 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-obsidian-950 transition-colors duration-300 hover:bg-transparent hover:text-on-obsidian">
+                {{ __('Read the docs') }} <span aria-hidden="true">→</span>
+            </a>
+            <a href="https://github.com/mage-obsidian" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-3 rounded-edge border border-on-obsidian/30 px-6 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] transition-colors duration-300 hover:border-on-obsidian">
+                {{ __('View on GitHub') }} <span aria-hidden="true">→</span>
+            </a>
+        </div>
     </div>
 </section>

@@ -1,0 +1,38 @@
+{#
+  Feature grid — the framework's documented capabilities, server-rendered. Icons
+  via hero_icon (centralized Heroicons). Copy sourced from docs/key-features.
+  Reused by the home and the What's New showcase page.
+#}
+{% set features = [
+    { icon: 'cube-transparent', title: 'Vue islands', desc: 'Components hydrate lazily as they enter the viewport — a page with no islands ships no Vue at all.' },
+    { icon: 'bolt', title: 'Instant HMR', desc: 'Edits to .vue, CSS and Twig reflect in the browser with no reload — no waiting during development.' },
+    { icon: 'code-bracket', title: 'Twig engine', desc: 'A Twig engine alongside native .phtml — HTML auto-escaping and clean inheritance, never mandatory.' },
+    { icon: 'square-3-stack-3d', title: 'Module & theme inheritance', desc: 'Assets merge across modules, themes and parents; override only the most specific file.' },
+    { icon: 'language', title: 'Built-in i18n', desc: 'Translate in components with $t() against Magento’s native js-translation, with a phrase collector.' },
+    { icon: 'globe-alt', title: 'Structured data', desc: 'Auto-emits schema.org JSON-LD (Organization, WebSite, Breadcrumb, Product) — cacheable, no extra JS.' },
+    { icon: 'photo', title: 'Core-Web-Vitals images', desc: 'An image helper renders <img>/<picture> with width/height, loading and fetchpriority to kill CLS.' },
+    { icon: 'puzzle-piece', title: 'Opt-in Pinia state', desc: 'Islands share one page-wide store — loaded only by components that import it.' },
+    { icon: 'command-line', title: 'Scaffolding', desc: 'Generate modules, themes and Vue components already wired for the modern frontend.' },
+    { icon: 'wrench-screwdriver', title: 'Tooling', desc: 'ESLint, Prettier, TypeScript and Vitest integrated, with a generated jsconfig for go-to-definition.' },
+    { icon: 'cube', title: 'Native foundations', desc: 'Built on Magento’s Layouts, Blocks and Templates — not a PWA, no reinvented engine.' },
+    { icon: 'arrow-path', title: 'Legacy coexistence', desc: 'Themes without the compatibility manifest keep the native pipeline; only modern themes use Vite.' }
+] %}
+<section class="showcase-bleed bg-alabaster" aria-labelledby="showcase-features-heading">
+    <div class="mx-auto max-w-[1320px] px-6 py-20 md:px-8 md:py-28">
+        <p class="font-mono uppercase tracking-[0.3em] text-ink-soft" style="font-size:var(--text-eyebrow)">{{ __('Features') }}</p>
+        <h2 id="showcase-features-heading" class="mt-5 max-w-[18ch] font-display leading-[1.05] text-ink" style="font-size:var(--text-h2)">
+            {{ __('Everything the legacy frontend isn’t') }}
+        </h2>
+        <div class="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-edge border border-ash-200 bg-ash-200 sm:grid-cols-2 lg:grid-cols-3">
+            {% for f in features %}
+                <article class="flex flex-col gap-4 bg-alabaster-raised p-7 transition-colors duration-300 hover:bg-paper">
+                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-edge border border-ash-300 text-accent [&>svg]:h-5 [&>svg]:w-5">
+                        {{ hero_icon(f.icon, 'outline', '24')|raw }}
+                    </span>
+                    <h3 class="font-display text-xl leading-tight text-ink">{{ __(f.title) }}</h3>
+                    <p class="font-body text-sm leading-relaxed text-ink-soft">{{ __(f.desc) }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>

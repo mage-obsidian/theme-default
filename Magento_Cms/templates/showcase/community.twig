@@ -1,0 +1,46 @@
+{#
+  Community / open-source band closing the showcase. Vitreous dark field with the
+  three project entry points: docs, GitHub and Discord. Real project URLs.
+#}
+{% set links = [
+    {
+        icon: 'document-text',
+        eyebrow: 'Documentation',
+        title: 'Read the docs',
+        href: 'https://mage-obsidian.jeanmarcos.dev/'
+    },
+    {
+        icon: 'code-bracket-square',
+        eyebrow: 'Source',
+        title: 'View on GitHub',
+        href: 'https://github.com/mage-obsidian'
+    },
+    {
+        icon: 'chat-bubble-left-right',
+        eyebrow: 'Community',
+        title: 'Join the Discord',
+        href: 'https://discord.gg/d6nHVw8h'
+    }
+] %}
+<section class="showcase-bleed bg-obsidian-950 text-on-obsidian" aria-labelledby="showcase-community-heading">
+    <div class="mx-auto max-w-[1320px] px-6 py-24 md:px-8 md:py-32">
+        <p class="font-mono uppercase tracking-[0.3em] text-on-obsidian-soft" style="font-size:var(--text-eyebrow)">{{ __('Open source') }}</p>
+        <h2 id="showcase-community-heading" class="mt-5 max-w-[22ch] font-display leading-[1.05]" style="font-size:var(--text-h2)">
+            {{ __('Built in the open. Come build with us.') }}
+        </h2>
+        <div class="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-edge border border-obsidian-700 bg-obsidian-700 sm:grid-cols-3">
+            {% for l in links %}
+                <a href="{{ l.href|escape_url }}" target="_blank" rel="noopener"
+                   class="group flex flex-col gap-5 bg-obsidian-900 p-8 transition-colors hover:bg-obsidian-800">
+                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-edge border border-obsidian-600 text-on-obsidian [&>svg]:h-6 [&>svg]:w-6">
+                        {{ hero_icon(l.icon, 'outline', '24')|raw }}
+                    </span>
+                    <span class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-on-obsidian-soft">{{ __(l.eyebrow) }}</span>
+                    <span class="inline-flex items-center gap-2 font-display text-xl leading-tight">
+                        {{ __(l.title) }} <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+                    </span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>

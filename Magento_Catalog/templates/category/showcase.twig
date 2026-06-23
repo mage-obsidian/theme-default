@@ -1,0 +1,12 @@
+{#
+  Framework showcase dispatcher. `block.getShowcase().getShowcaseId()` returns a
+  template id for the What's New / Sale slots and null for every other category
+  (then this renders nothing — zero impact on normal listings). `block` is a
+  MageObsidian Template, so the included sections get image()/hero_icon helpers.
+#}
+{% set showcase_id = block.getShowcase().getShowcaseId() %}
+{% if showcase_id == 'whats-new' %}
+    {% include 'Magento_Cms::showcase/whats-new.twig' %}
+{% elseif showcase_id == 'community' %}
+    {% include 'Magento_Cms::showcase/community-page.twig' %}
+{% endif %}

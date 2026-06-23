@@ -379,3 +379,41 @@
     animation: none !important;
   }
 }
+
+/* Framework-showcase slots (What's New / Sale): the showcase page hero owns the
+   <h1>, so the native category title would be a redundant second heading. The
+   block still sets the document <title> in PHP, independent of this visible node. */
+.category-what-is-new .category-title,
+.category-sale .category-title {
+  display: none;
+}
+
+/* Full-bleed showcase bands break out of the centered content column to the
+   viewport edges; the inner container keeps the readable max width. overflow-x:
+   clip on the wrapper absorbs the 100vw vs. scrollbar-width difference so the
+   breakout never adds a horizontal scrollbar. */
+.page-wrapper {
+  overflow-x: clip;
+}
+.showcase-bleed {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+
+/* The showcase/home pages run dark bands edge to edge: drop the content well's
+   vertical padding, the footer's top margin, and (on the category slots) the
+   breadcrumb strip, so no light band shows between the bands and the chrome. */
+.cms-index-index #maincontent,
+.category-what-is-new #maincontent,
+.category-sale #maincontent {
+  padding-block: 0;
+}
+.cms-index-index footer,
+.category-what-is-new footer,
+.category-sale footer {
+  margin-top: 0;
+}
+.category-what-is-new .breadcrumbs,
+.category-sale .breadcrumbs {
+  display: none;
+}
