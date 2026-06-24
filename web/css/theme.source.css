@@ -414,25 +414,18 @@
   display: none;
 }
 
-/* Full-bleed showcase bands break out of the centered content column to the
-   viewport edges; the inner container keeps the readable max width. overflow-x:
-   clip on the wrapper absorbs the 100vw vs. scrollbar-width difference so the
-   breakout never adds a horizontal scrollbar. */
-.page-wrapper {
-  overflow-x: clip;
-}
+/* Showcase bands fill the content well edge to edge; their inner container keeps
+   the readable max width. The well itself goes full-width on showcase pages (no
+   vw math, so a vertical scrollbar never produces a horizontal one). */
 .showcase-bleed {
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
+  width: 100%;
 }
 
-/* The showcase/home pages run dark bands edge to edge: drop the content well's
-   vertical padding, the footer's top margin, and (on the category slots) the
-   breadcrumb strip, so no light band shows between the bands and the chrome. */
 .cms-index-index #maincontent,
 .category-what-is-new #maincontent,
 .category-sale #maincontent {
-  padding-block: 0;
+  max-width: none;
+  padding: 0;
 }
 .cms-index-index footer,
 .category-what-is-new footer,
