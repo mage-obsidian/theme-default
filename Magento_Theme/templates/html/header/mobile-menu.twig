@@ -13,6 +13,10 @@
     'MageObsidian_Storefront::navigation/MobileMenu',
     {
         links: block.getNavigation().getItems(),
+        utilities: [
+            { url: block.getUrl('wishlist'), label: __('My Wish List'), kind: 'wishlist' },
+            { url: block.getUrl('catalog/product_compare'), label: __('Compare Products'), kind: 'compare' }
+        ],
         label: __('Menu'),
         navLabel: __('Browse'),
         stores: stores.hasMultiple()

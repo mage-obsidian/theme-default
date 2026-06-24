@@ -7,39 +7,46 @@
 #}
 {% from 'Magento_Theme::macros/ui.twig' import nav_list %}
 <div class="sticky top-0 z-30 border-b border-ash-200 bg-alabaster/85 backdrop-blur-md print:hidden">
-    <div class="mx-auto flex h-[68px] max-w-[1320px] items-center justify-between gap-4 px-4 md:gap-6 md:px-8">
+    <div class="mx-auto flex h-[68px] max-w-[1320px] items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 md:gap-6 md:px-8">
         <div class="flex items-center gap-2">
             {{ child_html('mobile_menu') }}
             <a href="{{ block.getUrl('') }}"
-               class="font-display text-2xl font-semibold tracking-[0.16em] text-ink"
+               class="font-display text-base font-semibold tracking-[0.1em] text-ink min-[360px]:text-lg min-[360px]:tracking-[0.12em] sm:text-2xl sm:tracking-[0.16em]"
                aria-label="{{ __('OBSIDIAN — home')|escape_html_attr }}">OBSIDIAN</a>
         </div>
 
-        <nav class="hidden items-center gap-8 md:flex" aria-label="{{ __('Primary')|escape_html_attr }}">
+        <nav class="hidden items-center gap-6 lg:flex xl:gap-8" aria-label="{{ __('Primary')|escape_html_attr }}">
             {{ nav_list(
                 block.getNavigation().getItems(),
-                'font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink'
+                'whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink'
             ) }}
         </nav>
 
-        <div class="flex items-center gap-4 font-mono text-[0.72rem] uppercase leading-none tracking-[0.12em] text-ink-soft">
-            <div class="hidden items-center gap-4 md:flex">
+        <div class="flex items-center gap-3 font-mono text-[0.72rem] uppercase leading-none tracking-[0.12em] text-ink-soft sm:gap-4">
+            <div class="hidden items-center gap-4 lg:flex">
                 {{ child_html('switcher_language') }}
                 {{ child_html('switcher_currency') }}
             </div>
             {{ child_html('account_menu') }}
             {{ child_html('search') }}
-            <a href="{{ block.getUrl('wishlist') }}" class="inline-flex items-center transition-colors hover:text-ink" aria-label="{{ __('My Wish List')|escape_html_attr }}">
-                {{ child_html('wishlist_count') }}
-            </a>
-            <a href="{{ block.getUrl('catalog/product_compare') }}" class="inline-flex items-center transition-colors hover:text-ink" aria-label="{{ __('Compare Products')|escape_html_attr }}">
-                {{ child_html('compare_count') }}
-            </a>
+            {# Below lg the desktop nav is collapsed into the hamburger drawer, and
+               wishlist/compare move there with it (the bar would otherwise wrap in
+               the md–lg range); keep them in the bar only once there is room. #}
+            <div class="hidden items-center gap-4 lg:flex">
+                <a href="{{ block.getUrl('wishlist') }}" class="inline-flex items-center transition-colors hover:text-ink" aria-label="{{ __('My Wish List')|escape_html_attr }}">
+                    {{ child_html('wishlist_count') }}
+                </a>
+                <a href="{{ block.getUrl('catalog/product_compare') }}" class="inline-flex items-center transition-colors hover:text-ink" aria-label="{{ __('Compare Products')|escape_html_attr }}">
+                    {{ child_html('compare_count') }}
+                </a>
+            </div>
             {# `data-minicart-trigger` is a neutral hook: with no JS (or no checkout
                module) this stays a plain link to the cart page; the checkout
-               module's mini-cart island enhances it to open the drawer instead. #}
-            <a href="{{ block.getUrl('checkout/cart') }}" data-minicart-trigger class="inline-flex items-center gap-2 rounded-edge border border-ash-300 px-3 py-2 transition-colors hover:border-ink">
-                {{ child_html('cart_count') }} {{ __('Bag') }}
+               module's mini-cart island enhances it to open the drawer instead.
+               The label is icon-only (shopping-bag lives in the cart_count island),
+               so the link carries the accessible name itself. #}
+            <a href="{{ block.getUrl('checkout/cart') }}" data-minicart-trigger class="inline-flex items-center rounded-edge border border-ash-300 px-3 py-2 transition-colors hover:border-ink" aria-label="{{ __('Bag')|escape_html_attr }}">
+                {{ child_html('cart_count') }}
             </a>
         </div>
     </div>
