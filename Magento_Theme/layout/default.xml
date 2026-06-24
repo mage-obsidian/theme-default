@@ -8,7 +8,7 @@
     <body>
         <referenceBlock name="head.additional">
             <block name="obsidian.favicon" template="Magento_Theme::html/head/favicon.twig"/>
-            <block name="obsidian.fonts" template="Magento_Theme::html/head/fonts.twig"/>
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.fonts" template="Magento_Theme::html/head/fonts.twig"/>
         </referenceBlock>
         <!-- Replace the parent theme's (theme-base) demo language/currency
              switchers with OBSIDIAN Twig islands mounted in the header utility

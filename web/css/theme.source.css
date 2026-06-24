@@ -5,6 +5,32 @@
    ============================================================ */
 @import "tailwindcss";
 
+/* Self-hosted variable fonts (OFL, see web/fonts/OFL-*.txt). Replaces the
+   Google Fonts <link> that fonts.twig used to load — no third-party round-trip,
+   so the obsidian display face is served from our own origin and the swap
+   settles faster. Vite fingerprints these woff2 into web/generated. */
+@font-face {
+  font-family: "Bodoni Moda";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/bodoni-moda-latin-wght-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Hanken Grotesk";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("../fonts/hanken-grotesk-latin-wght-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-latin-wght-normal.woff2") format("woff2");
+}
+
 @theme {
   /* — Obsidian: vitreous near-black, cool violet undertone — */
   --color-obsidian-950: #08070b;

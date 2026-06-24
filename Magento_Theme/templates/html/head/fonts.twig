@@ -1,15 +1,9 @@
 {#
-  OBSIDIAN type families. The stylesheet is loaded off the critical path
-  (preload as=style + onload swap to stylesheet) so it no longer render-blocks;
-  display=swap keeps text visible meanwhile. <noscript> restores it without JS.
-  TODO(perf): self-host the families in a later performance wave.
+  Self-hosted OBSIDIAN type families. The @font-face rules live in the theme CSS
+  (web/css/theme.source.css) and are served from our own origin via Vite — no
+  Google Fonts round-trip, no preconnects. Here we only preload the display face
+  (the hero LCP) so its swap settles sooner; body/mono load on demand.
+  font-display:swap keeps text visible meanwhile.
 #}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style"
-      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"
-      onload="this.onload=null;this.rel='stylesheet'">
-<noscript>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&amp;family=Hanken+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap">
-</noscript>
+<link rel="preload" as="font" type="font/woff2" crossorigin
+      href="{{ block.getViteFileUrl('bodoni-moda-latin-wght-normal.woff2') }}">
