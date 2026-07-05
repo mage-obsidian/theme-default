@@ -1,12 +1,22 @@
-# MageObsidian — Default theme (Obsidian)
+# MageObsidian — OBSIDIAN (Default Theme)
 
-The default storefront theme for [MageObsidian](https://mage-obsidian.jeanmarcos.dev/). It inherits from `MageObsidian/theme-base` (the technical base layer) and adds the **OBSIDIAN** design line: a cool mineral base, vitreous obsidian signature surfaces, an iridescent sheen as the single signature, and sharpened edges.
+[![Latest Version](https://img.shields.io/packagist/v/mage-obsidian/theme-default.svg?style=flat-square)](https://packagist.org/packages/mage-obsidian/theme-default)
+[![License](https://img.shields.io/packagist/l/mage-obsidian/theme-default.svg?style=flat-square)](https://packagist.org/packages/mage-obsidian/theme-default)
 
-Pairs with the `mage-obsidian/module-storefront` module for ViewModels, legacy layout neutralization and shared Vue islands.
+📚 [Documentation](https://mage-obsidian.jeanmarcos.dev/) · 🚀 [Live demo](https://mage-obsidian-demo.jeanmarcos.dev/) · 💬 [Discussions](https://github.com/mage-obsidian/module-modern-frontend/discussions)
 
-- Design tokens: `web/css/theme.source.css` (`@theme`) + the `sheen` utility.
-- Parent: `MageObsidian/theme-base`.
+**OBSIDIAN** — the default [MageObsidian](https://mage-obsidian.jeanmarcos.dev/) storefront theme for Magento 2, built with Vite, Tailwind CSS 4, Vue islands and Twig components. See it live at the [demo store](https://mage-obsidian-demo.jeanmarcos.dev/) (Lighthouse 100/100/100/100).
 
-## Documentation
+## Installation
 
-For more details, visit the [official documentation](https://mage-obsidian.jeanmarcos.dev/).
+```bash
+composer require mage-obsidian/theme-default
+bin/magento setup:upgrade
+bin/magento mage-obsidian:frontend:config --generate
+```
+
+Then rebuild your theme (`mage-obsidian:build-themes`). Full guide: [documentation](https://mage-obsidian.jeanmarcos.dev/).
+
+## Support the project
+
+If MageObsidian saves you time, consider [buying me a coffee](https://ko-fi.com/Q5Q816Z9WN). ❤️
