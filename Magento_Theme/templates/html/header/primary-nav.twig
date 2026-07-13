@@ -7,7 +7,7 @@
 {{ render_vue(
     'MageObsidian_Storefront::navigation/PrimaryNav',
     {
-        links: block.getNavigation().getItems(),
+        links: block.getNavigation().getItems(block.getMaxDepth()|default(1)),
         label: __('Primary'),
         moreLabel: __('More')
     },

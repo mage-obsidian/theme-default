@@ -12,13 +12,15 @@
 {{ render_vue(
     'MageObsidian_Storefront::navigation/MobileMenu',
     {
-        links: block.getNavigation().getItems(),
+        links: block.getNavigation().getItems(block.getMaxDepth()|default(1)),
         utilities: [
             { url: block.getUrl('wishlist'), label: __('My Wish List'), kind: 'wishlist' },
             { url: block.getUrl('catalog/product_compare'), label: __('Compare Products'), kind: 'compare' }
         ],
         label: __('Menu'),
         navLabel: __('Browse'),
+        brand: 'OBSIDIAN',
+        homeUrl: block.getBaseUrl(),
         stores: stores.hasMultiple()
             ? { label: stores.getCurrentLabel(), srLabel: __('Change language'), items: stores.getItems() }
             : null,

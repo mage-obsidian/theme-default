@@ -30,6 +30,9 @@
                    as="primary_nav" template="Magento_Theme::html/header/primary-nav.twig">
                 <arguments>
                     <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
+                    <!-- Levels of menu categories to load; 2 enables subcategory
+                         flyouts. Set to 1 to keep a flat top-level bar. -->
+                    <argument name="max_depth" xsi:type="number">2</argument>
                 </arguments>
             </block>
             <!-- Dedicated MageObsidian Template child so the mobile-menu island can
@@ -38,6 +41,9 @@
                    as="mobile_menu" template="Magento_Theme::html/header/mobile-menu.twig">
                 <arguments>
                     <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
+                    <!-- Nested categories render as an accordion in the drawer;
+                         keep in sync with the desktop bar. Set to 1 for a flat list. -->
+                    <argument name="max_depth" xsi:type="number">2</argument>
                     <!-- Same switcher ViewModels as the desktop islands, so the
                          drawer and the header share one source. -->
                     <argument name="store_switcher" xsi:type="object">MageObsidian\Storefront\ViewModel\StoreSwitcher</argument>
