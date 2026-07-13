@@ -5,7 +5,6 @@
   the nav_list macro. The mobile menu is an eager island (child block).
   `block` is the Magento header-content block.
 #}
-{% from 'Magento_Theme::macros/ui.twig' import nav_list %}
 <div class="sticky top-0 z-30 border-b border-ash-200 bg-alabaster/85 backdrop-blur-md print:hidden">
     <div class="mx-auto flex h-[68px] max-w-[1320px] items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 md:gap-6 md:px-8">
         <div class="flex items-center gap-2">
@@ -15,12 +14,13 @@
                aria-label="{{ __('OBSIDIAN — home')|escape_html_attr }}">OBSIDIAN</a>
         </div>
 
-        <nav class="hidden items-center gap-6 lg:flex xl:gap-8" aria-label="{{ __('Primary')|escape_html_attr }}">
-            {{ nav_list(
-                block.getNavigation().getItems(),
-                'whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink'
-            ) }}
-        </nav>
+        {# Desktop nav is the PrimaryNav island (priority+ "More" overflow). The
+           wrapper is the shrinkable flex child (min-w-0), so a long category list
+           collapses into "More" instead of pushing the page into a horizontal
+           scroll. Below lg the nav lives in the hamburger drawer instead. #}
+        <div class="hidden min-w-0 flex-1 justify-center lg:flex">
+            {{ child_html('primary_nav') }}
+        </div>
 
         <div class="flex items-center gap-3 font-mono text-[0.72rem] uppercase leading-none tracking-[0.12em] text-ink-soft sm:gap-4">
             <div class="hidden items-center gap-4 lg:flex">

@@ -1,0 +1,15 @@
+{#
+  Desktop primary nav island. Same Navigation ViewModel as the mobile drawer and
+  the footer; the island measures the bar and collapses overflow into a "More"
+  disclosure so many top-level categories never overflow the page. Eager: it is
+  above the fold. `block` is a MageObsidian Template child of header-content.
+#}
+{{ render_vue(
+    'MageObsidian_Storefront::navigation/PrimaryNav',
+    {
+        links: block.getNavigation().getItems(),
+        label: __('Primary'),
+        moreLabel: __('More')
+    },
+    true
+) }}

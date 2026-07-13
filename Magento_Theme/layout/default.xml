@@ -23,6 +23,15 @@
                 <!-- Single source of the main nav, shared with the mobile menu. -->
                 <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
             </arguments>
+            <!-- Desktop primary nav island (priority+ "More" overflow). Dedicated
+                 MageObsidian Template child so it can use render_vue; shares the
+                 same Navigation ViewModel as the mobile menu and footer. -->
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.primary_nav"
+                   as="primary_nav" template="Magento_Theme::html/header/primary-nav.twig">
+                <arguments>
+                    <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
+                </arguments>
+            </block>
             <!-- Dedicated MageObsidian Template child so the mobile-menu island can
                  use render_vue; header-content itself stays the generic Theme block. -->
             <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.mobile_menu"
