@@ -5,6 +5,19 @@
   the nav_list macro. The mobile menu is an eager island (child block).
   `block` is the Magento header-content block.
 #}
+{# Slim utility bar (desktop only): announcement slot on the left, store/currency
+   switchers on the right. Not sticky — it scrolls away while the main header below
+   stays pinned. On mobile the switchers live in the drawer, so this is lg-only. #}
+<div class="hidden border-b border-ash-200 bg-ash-100/70 lg:block print:hidden">
+    <div class="mx-auto flex h-9 max-w-[1320px] items-center justify-between gap-4 px-4 font-mono text-[0.66rem] uppercase leading-none tracking-[0.14em] text-ink-soft md:px-8">
+        <p class="truncate">{{ __('Powered by MageObsidian — a modern frontend for Magento') }}</p>
+        <div class="flex items-center gap-4">
+            {{ child_html('switcher_language') }}
+            {{ child_html('switcher_currency') }}
+        </div>
+    </div>
+</div>
+
 <div class="sticky top-0 z-30 border-b border-ash-200 bg-alabaster/85 backdrop-blur-md print:hidden">
     <div class="mx-auto flex h-[68px] max-w-[1320px] items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 md:gap-6 md:px-8">
         <div class="flex items-center gap-2">
@@ -23,10 +36,6 @@
         </div>
 
         <div class="flex items-center gap-3 font-mono text-[0.72rem] uppercase leading-none tracking-[0.12em] text-ink-soft sm:gap-4">
-            <div class="hidden items-center gap-4 lg:flex">
-                {{ child_html('switcher_language') }}
-                {{ child_html('switcher_currency') }}
-            </div>
             {{ child_html('account_menu') }}
             {{ child_html('search') }}
             {# Below lg the desktop nav is collapsed into the hamburger drawer, and
