@@ -9,6 +9,7 @@
 #}
 {% set stores = block.getStoreSwitcher() %}
 {% set currencies = block.getCurrencySwitcher() %}
+{% set placeholder %}<div class="lg:hidden"><span class="-ml-1 inline-flex h-10 w-10 items-center justify-center text-ink-soft [&_svg]:size-6">{{ hero_icon('bars-3', 'outline', '24') }}</span></div>{% endset %}
 {{ render_vue(
     'MageObsidian_Storefront::navigation/MobileMenu',
     {
@@ -28,5 +29,6 @@
             ? { label: currencies.getCurrentLabel(), srLabel: __('Change currency'), items: currencies.getItems() }
             : null
     },
-    true
+    true,
+    placeholder
 ) }}

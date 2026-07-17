@@ -9,6 +9,7 @@
   results URL, so search works with no JS. With JS, the island renders instead.
 #}
 {% set form = block.getSearchForm() %}
+{% set placeholder %}<div class="relative"><span class="inline-flex items-center text-ink-soft [&_svg]:size-5">{{ hero_icon('magnifying-glass', 'outline', '24') }}</span></div>{% endset %}
 {{ render_vue(
     'MageObsidian_Storefront::navigation/SearchAutocomplete',
     {
@@ -27,7 +28,8 @@
             results: __('Search suggestions')
         }
     },
-    true
+    true,
+    placeholder
 ) }}
 <noscript>
     <form action="{{ form.getActionUrl()|escape_url }}" method="get" role="search"
