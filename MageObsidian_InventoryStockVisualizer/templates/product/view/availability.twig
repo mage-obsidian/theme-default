@@ -1,0 +1,4 @@
+{% set panel = block.getPanel() %}
+{% if panel.enabled %}
+    {{ render_vue('MageObsidian_InventoryStockVisualizer::inventory/AvailabilityPanel', { panel: panel }, true) }}
+{% endif %}

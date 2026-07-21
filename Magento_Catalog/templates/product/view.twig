@@ -34,6 +34,10 @@
                 <div class="pdp__price mt-6">{{ view.getPriceHtml()|raw }}</div>
             {% endif %}
 
+            {# Generic buy-box hook: a domain module (stock, delivery estimate…)
+               fills it; empty when no such module is installed. #}
+            {{ child_html('product_info_extra') }}
+
             {% set shortDescription = view.getShortDescriptionHtml() %}
             {% if shortDescription %}
                 <div class="pdp__short prose mt-6 max-w-prose text-ink-soft">{{ shortDescription|raw }}</div>
