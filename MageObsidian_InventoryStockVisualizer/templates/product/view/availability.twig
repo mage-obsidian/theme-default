@@ -1,9 +1,9 @@
 {% set panel = block.getPanel() %}
 {% if panel.enabled %}
-    {% set rows = panel.scope == 'per_source' ? panel.sources|filter(row => row.qty > 0) : [] %}
+    {% set rows = panel.scope == 'per_source' ? panel.sources|filter(row => row.level != 'out') : [] %}
     {% set total = 0 %}
     {% for row in rows %}
-        {% set total = total + (row.qty > 0 ? row.qty : 0) %}
+        {% set total = total + (row.qty ?? 0) %}
     {% endfor %}
 
     {% set placeholder %}
@@ -11,7 +11,7 @@
             <p class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-ash-500">{{ panel.title }}</p>
             <p class="mt-2 flex items-baseline gap-2">
                 {% if panel.displayType != 'level' and panel.kind != 'children' %}
-                    <span class="stockviz__figure font-mono text-2xl leading-none text-ink">{{ panel.qty }}</span>
+                    <span class="stockviz__figure font-mono text-2xl leading-none text-ink">{% if panel.qty is not null %}{{ panel.qty }}{% else %}&nbsp;{% endif %}</span>
                 {% endif %}
                 <span class="text-sm text-ink-soft">{{ panel.statusWord }}</span>
             </p>
@@ -55,7 +55,7 @@
                                 {{ hero_icon('map-pin', 'outline', 24)|raw }}
                                 <span class="truncate">{{ row.name }}</span>
                             </dt>
-                            <dd class="stockviz__figure shrink-0 font-mono text-xs text-ink-soft">{{ row.qty }}</dd>
+                            <dd class="stockviz__figure shrink-0 font-mono text-xs text-ink-soft">{% if row.qty is not null %}{{ row.qty }}{% else %}&nbsp;{% endif %}</dd>
                         </div>
                     {% endfor %}
                 </dl>
