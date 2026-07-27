@@ -14,18 +14,12 @@
             </p>
         </div>
 
-        <nav aria-label="{{ __('Shop')|escape_html_attr }}">
-            <div class="mb-4 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-on-obsidian">{{ __('Shop') }}</div>
-            <ul class="space-y-2 text-sm">
-                {% for item in block.getNavigation().getItems() %}
-                    <li><a href="{{ item.url|escape_url }}" class="transition-colors hover:text-on-obsidian">{{ item.label }}</a></li>
-                {% endfor %}
-            </ul>
-        </nav>
+        {{ child_html('footer_nav') }}
 
         <div>
             <div class="mb-4 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-on-obsidian">{{ __('More') }}</div>
-            {{ block.getChildHtml()|raw }}
+            {# Excluded: the Shop column, already placed above by the grid. #}
+            {{ block.getChildHtmlWithExclusions('', true, ['obsidian.footer_nav'])|raw }}
         </div>
     </div>
 

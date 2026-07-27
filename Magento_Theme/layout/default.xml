@@ -18,16 +18,20 @@
         <referenceBlock name="store_language" remove="true"/>
         <referenceBlock name="currency" remove="true"/>
 
+        <!-- Never rendered by this theme, but its beforeGetIdentities plugin still runs
+             a category collection per page, and its ttl makes Varnish drop those tags
+             for a fragment nobody requests. The islands below carry the tags now. -->
+        <referenceBlock name="catalog.topnav" remove="true"/>
+
         <referenceBlock name="header-content" template="Magento_Theme::html/header.twig">
             <arguments>
                 <!-- Single source of the main nav, shared with the mobile menu. -->
                 <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
             </arguments>
-            <!-- Desktop primary nav island (priority+ "More" overflow). Dedicated
-                 MageObsidian Template child so it can use render_vue; shares the
-                 same Navigation ViewModel as the mobile menu and footer. -->
-            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.primary_nav"
-                   as="primary_nav" template="Magento_Theme::html/header/primary-nav.twig">
+            <!-- Desktop primary nav island (priority+ "More" overflow). ttl pulls it
+                 through ESI under Varnish; inert otherwise. -->
+            <block class="MageObsidian\Storefront\Block\Navigation" name="obsidian.primary_nav"
+                   as="primary_nav" template="Magento_Theme::html/header/primary-nav.twig" ttl="3600">
                 <arguments>
                     <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
                     <!-- Levels of menu categories to load; 2 enables subcategory
@@ -35,10 +39,8 @@
                     <argument name="max_depth" xsi:type="number">2</argument>
                 </arguments>
             </block>
-            <!-- Dedicated MageObsidian Template child so the mobile-menu island can
-                 use render_vue; header-content itself stays the generic Theme block. -->
-            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.mobile_menu"
-                   as="mobile_menu" template="Magento_Theme::html/header/mobile-menu.twig">
+            <block class="MageObsidian\Storefront\Block\Navigation" name="obsidian.mobile_menu"
+                   as="mobile_menu" template="Magento_Theme::html/header/mobile-menu.twig" ttl="3600">
                 <arguments>
                     <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
                     <!-- Nested categories render as an accordion in the drawer;
@@ -50,9 +52,8 @@
                     <argument name="currency_switcher" xsi:type="object">MageObsidian\Storefront\ViewModel\CurrencySwitcher</argument>
                 </arguments>
             </block>
-            <!-- Desktop switcher islands (header.twig hides them on mobile; the
-                 drawer carries them there). MageObsidian Template children so
-                 render_vue is available. -->
+            <!-- Desktop switchers (header.twig hides them on mobile; the drawer
+                 carries them there). -->
             <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.switcher.language"
                    as="switcher_language" template="Magento_Store::switch/languages.twig">
                 <arguments>
@@ -77,6 +78,13 @@
             <arguments>
                 <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
             </arguments>
+            <!-- Its own block, rather than a loop in footer.twig, so it can carry a ttl. -->
+            <block class="MageObsidian\Storefront\Block\Navigation" name="obsidian.footer_nav"
+                   as="footer_nav" template="Magento_Theme::html/footer/nav.twig" ttl="3600">
+                <arguments>
+                    <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
+                </arguments>
+            </block>
         </referenceBlock>
         <!-- copyright is rendered inside footer.twig -->
         <referenceBlock name="copyright" remove="true"/>
