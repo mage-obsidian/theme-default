@@ -1,0 +1,32 @@
+{#
+  Shared store/currency switcher. A native <details> with GET switch links, so
+  it opens, closes, keyboard-navigates and switches with no JS; switch-actions
+  only adds outside-click/Escape and the post-switch cache bust.
+#}
+<script type="module" src="{{ vite_url('MageObsidian_Storefront::js/switch-actions') }}"></script>
+
+<details class="group relative" data-switcher>
+    <summary
+            class="inline-flex cursor-pointer list-none items-center gap-1 font-mono text-[0.72rem] uppercase tracking-[0.12em] text-ink-soft transition-colors hover:text-ink [&::-webkit-details-marker]:hidden"
+            aria-label="{{ (switcher.getCurrentLabel() ? switcher.getCurrentLabel() ~ ' — ' ~ srLabel : srLabel)|escape_html_attr }}"
+    >
+        {{ switcher.getCurrentLabel() }}
+        <span class="transition-transform group-open:rotate-180 [&_svg]:size-3">{{ hero_icon('chevron-down', 'outline', '24') }}</span>
+    </summary>
+
+    <ul
+            aria-label="{{ srLabel|escape_html_attr }}"
+            class="absolute right-0 z-40 mt-2 min-w-[7rem] rounded-edge border border-ash-200 bg-alabaster/95 py-1 shadow-xl backdrop-blur-md"
+    >
+        {% for item in switcher.getItems() %}
+            <li>
+                <a
+                        href="{{ item.url|escape_url }}"
+                        data-switch-link
+                        {% if item.current %}aria-current="true"{% endif %}
+                        class="block px-4 py-2 font-mono text-[0.72rem] uppercase tracking-[0.12em] transition-colors {{ item.current ? 'text-ink' : 'text-ink-soft hover:bg-ash-100 hover:text-ink' }}"
+                >{{ item.label }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</details>
