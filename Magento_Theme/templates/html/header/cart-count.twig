@@ -3,5 +3,5 @@
   block so render_vue is available; mounts eager (above the fold). Reactive via
   the engine's customer-data bridge — updates after add-to-cart without a reload.
 #}
-{% set placeholder %}<span class="relative inline-flex items-center gap-2 [&_svg]:size-5">{{ hero_icon('shopping-bag', 'outline', '24') }}<span class="h-1.5 w-1.5 rounded-full bg-ash-400" aria-hidden="true"></span></span>{% endset %}
+{% set placeholder %}<span class="cart-count relative inline-flex items-center [&_svg]:size-5">{{ hero_icon('shopping-bag', 'outline', '24') }}</span>{% endset %}
 {{ render_vue('MageObsidian_Storefront::cart/CartCount', { label: __('in your bag') }, true, placeholder) }}

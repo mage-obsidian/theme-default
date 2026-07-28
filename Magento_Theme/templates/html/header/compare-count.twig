@@ -1,2 +1,2 @@
-{% set placeholder %}<span class="compare-count relative inline-flex items-center gap-2 [&_svg]:size-5">{{ hero_icon('view-columns', 'outline', '24') }}</span>{% endset %}
+{% set placeholder %}<span class="compare-count relative inline-flex items-center [&_svg]:size-5">{{ hero_icon('view-columns', 'outline', '24') }}</span>{% endset %}
 {{ render_vue('MageObsidian_Storefront::compare/CompareCount', { label: __('in your compare list') }, true, placeholder) }}

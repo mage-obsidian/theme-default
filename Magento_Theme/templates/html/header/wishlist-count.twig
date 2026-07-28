@@ -1,2 +1,2 @@
-{% set placeholder %}<span class="wishlist-count relative inline-flex items-center gap-2 [&_svg]:size-5">{{ hero_icon('heart', 'outline', '24') }}</span>{% endset %}
+{% set placeholder %}<span class="wishlist-count relative inline-flex items-center [&_svg]:size-5">{{ hero_icon('heart', 'outline', '24') }}</span>{% endset %}
 {{ render_vue('MageObsidian_Storefront::wishlist/WishlistCount', { label: __('in your wish list') }, true, placeholder) }}
