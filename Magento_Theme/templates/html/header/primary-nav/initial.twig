@@ -8,7 +8,7 @@
 {%- apply island_list -%}
     {%- for link in links -%}
         {%- apply island_list -%}
-            {%- if not link.children or link.children is empty -%}
+            {%- if link.children is not defined or link.children is empty -%}
                 <a data-nav-item href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %} class="whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink" style="">{{ link.label }}</a>
             {%- else -%}
                 <div data-nav-item class="relative" style="">
@@ -19,10 +19,10 @@
                             {%- for child in link.children -%}
                                 <li>
                                     <a href="{{ child.url }}"{% if child.active %} aria-current="page"{% endif %} class="block whitespace-nowrap px-4 py-2 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ink-soft transition-colors hover:bg-ash-100 hover:text-ink">{{ child.label }}</a>
-                                    {%- apply island_if(child.children is not empty) -%}
+                                    {%- apply island_if(child.children is defined and child.children is not empty) -%}
                                         <ul class="pb-1">
                                         {%- apply island_list -%}
-                                            {%- for grandchild in child.children -%}
+                                            {%- for grandchild in child.children|default([]) -%}
                                                 <li><a href="{{ grandchild.url }}" class="block whitespace-nowrap px-4 py-1.5 pl-7 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ash-500 transition-colors hover:bg-ash-100 hover:text-ink">{{ grandchild.label }}</a></li>
                                             {%- endfor -%}
                                         {%- endapply -%}
