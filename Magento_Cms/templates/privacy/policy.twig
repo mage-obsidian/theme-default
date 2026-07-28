@@ -1,0 +1,57 @@
+{#
+  Privacy notice for the MageObsidian demo. Lives in the theme so it is versioned
+  and translatable, and is pulled into the CMS page by a {{block}} directive —
+  that keeps the native cms_page block in place, so the document title, meta and
+  breadcrumbs still come from the CMS record and a merchant can still replace the
+  page from the admin. Plain semantic HTML on purpose: the prose styles hook onto
+  `.cms-content`, which every CMS page and block is wrapped in.
+#}
+<p>{{ __('This site is a public demo of %1, an open-source frontend stack for Magento 2. It is a working Magento storefront, but it is not a shop: nothing here is for sale, no order is ever fulfilled, and no payment is ever taken.', 'MageObsidian') }}</p>
+
+<p>{{ __('This notice describes what the demo does with data you give it. It is written for this demo. If you are running a real store on MageObsidian, replace this page with your own policy — the framework does not write one for you.') }}</p>
+
+<h2>{{ __('What the demo stores') }}</h2>
+
+<p>{{ __('Everything below is first-party and stays on the server that runs this demo.') }}</p>
+
+<ul>
+    <li>{{ __('A session — Magento issues a session cookie so the cart and any form you submit survive between page loads.') }}</li>
+    <li>{{ __('A form key — a cookie holding a token that protects form submissions against cross-site request forgery.') }}</li>
+    <li>{{ __('Your cart — the products you add, until the session expires or the demo data is reset.') }}</li>
+    <li>{{ __('Your cookie choice — if you accept the cookie banner, a cookie records that so the banner stops asking.') }}</li>
+    <li>{{ __('An account, if you create one — the name, email and addresses you type into the registration form.') }}</li>
+</ul>
+
+<h2>{{ __('What the demo does not do') }}</h2>
+
+<ul>
+    <li>{{ __('No analytics, no session recording, no advertising or social pixels, no fingerprinting.') }}</li>
+    <li>{{ __('No third-party trackers. The pages load only assets served by this site.') }}</li>
+    <li>{{ __('No data is sold, shared or transferred to anyone.') }}</li>
+    <li>{{ __('No marketing email. Nothing you enter here will be used to contact you.') }}</li>
+    <li>{{ __('No payment data is collected, because checkout never reaches a real payment.') }}</li>
+</ul>
+
+<h2>{{ __('Demo data is disposable') }}</h2>
+
+<p>{{ __('The demo database is reset from time to time, without notice. Any account, address or cart you create here can disappear at any moment, and that is by design.') }}</p>
+
+<p>{{ __('Because of that, please treat this site as public and temporary: do not enter real personal data, and never reuse a password you use anywhere else. Use throwaway values — that is what the demo is for.') }}</p>
+
+<h2>{{ __('Cookies') }}</h2>
+
+<p>{{ __("The demo runs with Magento's cookie restriction mode enabled, so the cookies that are not strictly necessary are only set after you accept the banner. The strictly necessary ones — the session and the form key — are set regardless, because the storefront cannot function without them.") }}</p>
+
+<p>{{ __('You can clear them from your browser at any time. Doing so signs you out and empties the cart, and nothing else is lost.') }}</p>
+
+<h2>{{ __('Removing your data') }}</h2>
+
+<p>{{ __("Signing out and clearing your cookies removes your session. If you created an account and want it deleted before the next reset, open an issue on the project's repository and say so — no account details are needed, just the email you used.") }}</p>
+
+<h2>{{ __('Where this runs') }}</h2>
+
+<p>{{ __("The demo is self-hosted on the project's own infrastructure. Server logs record the usual request metadata — IP address, timestamp, user agent — for operating and securing the site, and are rotated regularly.") }}</p>
+
+<h2>{{ __('Questions') }}</h2>
+
+<p>{{ __('MageObsidian is developed in the open and this page is part of it. If something here is unclear or looks wrong, raise it at %1.', '<a href="https://github.com/mage-obsidian" target="_blank" rel="noopener">github.com/mage-obsidian</a>')|raw }}</p>

@@ -174,52 +174,58 @@
   }
 }
 
-/* CMS static-page prose. The CMS Page/Block render filtered HTML straight from
-   _toHtml (no template), so static pages — about-us, customer-service, privacy,
-   enable-cookies, 404 — are styled here by scoping to Magento's body classes.
-   The designed home (body.cms-index-index) is intentionally excluded. */
-.cms-page-view .column.main,
-.cms-noroute-index .column.main {
+/* Merchant-authored CMS prose. The CMS Page/Block render filtered HTML straight
+   from _toHtml (no template), so a WrapAuthoredContent plugin puts every one of
+   them inside `.cms-content` — that is the hook, not a page layout container:
+   this theme's page layouts emit `.content`, not Magento's `.column.main`, so
+   scoping to the latter matched nothing. Typography stays on `.cms-content` so
+   a block embedded in a designed page gets it too; the reading measure and page
+   padding are separate, scoped to whole CMS pages, so an embedded block is not
+   forced into a narrow column. The designed home has empty CMS content and is
+   therefore never wrapped. */
+.cms-page-view .columns > .content,
+.cms-noroute-index .columns > .content {
+  /* A reading measure, aligned to the page gutter rather than centred: the
+     breadcrumb and the <h1> live outside this container, so centring it would
+     leave the heading hanging to the left of its own text. */
   max-width: 76ch;
-  margin-inline: auto;
-  padding: 3rem 1.5rem 5rem;
+  padding: 1rem 0 5rem;
+}
+
+.cms-content {
   font-family: var(--font-body);
   color: var(--color-ink);
   line-height: 1.7;
 }
 
-.cms-page-view .column.main :is(h1, h2, h3),
-.cms-noroute-index .column.main :is(h1, h2, h3) {
+.cms-content :is(h1, h2, h3) {
   font-family: var(--font-display);
   color: var(--color-ink);
   line-height: 1.1;
   margin: 2.5rem 0 1rem;
 }
 
-.cms-page-view .column.main h1,
-.cms-noroute-index .column.main h1 { font-size: var(--text-h2); margin-top: 0; }
-.cms-page-view .column.main h2 { font-size: var(--text-h3); }
-.cms-page-view .column.main h3 { font-size: var(--text-lead); }
+.cms-content h1 { font-size: var(--text-h2); margin-top: 0; }
+.cms-content h2 { font-size: var(--text-h3); }
+.cms-content h3 { font-size: var(--text-lead); }
 
-.cms-page-view .column.main p,
-.cms-noroute-index .column.main p { margin: 1rem 0; }
+.cms-content p { margin: 1rem 0; }
 
-.cms-page-view .column.main :is(ul, ol) { margin: 1rem 0; padding-left: 1.5rem; }
-.cms-page-view .column.main ul { list-style: disc; }
-.cms-page-view .column.main ol { list-style: decimal; }
-.cms-page-view .column.main li { margin: 0.35rem 0; }
+.cms-content :is(ul, ol) { margin: 1rem 0; padding-left: 1.5rem; }
+.cms-content ul { list-style: disc; }
+.cms-content ol { list-style: decimal; }
+.cms-content li { margin: 0.35rem 0; }
 
-.cms-page-view .column.main a,
-.cms-noroute-index .column.main a {
+.cms-content a {
   color: var(--color-accent);
   text-underline-offset: 0.2em;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   transition: color 0.2s var(--ease-obsidian);
 }
-.cms-page-view .column.main a:hover { color: var(--color-ink); }
+.cms-content a:hover { color: var(--color-ink); }
 
-.cms-page-view .column.main blockquote {
+.cms-content blockquote {
   margin: 1.5rem 0;
   padding-left: 1.25rem;
   border-left: 2px solid var(--color-accent);
@@ -227,7 +233,7 @@
   font-style: italic;
 }
 
-.cms-page-view .column.main :is(img, table) { max-width: 100%; height: auto; }
+.cms-content :is(img, table) { max-width: 100%; height: auto; }
 
 /* ── Catalog: product card media. Magento's native <img> (anti-CLS width/height
    + lazy); we cover-fit it and add the hover scale here since the helper image()
