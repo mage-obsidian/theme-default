@@ -38,7 +38,7 @@
         {%- endapply -%}
     {%- endfor -%}
 {%- endapply -%}
-        <div class="relative" style="">
+        <div class="invisible absolute" style="">
         <button type="button" class="inline-flex items-center gap-1 whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink" aria-haspopup="true" aria-controls="" aria-expanded="false" data-allow-mismatch="attribute">{{ moreLabel }} {{ icon.chevron('h-3.5 w-3.5')|trim|raw }}</button>
         {%- apply island_if(false) -%}{%- endapply -%}
     </div>
