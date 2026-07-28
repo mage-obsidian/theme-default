@@ -1,0 +1,10 @@
+{#
+  Scopes the cross-document view transitions this theme opts into
+  (@view-transition in theme.source.css) to catalog-internal navigations. Without
+  it every navigation crossfades the whole viewport, and leaving a light listing
+  for the dark home blends the two snapshots into a grey wash.
+
+  A module script is late enough for `pageswap` (it fires on user navigation) and
+  avoids the parser-blocking script in the head that `pagereveal` would demand.
+#}
+<script type="module" src="{{ vite_url('MageObsidian_Storefront::js/viewTransitions') }}"></script>

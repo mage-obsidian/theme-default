@@ -388,8 +388,45 @@
 /* ── View animations (front enhancement) ── */
 
 /* Smooth cross-document navigation crossfade (category ↔ PDP, pagination, sort).
-   Per-element morphs (card image → PDP hero) arrive with the PDP. */
+   `navigation: auto` cannot express "only these navigations", so js/viewTransitions
+   skips the rest from pageswap — a full-viewport crossfade between pages of
+   opposite luminance (a light listing and the dark home) washes out to grey while
+   both snapshots are alive. */
 @view-transition { navigation: auto; }
+
+/* The chrome is identical on both sides of every animated navigation, so it is
+   pulled out of the root snapshot and held still: only the content well moves.
+   Skipping the crossfade means showing the incoming snapshot alone — a fade
+   between two identical images still dips through a blend. */
+.header_container { view-transition-name: obsidian-header; }
+#page_bottom_container { view-transition-name: obsidian-footer; }
+
+::view-transition-group(obsidian-header),
+::view-transition-group(obsidian-footer) {
+  animation: none;
+}
+::view-transition-image-pair(obsidian-header),
+::view-transition-image-pair(obsidian-footer) {
+  isolation: auto;
+}
+::view-transition-old(obsidian-header),
+::view-transition-old(obsidian-footer) {
+  display: none;
+}
+::view-transition-new(obsidian-header),
+::view-transition-new(obsidian-footer) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+}
+::view-transition-group(pdp-hero) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
 
 /* Subtle scroll-driven entrance for cards. Guarded by @supports and
    no-preference so unsupported browsers and reduced-motion users see static
