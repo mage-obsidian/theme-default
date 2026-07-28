@@ -398,7 +398,15 @@
    pulled out of the root snapshot and held still: only the content well moves.
    Skipping the crossfade means showing the incoming snapshot alone — a fade
    between two identical images still dips through a blend. */
-.header_container { view-transition-name: obsidian-header; }
+/* A view-transition-name turns the element into a stacking context, which traps
+   the sticky bar's z-index inside the header: without a z-index of its own the
+   header paints at its place in flow and the content below covers the mega-menu
+   flyouts. The footer needs no counterpart — it already paints after the well. */
+.header_container {
+  view-transition-name: obsidian-header;
+  position: relative;
+  z-index: 40;
+}
 #page_bottom_container { view-transition-name: obsidian-footer; }
 
 ::view-transition-group(obsidian-header),
