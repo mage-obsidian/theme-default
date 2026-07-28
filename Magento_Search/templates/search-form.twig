@@ -9,7 +9,16 @@
   results URL, so search works with no JS. With JS, the island renders instead.
 #}
 {% set form = block.getSearchForm() %}
-{% set placeholder %}<div class="relative"><span class="inline-flex items-center text-ink-soft [&_svg]:size-5">{{ hero_icon('magnifying-glass', 'outline', '24') }}</span></div>{% endset %}
+{% set labels = {
+    search: __('Search'),
+    placeholder: __('Search the store'),
+    submit: __('Search'),
+    close: __('Close search'),
+    results: __('Search suggestions')
+} %}
+{% set serverHtml %}
+    {% include 'Magento_Search::search-form/initial.twig' with { block: block, labels: labels } only %}
+{% endset %}
 {{ render_vue(
     'MageObsidian_Storefront::navigation/SearchAutocomplete',
     {
@@ -20,16 +29,11 @@
         minLength: form.getMinQueryLength(),
         maxLength: form.getMaxQueryLength(),
         suggestionsEnabled: form.isSuggestionsAllowed(),
-        labels: {
-            search: __('Search'),
-            placeholder: __('Search the store'),
-            submit: __('Search'),
-            close: __('Close search'),
-            results: __('Search suggestions')
-        }
+        labels: labels
     },
     true,
-    placeholder
+    serverHtml,
+    true
 ) }}
 <noscript>
     <form action="{{ form.getActionUrl()|escape_url }}" method="get" role="search"

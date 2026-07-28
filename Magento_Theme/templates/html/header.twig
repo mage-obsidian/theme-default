@@ -31,7 +31,7 @@
            wrapper is the shrinkable flex child (min-w-0), so a long category list
            collapses into "More" instead of pushing the page into a horizontal
            scroll. Below lg the nav lives in the hamburger drawer instead. #}
-        <div class="hidden min-w-0 flex-1 justify-center lg:flex">
+        <div class="hidden min-w-0 flex-1 justify-center lg:flex [&>[data-mage-island]]:min-w-0">
             {{ child_html('primary_nav') }}
         </div>
 

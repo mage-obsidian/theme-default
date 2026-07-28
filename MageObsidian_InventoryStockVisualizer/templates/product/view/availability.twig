@@ -1,67 +1,14 @@
 {% set panel = block.getPanel() %}
 {% if panel.enabled %}
-    {% set rows = panel.scope == 'per_source' ? panel.sources|filter(row => row.level != 'out') : [] %}
-    {% set total = 0 %}
-    {% for row in rows %}
-        {% set total = total + (row.qty ?? 0) %}
-    {% endfor %}
-
-    {% set placeholder %}
-        <section class="stockviz mt-6 max-w-sm border-y border-ash-200 py-4" data-level="{{ panel.level }}">
-            <p class="font-mono text-[0.66rem] uppercase tracking-[0.2em] text-ash-500">{{ panel.title }}</p>
-            <p class="mt-2 flex items-baseline gap-2">
-                {% if panel.displayType != 'level' and panel.kind != 'children' %}
-                    <span class="stockviz__figure font-mono text-2xl leading-none text-ink">{% if panel.qty is not null %}{{ panel.qty }}{% else %}&nbsp;{% endif %}</span>
-                {% endif %}
-                <span class="text-sm text-ink-soft">{{ panel.statusWord }}</span>
-            </p>
-            {% if panel.kind != 'children' %}
-            <div class="stockviz__rail mt-3 flex h-1.5 w-full overflow-hidden rounded-full bg-ash-200">
-                {% if rows|length > 1 and total > 0 %}
-                    {% for row in rows %}
-                        <span class="stockviz__seg h-full {{ loop.index0 % 2 == 0 ? 'stockviz__seg--a' : 'stockviz__seg--b' }}"
-                              style="width: {{ (row.qty > 0 ? (row.qty / total * 100)|round : 0) }}%"></span>
-                    {% endfor %}
-                {% else %}
-                    <span class="stockviz__seg stockviz__seg--a block h-full" style="width: {{ panel.fill }}%"></span>
-                {% endif %}
-            </div>
-            {% endif %}
-
-            {% if panel.sets is not null %}
-                <p class="mt-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ash-500">
-                    {{ panel.sets > 0 ? panel.setsTemplate|replace({'%1': panel.sets}) : panel.noSetsText }}
-                </p>
-            {% endif %}
-
-            {% if panel.children|length %}
-                <dl class="mt-3 space-y-1.5">
-                    {% for child in panel.children %}
-                        <div class="flex items-baseline justify-between gap-4">
-                            <dt class="truncate font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ash-500">
-                                {{ child.label }}
-                            </dt>
-                            <dd class="stockviz__figure shrink-0 font-mono text-xs text-ink-soft">{{ child.qty }}</dd>
-                        </div>
-                    {% endfor %}
-                </dl>
-            {% endif %}
-
-            {% if rows|length > 1 %}
-                <dl class="mt-3 space-y-1.5">
-                    {% for row in rows %}
-                        <div class="flex items-baseline justify-between gap-4">
-                            <dt class="flex min-w-0 items-center gap-1.5 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ash-500">
-                                {{ hero_icon('map-pin', 'outline', 24)|raw }}
-                                <span class="truncate">{{ row.name }}</span>
-                            </dt>
-                            <dd class="stockviz__figure shrink-0 font-mono text-xs text-ink-soft">{% if row.qty is not null %}{{ row.qty }}{% else %}&nbsp;{% endif %}</dd>
-                        </div>
-                    {% endfor %}
-                </dl>
-            {% endif %}
-        </section>
+    {% set serverHtml %}
+        {% include 'MageObsidian_InventoryStockVisualizer::product/view/availability/initial.twig' with { block: block, panel: panel } only %}
     {% endset %}
 
-    {{ render_vue('MageObsidian_InventoryStockVisualizer::inventory/AvailabilityPanel', { panel: panel }, true, placeholder) }}
+    {{ render_vue(
+        'MageObsidian_InventoryStockVisualizer::inventory/AvailabilityPanel',
+        { panel: panel },
+        true,
+        serverHtml,
+        true
+    ) }}
 {% endif %}

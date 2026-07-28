@@ -1,0 +1,45 @@
+<form class="pdp__configurable" novalidate>
+    <div class="pdp__price mb-6 flex items-baseline gap-3" aria-live="polite">
+        <span class="pdp__price-final font-mono text-2xl{{ oldPrice ? ' text-sale' : ' text-ink' }}">{{ price }}</span>
+        {% apply island_if(oldPrice) %}<span class="pdp__price-regular font-mono text-base text-ink-soft line-through">{{ oldPrice }}</span>{% endapply %}
+    </div>
+
+    {% apply island_list %}
+        {% for group in groups %}
+            <fieldset class="pdp__swatch-group mb-6 border-0 p-0">
+                <legend class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ group.label }}</legend>
+                <div class="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="{{ __('Choose %1', group.label) }}">
+                    {% apply island_list %}
+                        {% for option in group.options %}
+                            <button type="button" role="radio"
+                                    data-option-id="{{ option.id }}"
+                                    aria-checked="false"
+                                    aria-label="{{ option.label }}"
+                                    {%- if not option.available %} disabled{% endif %}
+                                    tabindex="{{ loop.first ? '0' : '-1' }}"
+                                    class="pdp__swatch{% if not option.available %} pdp__swatch--unavailable{% endif %}{% if option.kind == 'text' %} pdp__swatch--text{% endif %}">
+                                {%- if option.kind == 'color' -%}
+                                    <span class="pdp__swatch-chip" style="background-color:{{ option.value }};" aria-hidden="true"></span>
+                                {%- elseif option.kind == 'image' -%}
+                                    <span class="pdp__swatch-chip" style="background-image:url({{ option.value }});" aria-hidden="true"></span>
+                                {%- else -%}
+                                    <span>{{ option.label }}</span>
+                                {%- endif -%}
+                            </button>
+                        {% endfor %}
+                    {% endapply %}
+                </div>
+            </fieldset>
+        {% endfor %}
+    {% endapply %}
+
+    <div class="pdp__buy-row flex flex-wrap items-end gap-4">
+        <div class="pdp__qty">
+            <label for="pdp-cfg-qty" class="block font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ labels.qty }}</label>
+            <input id="pdp-cfg-qty" value="{{ qty }}" type="number" inputmode="numeric" min="1" step="1"
+                   class="mt-2 w-20 rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 text-center font-mono text-sm text-ink focus:border-ink focus:outline-none">
+        </div>
+        <button type="submit" aria-disabled="true" aria-busy="false"
+                class="inline-flex flex-1 items-center justify-center rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink disabled:opacity-60">{{ labels.selectOptions }}</button>
+    </div>
+</form>

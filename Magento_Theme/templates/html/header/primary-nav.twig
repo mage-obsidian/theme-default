@@ -4,12 +4,26 @@
   disclosure so many top-level categories never overflow the page. Eager: it is
   above the fold. `block` is a MageObsidian Template child of header-content.
 #}
+{% set links = block.getNavigation().getItems(block.getMaxDepth()|default(1)) %}
+{% set label = __('Primary') %}
+{% set moreLabel = __('More') %}
+
+{% set serverHtml %}
+    {% include 'Magento_Theme::html/header/primary-nav/initial.twig' with {
+        links: links,
+        label: label,
+        moreLabel: moreLabel
+    } only %}
+{% endset %}
+
 {{ render_vue(
     'MageObsidian_Storefront::navigation/PrimaryNav',
     {
-        links: block.getNavigation().getItems(block.getMaxDepth()|default(1)),
-        label: __('Primary'),
-        moreLabel: __('More')
+        links: links,
+        label: label,
+        moreLabel: moreLabel
     },
+    true,
+    serverHtml,
     true
 ) }}

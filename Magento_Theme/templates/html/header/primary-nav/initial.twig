@@ -1,0 +1,45 @@
+{% macro chevron(size) %}
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="{{ size }} transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"></path></svg>
+{% endmacro %}
+
+{% import _self as icon %}
+
+<nav class="flex min-w-0 items-center gap-6 overflow-y-visible xl:gap-8 overflow-x-clip" aria-label="{{ label }}">
+{%- apply island_list -%}
+    {%- for link in links -%}
+        {%- apply island_list -%}
+            {%- if not link.children or link.children is empty -%}
+                <a data-nav-item href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %} class="whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink" style="">{{ link.label }}</a>
+            {%- else -%}
+                <div data-nav-item class="relative" style="">
+                    <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %} aria-haspopup="true" aria-expanded="false" class="inline-flex items-center gap-1 whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink">{{ link.label }} {{ icon.chevron('h-3 w-3')|trim|raw }}</a>
+                    <div class="absolute left-0 top-full z-40 pt-3" style="display:none;">
+                        <ul aria-label="{{ link.label }}" class="min-w-[12rem] rounded-edge border border-ash-200 bg-alabaster/95 py-1 shadow-xl backdrop-blur-md">
+                        {%- apply island_list -%}
+                            {%- for child in link.children -%}
+                                <li>
+                                    <a href="{{ child.url }}"{% if child.active %} aria-current="page"{% endif %} class="block whitespace-nowrap px-4 py-2 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ink-soft transition-colors hover:bg-ash-100 hover:text-ink">{{ child.label }}</a>
+                                    {%- apply island_if(child.children is not empty) -%}
+                                        <ul class="pb-1">
+                                        {%- apply island_list -%}
+                                            {%- for grandchild in child.children -%}
+                                                <li><a href="{{ grandchild.url }}" class="block whitespace-nowrap px-4 py-1.5 pl-7 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ash-500 transition-colors hover:bg-ash-100 hover:text-ink">{{ grandchild.label }}</a></li>
+                                            {%- endfor -%}
+                                        {%- endapply -%}
+                                        </ul>
+                                    {%- endapply -%}
+                                </li>
+                            {%- endfor -%}
+                        {%- endapply -%}
+                        </ul>
+                    </div>
+                </div>
+            {%- endif -%}
+        {%- endapply -%}
+    {%- endfor -%}
+{%- endapply -%}
+        <div class="relative" style="">
+        <button type="button" class="inline-flex items-center gap-1 whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink" aria-haspopup="true" aria-controls="" aria-expanded="false" data-allow-mismatch="attribute">{{ moreLabel }} {{ icon.chevron('h-3.5 w-3.5')|trim|raw }}</button>
+        {%- apply island_if(false) -%}{%- endapply -%}
+    </div>
+</nav>

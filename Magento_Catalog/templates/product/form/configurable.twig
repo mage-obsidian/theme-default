@@ -23,6 +23,28 @@
     } %}
 {% endif %}
 
+{% set labels = {
+    chooseFor: __('Choose %1'),
+    addToCart: view.getSubmitLabel(),
+    qty: __('Qty'),
+    selectOptions: __('Select the options above'),
+    unavailable: __('This combination is unavailable'),
+    added: __('Added to cart'),
+    failed: __('Could not add to cart')
+} %}
+
+{% set serverHtml %}
+    {% if view.getPreconfiguredSuperAttribute() is empty %}
+        {% include 'Magento_Catalog::product/form/configurable/initial.twig' with {
+            groups: view.getSwatchGroups(cfg.getJsonConfig(), cfg.getJsonSwatchConfig()),
+            price: view.formatPrice(view.getFinalPrice()),
+            oldPrice: null,
+            qty: 1,
+            labels: labels
+        } only %}
+    {% endif %}
+{% endset %}
+
 {{ render_vue('MageObsidian_Catalog::catalog/ProductForm', {
     config: cfg.getJsonConfig(),
     swatches: cfg.getJsonSwatchConfig(),
@@ -33,16 +55,8 @@
     initialPriceAmount: view.getFinalPrice(),
     preconfigured: view.getPreconfiguredSuperAttribute(),
     initialQty: view.getPreconfiguredQty(),
-    labels: {
-        chooseFor: __('Choose %1'),
-        addToCart: view.getSubmitLabel(),
-        qty: __('Qty'),
-        selectOptions: __('Select the options above'),
-        unavailable: __('This combination is unavailable'),
-        added: __('Added to cart'),
-        failed: __('Could not add to cart')
-    }
-}, true) }}
+    labels: labels
+}, true, serverHtml, true) }}
 <noscript>
     <p class="pdp__noscript mt-2 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-ink-soft">
         {{ __('Enable JavaScript to choose options and add this product to your cart.') }}
