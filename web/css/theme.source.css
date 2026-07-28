@@ -192,48 +192,55 @@
   padding: 1rem 0 5rem;
 }
 
-.cms-content {
-  font-family: var(--font-body);
-  color: var(--color-ink);
-  line-height: 1.7;
+/* In `base` on purpose. Tailwind declares the order `theme, base, components,
+   utilities`, so anything here loses to a utility no matter how specific it is.
+   Unlayered, `.cms-content h2` would beat a `text-2xl` written in the CMS or set
+   by a Vue island rendered inside the content — the class would be in the bundle
+   and still not apply. */
+@layer base {
+  .cms-content {
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    line-height: 1.7;
+  }
+
+  .cms-content :is(h1, h2, h3) {
+    font-family: var(--font-display);
+    color: var(--color-ink);
+    line-height: 1.1;
+    margin: 2.5rem 0 1rem;
+  }
+
+  .cms-content h1 { font-size: var(--text-h2); margin-top: 0; }
+  .cms-content h2 { font-size: var(--text-h3); }
+  .cms-content h3 { font-size: var(--text-lead); }
+
+  .cms-content p { margin: 1rem 0; }
+
+  .cms-content :is(ul, ol) { margin: 1rem 0; padding-left: 1.5rem; }
+  .cms-content ul { list-style: disc; }
+  .cms-content ol { list-style: decimal; }
+  .cms-content li { margin: 0.35rem 0; }
+
+  .cms-content a {
+    color: var(--color-accent);
+    text-underline-offset: 0.2em;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    transition: color 0.2s var(--ease-obsidian);
+  }
+  .cms-content a:hover { color: var(--color-ink); }
+
+  .cms-content blockquote {
+    margin: 1.5rem 0;
+    padding-left: 1.25rem;
+    border-left: 2px solid var(--color-accent);
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+
+  .cms-content :is(img, table) { max-width: 100%; height: auto; }
 }
-
-.cms-content :is(h1, h2, h3) {
-  font-family: var(--font-display);
-  color: var(--color-ink);
-  line-height: 1.1;
-  margin: 2.5rem 0 1rem;
-}
-
-.cms-content h1 { font-size: var(--text-h2); margin-top: 0; }
-.cms-content h2 { font-size: var(--text-h3); }
-.cms-content h3 { font-size: var(--text-lead); }
-
-.cms-content p { margin: 1rem 0; }
-
-.cms-content :is(ul, ol) { margin: 1rem 0; padding-left: 1.5rem; }
-.cms-content ul { list-style: disc; }
-.cms-content ol { list-style: decimal; }
-.cms-content li { margin: 0.35rem 0; }
-
-.cms-content a {
-  color: var(--color-accent);
-  text-underline-offset: 0.2em;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  transition: color 0.2s var(--ease-obsidian);
-}
-.cms-content a:hover { color: var(--color-ink); }
-
-.cms-content blockquote {
-  margin: 1.5rem 0;
-  padding-left: 1.25rem;
-  border-left: 2px solid var(--color-accent);
-  color: var(--color-ink-soft);
-  font-style: italic;
-}
-
-.cms-content :is(img, table) { max-width: 100%; height: auto; }
 
 /* ── Catalog: product card media. Magento's native <img> (anti-CLS width/height
    + lazy); we cover-fit it and add the hover scale here since the helper image()
