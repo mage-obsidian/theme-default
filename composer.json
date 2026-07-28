@@ -6,7 +6,7 @@
         "MIT"
     ],
     "require": {
-        "mage-obsidian/theme-base": "^3.1"
+        "mage-obsidian/theme-base": "^3.2"
     },
     "autoload": {
         "files": [
