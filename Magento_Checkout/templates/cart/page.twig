@@ -7,7 +7,8 @@
   "Estimate Shipping and Tax" panel is a Vue island rendered outside the morphed
   region so a qty refresh never destroys it (same as gift options).
 #}
-{% set items = block.getCartItems().getItems() %}
+{% set cartItems = block.getCartItems() %}
+{% set items = cartItems.getItems() %}
 {% set wishlist = block.getWishlist() %}
 {% set giftOptions = block.getGiftOptions() %}
 {% set checkoutConfig = block.getCheckoutConfig().getConfig() %}
@@ -105,8 +106,8 @@
                 </ul>
 
                 <div class="mt-6 flex items-center justify-between gap-4">
-                    <a href="{{ block.getUrl('')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.16em] text-ink-soft transition-colors hover:text-ink">{{ __('Continue shopping') }}</a>
-                    {# No-JS quantity update; cart-page.js makes the steppers live. #}
+                    <a href="{{ cartItems.getContinueShoppingUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.16em] text-ink-soft transition-colors hover:text-ink">{{ __('Continue shopping') }}</a>
+                    {# No-JS quantity update; cart-page.js makes the steppers live and hides this. #}
                     <button type="submit" class="rounded-edge border border-ash-300 px-4 py-2 font-mono text-xs uppercase tracking-[0.16em] text-ink-soft transition-colors hover:border-ink hover:text-ink" data-cart-update>{{ __('Update bag') }}</button>
                 </div>
             </form>
