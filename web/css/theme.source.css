@@ -92,8 +92,11 @@
 @layer base {
   /* The scrollbar appearing shifts every centered container by half its width,
      so a page that grows past the viewport nudges the whole header sideways. */
+  /* Without this the canvas is the UA's white: every render gap between two
+     documents, and every overscroll, flashes #fff instead of the surface. */
   html {
     scrollbar-gutter: stable;
+    background: var(--color-alabaster);
   }
 
   :where(button, [role="button"]):not(:disabled, [aria-disabled="true"]) {
