@@ -30,14 +30,14 @@
                                            id="ship-{{ index }}-{{ item.getQuoteItemId() }}-qty"
                                            name="ship[{{ index }}][{{ item.getQuoteItemId() }}][qty]"
                                            value="{{ item.getQty() }}"
-                                           class="h-10 w-16 rounded-edge border border-ash-300 bg-transparent px-2 text-center font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                                           class="field__control w-16 px-2 text-center font-mono">
                                 </td>
                                 <td class="px-4 py-4 align-top">
                                     {% if item.getProduct().getIsVirtual() %}
                                         <span class="text-ink-soft">{{ __('A shipping selection is not applicable.') }}</span>
                                     {% else %}
                                         <label class="sr-only" for="ship_{{ index }}_{{ item.getQuoteItemId() }}_address">{{ __('Send To') }}</label>
-                                        <div class="[&_select]:h-10 [&_select]:rounded-edge [&_select]:border [&_select]:border-ash-300 [&_select]:bg-transparent [&_select]:px-2 [&_select]:text-sm [&_select]:text-ink">
+                                        <div class="field-slot">
                                             {{ block.getAddressesHtmlSelect(item, index)|raw }}
                                         </div>
                                     {% endif %}

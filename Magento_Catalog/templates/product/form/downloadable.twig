@@ -22,10 +22,10 @@
                 {{ links.getLinksTitle() }}{% if required and separately %} <span class="text-sale">*</span>{% endif %}
             </legend>
             {% for link in links.getLinks() %}
-                <label class="pdp__link flex items-center gap-3 text-sm text-ink">
+                <label class="pdp__link field-check text-sm text-ink">
                     {% if separately %}
                         <input type="checkbox" name="links[]" value="{{ link.getId() }}" {{ links.getLinkCheckedValue(link) }}
-                               class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
+                               class="field-check__input">
                     {% endif %}
                     <span class="flex-1">{{ link.getTitle() }}</span>
                     {% if separately %}
@@ -45,7 +45,7 @@
         <div class="pdp__qty">
             <label for="pdp-qty" class="block font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Qty') }}</label>
             <input id="pdp-qty" name="qty" type="number" inputmode="numeric" min="1" step="1" value="1"
-                   class="mt-2 w-20 rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 text-center font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                   class="field__control mt-2 w-20 text-center font-mono">
         </div>
 
         <button type="submit"
