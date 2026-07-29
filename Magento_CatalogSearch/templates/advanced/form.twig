@@ -14,8 +14,6 @@
             {% set code = attribute.getAttributeCode() %}
             {% set type = block.getAttributeInputType(attribute) %}
             {% if type == 'number' or type == 'price' or type == 'date' %}
-                {# A range is two controls under one label, which the macro cannot
-                   express; the classes are the macro's own. #}
                 {% set numeric = type != 'date' %}
                 <div class="field">
                     <label for="adv-{{ code }}" class="field__label">{{ __(block.getAttributeLabel(attribute)) }}</label>

@@ -1,24 +1,4 @@
-{#
-  Form field primitives. The markup here and in module-storefront's Field.vue must
-  stay identical: a server-rendered form and a hydrating island have to agree.
-  Styling lives in `.field*` (module-storefront/css/module.extend.css), never in
-  utility classes repeated per template.
-
-  field({
-    name:         'login[username]'   required
-    label:        'Email'
-    id:           'login-email'       defaults to a slug of `name`
-    type:         'email'             text | email | password | tel | number | textarea | select
-    value:        ''
-    required:     true                paints the asterisk AND sets required/aria-required
-    autocomplete: 'email'
-    hint:         'We never share it.'
-    error:        'Already taken.'    server-side message; the enhancer fills the
-                                      same node client-side
-    options:      [{value, label}]    select only
-    attrs:        { minlength: 8 }    anything else, escaped
-  })
-#}
+{# The markup here and Field.vue must stay identical or hydration breaks. #}
 
 {% macro field(config) %}
     {% set name = config.name %}
@@ -78,23 +58,11 @@
             <p class="field__hint" id="{{ id }}-hint">{{ config.hint }}</p>
         {% endif %}
 
-        {# Always rendered, empty when there is nothing to say: the enhancer fills
-           this node instead of injecting one, so the message cannot appear before
-           its styles do and `aria-describedby` never points at nothing. #}
+        {# Rendered even when empty: the enhancer fills it instead of injecting one. #}
         <p class="field__error" id="{{ id }}-error" role="alert">{{ config.error|default('') }}</p>
     </div>
 {% endmacro %}
 
-{#
-  checkbox({
-    name:     'is_subscribed'   required
-    label:    'Sign me up'
-    id:       'subscription'    defaults to a slug of `name`
-    value:    '1'
-    checked:  true
-    attrs:    { 'data-x': '' }
-  })
-#}
 {% macro checkbox(config) %}
     {% set name = config.name %}
     {% set id = config.id ?? ('field-' ~ name|replace({'[': '-', ']': '', '_': '-', '.': '-'})|trim('-')) %}
