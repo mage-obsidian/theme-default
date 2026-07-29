@@ -94,7 +94,6 @@
      so a page that grows past the viewport nudges the whole header sideways. */
   html {
     scrollbar-gutter: stable;
-    background: var(--color-alabaster);
   }
 
   :where(button, [role="button"]):not(:disabled, [aria-disabled="true"]) {
