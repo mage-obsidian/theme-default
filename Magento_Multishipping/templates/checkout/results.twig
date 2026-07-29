@@ -28,7 +28,7 @@
     {% endif %}
 
     <h2 id="failed" class="mt-10 font-mono text-xs uppercase tracking-[0.14em] text-sale">{{ __('Failed to Order') }}</h2>
-    <p class="mt-3 rounded-edge border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+    <p class="form-banner mt-3">
         {{ __('To purchase these items: Return to the') }}
         <a href="{{ block.getUrl('multishipping/checkout/overview')|escape_url }}" class="underline underline-offset-4">{{ __('Review page in Checkout') }}</a>,
         {{ __('resolve any errors, and place a new order.') }}
