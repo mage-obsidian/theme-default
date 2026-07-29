@@ -92,8 +92,6 @@
 @layer base {
   /* The scrollbar appearing shifts every centered container by half its width,
      so a page that grows past the viewport nudges the whole header sideways. */
-  /* Without this the canvas is the UA's white: every render gap between two
-     documents, and every overscroll, flashes #fff instead of the surface. */
   html {
     scrollbar-gutter: stable;
     background: var(--color-alabaster);
@@ -420,8 +418,6 @@
   z-index: 40;
 }
 #page_bottom_container { view-transition-name: obsidian-footer; }
-/* Sits above the header and outside it, so without a name of its own it stays in
-   the root snapshot and cross-fades against frozen chrome — one flickering frame. */
 .message.global.demo { view-transition-name: obsidian-notice; }
 
 /* Subtle scroll-driven entrance for cards. Guarded by @supports and

@@ -10,9 +10,6 @@
 ::view-transition-new(obsidian-header),
 ::view-transition-new(obsidian-footer) { animation: none; mix-blend-mode: normal; }
 
-/* Held opaque rather than hidden like the header: the incoming bar has not
-   painted yet on the first frames, and a hidden old image uncovers the hole it
-   left in the root snapshot. */
 ::view-transition-old(obsidian-notice) { animation: none; opacity: 1; mix-blend-mode: normal; }
 ::view-transition-new(obsidian-notice) { animation: none; mix-blend-mode: normal; }
 
@@ -20,10 +17,6 @@
 ::view-transition-old(root) { animation: none; opacity: 1; mix-blend-mode: normal; }
 ::view-transition-new(root) { animation: 220ms both obsidian-vt-fade-in; mix-blend-mode: normal; }
 
-/* An element that persists across the navigation is lifted out of both root
-   snapshots, so fading its old and new images against each other exposes the
-   hole underneath. Hold the old one opaque and fade the new in over it; the
-   :only-child pairs, where the element just leaves or arrives, keep a real fade. */
 ::view-transition-group(pdp-hero) {
     animation-duration: 320ms;
     animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
