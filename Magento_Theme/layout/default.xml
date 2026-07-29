@@ -35,6 +35,7 @@
                    as="primary_nav" template="Magento_Theme::html/header/primary-nav.twig" ttl="3600">
                 <arguments>
                     <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
+                    <argument name="overflow" xsi:type="object">MageObsidian\Storefront\ViewModel\NavOverflow</argument>
                     <!-- Levels of menu categories to load; 2 enables subcategory
                          flyouts. Set to 1 to keep a flat top-level bar. -->
                     <argument name="max_depth" xsi:type="number">2</argument>

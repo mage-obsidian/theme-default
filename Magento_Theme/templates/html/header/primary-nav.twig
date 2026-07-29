@@ -1,12 +1,16 @@
-{#
-  Desktop primary nav island. Same Navigation ViewModel as the mobile drawer and
-  the footer; the island measures the bar and collapses overflow into a "More"
-  disclosure so many top-level categories never overflow the page. Eager: it is
-  above the fold. `block` is a MageObsidian Template child of header-content.
-#}
 {% set links = block.getNavigation().getItems(block.getMaxDepth()|default(1)) %}
 {% set label = __('Primary') %}
 {% set moreLabel = __('More') %}
+
+<style>{{ block.getOverflow().getStyle(links, {
+    container: 'obsidian-nav',
+    tracking: 0.18,
+    chevron: 16,
+    moreLabel: moreLabel,
+    moreExtra: 18,
+    uppercase: true,
+    gaps: [{ gap: 24 }, { from: 1280, gap: 32 }]
+})|raw }}</style>
 
 {% set serverHtml %}
     {% include 'Magento_Theme::html/header/primary-nav/initial.twig' with {

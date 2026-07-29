@@ -4,14 +4,14 @@
 
 {% import _self as icon %}
 
-<nav class="flex min-w-0 items-center gap-6 overflow-y-visible xl:gap-8 overflow-x-clip" aria-label="{{ label }}">
+<nav class="flex min-w-0 items-center gap-6 xl:gap-8" aria-label="{{ label }}">
 {%- apply island_list -%}
     {%- for link in links -%}
         {%- apply island_list -%}
             {%- if link.children is not defined or link.children is empty -%}
-                <a data-nav-item href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %} class="whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink" style="">{{ link.label }}</a>
+                <a data-nav-item data-nav-index="{{ loop.index0 }}" href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %} class="whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink">{{ link.label }}</a>
             {%- else -%}
-                <div data-nav-item class="relative" style="">
+                <div data-nav-item data-nav-index="{{ loop.index0 }}" class="relative">
                     <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %} aria-haspopup="true" aria-expanded="false" class="inline-flex items-center gap-1 whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink">{{ link.label }} {{ icon.chevron('h-3 w-3')|trim|raw }}</a>
                     <div class="absolute left-0 top-full z-40 pt-3" style="display:none;">
                         <ul aria-label="{{ link.label }}" class="min-w-[12rem] rounded-edge border border-ash-200 bg-alabaster/95 py-1 shadow-xl backdrop-blur-md">
@@ -38,7 +38,7 @@
         {%- endapply -%}
     {%- endfor -%}
 {%- endapply -%}
-        <div class="invisible absolute" style="">
+    <div data-nav-more class="relative">
         <button type="button" class="inline-flex items-center gap-1 whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink" aria-haspopup="true" aria-controls="" aria-expanded="false" data-allow-mismatch="attribute">{{ moreLabel }} {{ icon.chevron('h-3.5 w-3.5')|trim|raw }}</button>
         {%- apply island_if(false) -%}{%- endapply -%}
     </div>
