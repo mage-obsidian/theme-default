@@ -1,17 +1,24 @@
 {# Resend account-confirmation email. `block` is a MageObsidian Template (getUrl,
    formkey). Native POST to customer/account/confirmation — the controller resends
    the link. No JS (native email-input validation). #}
+{% import 'Magento_Theme::macros/form.twig' as form %}
 <section class="mx-auto w-full max-w-md px-4 py-16">
     <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Send confirmation link') }}</h1>
     <p class="mt-2 text-sm text-ink-soft">{{ __('Please enter your email below and we will send you the confirmation link.') }}</p>
 
     <form action="{{ block.getUrl('customer/account/confirmation')|escape_url }}" method="post" class="mt-8 flex flex-col gap-5">
         {{ block.getBlockHtml('formkey')|raw }}
-        <div class="flex flex-col gap-2">
-            <label for="email_address" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Email') }}</label>
-            <input type="email" id="email_address" name="email" required autocomplete="email" autocapitalize="off"
-                   class="h-11 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none">
-        </div>
+        {{ form.field({
+            name: 'email',
+            id: 'email_address',
+            label: __('Email'),
+            type: 'email',
+            required: true,
+            autocomplete: 'email',
+            attrs: { autocapitalize: 'off' }
+        }) }}
+
+        {{ form.required_note(__('Required fields')) }}
         <div class="flex items-center gap-4">
             <button type="submit" class="h-11 rounded-edge bg-ink px-8 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-obsidian-800">{{ __('Send confirmation link') }}</button>
             <a href="{{ block.getUrl('customer/account/login')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft underline underline-offset-4 transition-colors hover:text-ink">{{ __('Back to Sign In') }}</a>

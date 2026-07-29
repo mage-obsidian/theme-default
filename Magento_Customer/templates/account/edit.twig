@@ -1,9 +1,9 @@
 {# Edit account information. `form_data` is the core Form\Edit block (post data,
    min length). Native POST to editPost; edit-enhancer.ts toggles the email /
    password fieldsets and validates conditionally. #}
+{% import 'Magento_Theme::macros/form.twig' as form %}
 {% set edit = block.getChildBlock('form_data') %}
 {% set cust = edit.getCustomer() %}
-{% set inputClass = 'h-11 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none' %}
 {% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
 <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Account Information') }}</h1>
 
@@ -21,43 +21,71 @@
     {{ block.getBlockHtml('formkey')|raw }}
 
     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <div class="flex flex-col gap-2">
-            <label for="edit-firstname" class="{{ labelClass }}">{{ __('First Name') }}</label>
-            <input type="text" id="edit-firstname" name="firstname" value="{{ cust.getFirstname()|escape_html_attr }}" required autocomplete="given-name" class="{{ inputClass }}">
-        </div>
-        <div class="flex flex-col gap-2">
-            <label for="edit-lastname" class="{{ labelClass }}">{{ __('Last Name') }}</label>
-            <input type="text" id="edit-lastname" name="lastname" value="{{ cust.getLastname()|escape_html_attr }}" required autocomplete="family-name" class="{{ inputClass }}">
-        </div>
+        {{ form.field({
+            name: 'firstname',
+            id: 'edit-firstname',
+            label: __('First Name'),
+            value: cust.getFirstname(),
+            required: true,
+            autocomplete: 'given-name'
+        }) }}
+        {{ form.field({
+            name: 'lastname',
+            id: 'edit-lastname',
+            label: __('Last Name'),
+            value: cust.getLastname(),
+            required: true,
+            autocomplete: 'family-name'
+        }) }}
     </div>
 
     <label class="flex items-center gap-3 {{ labelClass }}">
         <input type="checkbox" name="change_email" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
         {{ __('Change Email') }}
     </label>
-    <div data-email-fields class="flex flex-col gap-2">
-        <label for="edit-email" class="{{ labelClass }}">{{ __('Email') }}</label>
-        <input type="email" id="edit-email" name="email" value="{{ cust.getEmail()|escape_html_attr }}" autocomplete="email" autocapitalize="off" class="{{ inputClass }}">
+    <div data-email-fields>
+        {{ form.field({
+            name: 'email',
+            id: 'edit-email',
+            label: __('Email'),
+            type: 'email',
+            value: cust.getEmail(),
+            autocomplete: 'email',
+            attrs: { autocapitalize: 'off' }
+        }) }}
     </div>
 
     <label class="flex items-center gap-3 {{ labelClass }}">
         <input type="checkbox" name="change_password" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
         {{ __('Change Password') }}
     </label>
-    <div data-current-password-fields class="flex flex-col gap-2">
-        <label for="edit-current-password" class="{{ labelClass }}">{{ __('Current Password') }}</label>
-        <input type="password" id="edit-current-password" name="current_password" autocomplete="current-password" class="{{ inputClass }}">
+    <div data-current-password-fields>
+        {{ form.field({
+            name: 'current_password',
+            id: 'edit-current-password',
+            label: __('Current Password'),
+            type: 'password',
+            autocomplete: 'current-password'
+        }) }}
     </div>
     <div data-password-fields class="flex flex-col gap-5">
-        <div class="flex flex-col gap-2">
-            <label for="edit-password" class="{{ labelClass }}">{{ __('New Password') }}</label>
-            <input type="password" id="edit-password" name="password" autocomplete="new-password" class="{{ inputClass }}">
-        </div>
-        <div class="flex flex-col gap-2">
-            <label for="edit-password-confirmation" class="{{ labelClass }}">{{ __('Confirm New Password') }}</label>
-            <input type="password" id="edit-password-confirmation" name="password_confirmation" autocomplete="new-password" class="{{ inputClass }}">
-        </div>
+        {{ form.field({
+            name: 'password',
+            id: 'edit-password',
+            label: __('New Password'),
+            type: 'password',
+            autocomplete: 'new-password'
+        }) }}
+        {{ form.field({
+            name: 'password_confirmation',
+            id: 'edit-password-confirmation',
+            label: __('Confirm New Password'),
+            type: 'password',
+            autocomplete: 'new-password'
+        }) }}
     </div>
+
+    {{ form.required_note(__('Required fields')) }}
 
     <div class="flex items-center gap-4">
         <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Save') }}</button>

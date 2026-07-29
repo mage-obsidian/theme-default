@@ -3,6 +3,7 @@
    POST to createPost (email confirmation / redirects unchanged); register-enhancer.ts
    adds inline validation only. Optional profile/address attributes are deferred to
    a later batch — this covers the default name/email/password registration. #}
+{% import 'Magento_Theme::macros/form.twig' as form %}
 {% set register = block.getChildBlock('form_data') %}
 {% set fd = register.getFormData() %}
 <section class="mx-auto w-full max-w-md px-4 py-16">
@@ -23,30 +24,53 @@
         {{ block.getBlockHtml('formkey')|raw }}
 
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div class="flex flex-col gap-2">
-                <label for="reg-firstname" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('First Name') }}</label>
-                <input type="text" id="reg-firstname" name="firstname" value="{{ fd.getFirstname()|escape_html_attr }}" required autocomplete="given-name" class="h-11 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none">
-            </div>
-            <div class="flex flex-col gap-2">
-                <label for="reg-lastname" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Last Name') }}</label>
-                <input type="text" id="reg-lastname" name="lastname" value="{{ fd.getLastname()|escape_html_attr }}" required autocomplete="family-name" class="h-11 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none">
-            </div>
+            {{ form.field({
+                name: 'firstname',
+                id: 'reg-firstname',
+                label: __('First Name'),
+                value: fd.getFirstname(),
+                required: true,
+                autocomplete: 'given-name'
+            }) }}
+            {{ form.field({
+                name: 'lastname',
+                id: 'reg-lastname',
+                label: __('Last Name'),
+                value: fd.getLastname(),
+                required: true,
+                autocomplete: 'family-name'
+            }) }}
         </div>
 
-        <div class="flex flex-col gap-2">
-            <label for="reg-email" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Email') }}</label>
-            <input type="email" id="reg-email" name="email" value="{{ fd.getEmail()|escape_html_attr }}" required autocomplete="email" autocapitalize="off" class="h-11 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none">
-        </div>
+        {{ form.field({
+            name: 'email',
+            id: 'reg-email',
+            label: __('Email'),
+            type: 'email',
+            value: fd.getEmail(),
+            required: true,
+            autocomplete: 'email',
+            attrs: { autocapitalize: 'off' }
+        }) }}
 
-        <div class="flex flex-col gap-2">
-            <label for="reg-password" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Password') }}</label>
-            <input type="password" id="reg-password" name="password" required minlength="8" autocomplete="new-password" class="h-11 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none">
-        </div>
+        {{ form.field({
+            name: 'password',
+            id: 'reg-password',
+            label: __('Password'),
+            type: 'password',
+            required: true,
+            autocomplete: 'new-password',
+            attrs: { minlength: 8 }
+        }) }}
 
-        <div class="flex flex-col gap-2">
-            <label for="reg-password-confirmation" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Confirm Password') }}</label>
-            <input type="password" id="reg-password-confirmation" name="password_confirmation" required autocomplete="new-password" class="h-11 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none">
-        </div>
+        {{ form.field({
+            name: 'password_confirmation',
+            id: 'reg-password-confirmation',
+            label: __('Confirm Password'),
+            type: 'password',
+            required: true,
+            autocomplete: 'new-password'
+        }) }}
 
         <label class="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
             <input type="checkbox" name="is_subscribed" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
@@ -57,6 +81,8 @@
         {% include 'Magento_Persistent::remember-me.twig' with { remember: block.getRemember() } only %}
 
         <button type="submit" class="mt-1 h-11 rounded-edge bg-ink font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Create an Account') }}</button>
+
+        {{ form.required_note(__('Required fields')) }}
 
         <p class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
             {{ __('Already have an account?') }}
