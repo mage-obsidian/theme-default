@@ -85,6 +85,34 @@
     </div>
 {% endmacro %}
 
+{#
+  checkbox({
+    name:     'is_subscribed'   required
+    label:    'Sign me up'
+    id:       'subscription'    defaults to a slug of `name`
+    value:    '1'
+    checked:  true
+    attrs:    { 'data-x': '' }
+  })
+#}
+{% macro checkbox(config) %}
+    {% set name = config.name %}
+    {% set id = config.id ?? ('field-' ~ name|replace({'[': '-', ']': '', '_': '-', '.': '-'})|trim('-')) %}
+
+    <label class="field-check" for="{{ id }}">
+        <input
+                class="field-check__input"
+                type="checkbox"
+                id="{{ id }}"
+                name="{{ name }}"
+                value="{{ config.value|default('1')|escape_html_attr }}"
+                {% if config.checked|default(false) %}checked{% endif %}
+                {% for attribute, attributeValue in config.attrs|default({}) %}{{ attribute }}="{{ attributeValue|escape_html_attr }}" {% endfor %}
+        >
+        <span class="field-check__label">{{ config.label }}</span>
+    </label>
+{% endmacro %}
+
 {% macro required_note(label) %}
     <p class="field-note"><span class="field-note__marker">*</span> {{ label }}</p>
 {% endmacro %}
