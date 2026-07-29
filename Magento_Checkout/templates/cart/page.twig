@@ -36,7 +36,7 @@
                 {{ block.getBlockHtml('formkey')|raw }}
                 <ul class="divide-y divide-ash-200 border-y border-ash-200">
                     {% for item in items %}
-                        <li class="flex gap-4 py-6" data-cart-line>
+                        <li class="flex gap-4 py-6" data-cart-line style="view-transition-name: cart-line-{{ item.id }}">
                             <a href="{{ item.url|escape_url }}" class="block h-28 w-24 shrink-0 overflow-hidden rounded-edge bg-ash-100">
                                 {% if item.image %}
                                     <img src="{{ item.image|escape_url }}" alt="{{ item.name|escape_html_attr }}" class="h-full w-full object-cover" loading="lazy" width="96" height="112">
@@ -113,7 +113,7 @@
             </form>
 
             <aside class="flex flex-col gap-6">
-                <div class="rounded-edge border border-ash-200 bg-alabaster-raised p-6">
+                <div class="rounded-edge border border-ash-200 bg-alabaster-raised p-6" style="view-transition-name: cart-summary">
                     {{ child_html('totals') }}
                     <a href="{{ block.getUrl('checkout')|escape_url }}" class="mt-6 inline-flex w-full items-center justify-center rounded-edge bg-ink px-5 py-3.5 font-mono text-xs uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800">
                         {{ __('Proceed to checkout') }}

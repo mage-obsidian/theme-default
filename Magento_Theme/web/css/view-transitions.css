@@ -1,0 +1,46 @@
+::view-transition-group(obsidian-header),
+::view-transition-group(obsidian-footer) { animation: none; }
+::view-transition-image-pair(obsidian-header),
+::view-transition-image-pair(obsidian-footer) { isolation: auto; }
+
+::view-transition-old(obsidian-header),
+::view-transition-old(obsidian-footer) { display: none; }
+::view-transition-new(obsidian-header),
+::view-transition-new(obsidian-footer) { animation: none; mix-blend-mode: normal; }
+
+/* A named animation, not an adjusted duration: the UA drives `plus-lighter` as an
+   animation, which beats a `mix-blend-mode: normal` declaration and washes the
+   viewport out to white against the opaque old frame. */
+::view-transition-image-pair(root) { isolation: auto; }
+::view-transition-old(root) { animation: none; opacity: 1; }
+::view-transition-new(root) { animation: 220ms both obsidian-vt-fade-in; mix-blend-mode: normal; }
+
+::view-transition-group(pdp-hero) {
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+::view-transition-image-pair(pdp-hero) { isolation: auto; }
+::view-transition-old(pdp-hero) { animation: 320ms both obsidian-vt-fade-out; mix-blend-mode: normal; }
+::view-transition-new(pdp-hero) { animation: 320ms both obsidian-vt-fade-in; mix-blend-mode: normal; }
+
+::view-transition-group(.obsidian-card) {
+    animation-duration: 280ms;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+::view-transition-old(.obsidian-card) { animation: 140ms both obsidian-vt-card-out; }
+::view-transition-new(.obsidian-card) {
+    animation: 200ms 60ms both obsidian-vt-card-in;
+    mix-blend-mode: normal;
+}
+
+@keyframes obsidian-vt-fade-in { from { opacity: 0; } }
+@keyframes obsidian-vt-fade-out { to { opacity: 0; } }
+@keyframes obsidian-vt-card-out { to { opacity: 0; transform: scale(0.98); } }
+@keyframes obsidian-vt-card-in { from { opacity: 0; transform: scale(0.98); } }
+
+/* The global reduced-motion blanket cannot reach these pseudos. */
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) { animation: none !important; }
+}
