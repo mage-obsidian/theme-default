@@ -1,0 +1,90 @@
+{#
+  Form field primitives. The markup here and in module-storefront's Field.vue must
+  stay identical: a server-rendered form and a hydrating island have to agree.
+  Styling lives in `.field*` (module-storefront/css/module.extend.css), never in
+  utility classes repeated per template.
+
+  field({
+    name:         'login[username]'   required
+    label:        'Email'
+    id:           'login-email'       defaults to a slug of `name`
+    type:         'email'             text | email | password | tel | number | textarea | select
+    value:        ''
+    required:     true                paints the asterisk AND sets required/aria-required
+    autocomplete: 'email'
+    hint:         'We never share it.'
+    error:        'Already taken.'    server-side message; the enhancer fills the
+                                      same node client-side
+    options:      [{value, label}]    select only
+    attrs:        { minlength: 8 }    anything else, escaped
+  })
+#}
+
+{% macro field(config) %}
+    {% set name = config.name %}
+    {% set id = config.id ?? ('field-' ~ name|replace({'[': '-', ']': '', '_': '-', '.': '-'})|trim('-')) %}
+    {% set type = config.type ?? 'text' %}
+    {% set required = config.required ?? false %}
+    {% set describedBy = [
+        config.hint is defined and config.hint ? id ~ '-hint' : null,
+        id ~ '-error'
+    ]|filter(v => v)|join(' ') %}
+
+    <div class="field">
+        <label class="field__label" for="{{ id }}">
+            {{- config.label -}}
+            {%- if required %}<span class="field__required" aria-hidden="true">*</span>{% endif -%}
+        </label>
+
+        {%- if type == 'textarea' -%}
+            <textarea
+                    class="field__control"
+                    id="{{ id }}"
+                    name="{{ name }}"
+                    {% if required %}required aria-required="true"{% endif %}
+                    {% if config.autocomplete is defined %}autocomplete="{{ config.autocomplete|escape_html_attr }}"{% endif %}
+                    aria-describedby="{{ describedBy }}"
+                    {% for attribute, attributeValue in config.attrs|default({}) %}{{ attribute }}="{{ attributeValue|escape_html_attr }}" {% endfor %}
+            >{{ config.value|default('') }}</textarea>
+        {%- elseif type == 'select' -%}
+            <select
+                    class="field__control"
+                    id="{{ id }}"
+                    name="{{ name }}"
+                    {% if required %}required aria-required="true"{% endif %}
+                    {% if config.autocomplete is defined %}autocomplete="{{ config.autocomplete|escape_html_attr }}"{% endif %}
+                    aria-describedby="{{ describedBy }}"
+                    {% for attribute, attributeValue in config.attrs|default({}) %}{{ attribute }}="{{ attributeValue|escape_html_attr }}" {% endfor %}
+            >
+                {% for option in config.options|default([]) %}
+                    <option value="{{ option.value|escape_html_attr }}"{% if option.value == config.value|default('') %} selected{% endif %}>{{ option.label }}</option>
+                {% endfor %}
+            </select>
+        {%- else -%}
+            <input
+                    class="field__control"
+                    type="{{ type }}"
+                    id="{{ id }}"
+                    name="{{ name }}"
+                    value="{{ config.value|default('')|escape_html_attr }}"
+                    {% if required %}required aria-required="true"{% endif %}
+                    {% if config.autocomplete is defined %}autocomplete="{{ config.autocomplete|escape_html_attr }}"{% endif %}
+                    aria-describedby="{{ describedBy }}"
+                    {% for attribute, attributeValue in config.attrs|default({}) %}{{ attribute }}="{{ attributeValue|escape_html_attr }}" {% endfor %}
+            >
+        {%- endif -%}
+
+        {% if config.hint is defined and config.hint %}
+            <p class="field__hint" id="{{ id }}-hint">{{ config.hint }}</p>
+        {% endif %}
+
+        {# Always rendered, empty when there is nothing to say: the enhancer fills
+           this node instead of injecting one, so the message cannot appear before
+           its styles do and `aria-describedby` never points at nothing. #}
+        <p class="field__error" id="{{ id }}-error" role="alert">{{ config.error|default('') }}</p>
+    </div>
+{% endmacro %}
+
+{% macro required_note(label) %}
+    <p class="field-note"><span class="field-note__marker">*</span> {{ label }}</p>
+{% endmacro %}
