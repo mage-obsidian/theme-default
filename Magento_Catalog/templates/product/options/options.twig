@@ -15,7 +15,7 @@
 #}
 {% macro select_range(name, from, to, label, pad, selected) %}
     <select name="{{ name }}" aria-label="{{ label }}" data-option-input
-            class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+            class="field__control font-mono">
         <option value="">{{ label }}</option>
         {% for n in range(from, to) %}
             <option value="{{ n }}"{% if selected is not null and selected == n %} selected{% endif %}>{{ pad and n < 10 ? '0' ~ n : n }}</option>
@@ -24,7 +24,8 @@
 {% endmacro %}
 {% import _self as dateparts %}
 {% set preselected = preselected|default({}) %}
-<div class="pdp__options mt-8 flex flex-col gap-6" data-product-options>
+<div class="pdp__options mt-8 flex flex-col gap-6" data-product-options
+     data-err-required="{{ __('This is a required field.')|escape_html_attr }}">
     <script type="application/json" data-options-config>{{ config|raw }}</script>
 
     {% for option in options %}
@@ -36,8 +37,8 @@
         {% set uploaded = type == 'file' and saved.title|default('') is not empty ? saved : null %}
         <fieldset class="pdp__option border-0 p-0" data-option data-option-id="{{ id }}"
                   data-option-type="{{ type }}"{% if required %} data-required{% endif %}{% if uploaded %} data-option-uploaded{% endif %}>
-            <legend id="opt-legend-{{ id }}" class="pdp__option-label font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">
-                {{ option.getTitle() }}{% if required %} <abbr class="text-sale no-underline" title="{{ __('Required') }}">*</abbr>{% endif %}
+            <legend id="opt-legend-{{ id }}" class="pdp__option-label field__label">
+                {{ option.getTitle() }}{% if required %}<span class="field__required" aria-hidden="true">*</span>{% endif %}
             </legend>
             <div class="pdp__option-control mt-3">
                 {% if type == 'field' %}
@@ -46,20 +47,20 @@
                            {% if saved is not null %}value="{{ saved }}"{% endif %}
                            {% if option.getMaxCharacters() %}maxlength="{{ option.getMaxCharacters() }}"{% endif %}
                            {% if required %}required aria-required="true"{% endif %}
-                           class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                           class="field__control w-full font-mono">
 
                 {% elseif type == 'area' %}
                     <textarea name="options[{{ id }}]" id="option-{{ id }}" rows="4" data-option-input
                               aria-labelledby="opt-legend-{{ id }}"
                               {% if option.getMaxCharacters() %}maxlength="{{ option.getMaxCharacters() }}"{% endif %}
                               {% if required %}required aria-required="true"{% endif %}
-                              class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">{% if saved is not null %}{{ saved }}{% endif %}</textarea>
+                              class="field__control w-full font-mono">{% if saved is not null %}{{ saved }}{% endif %}</textarea>
 
                 {% elseif type == 'drop_down' %}
                     <select name="options[{{ id }}]" id="option-{{ id }}" data-option-input
                             aria-labelledby="opt-legend-{{ id }}"
                             {% if required %}required aria-required="true"{% endif %}
-                            class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                            class="field__control w-full font-mono">
                         <option value="">{{ __('-- Please Select --') }}</option>
                         {% for value in option.getValues() %}
                             {% set amount = value.getPrice(true) %}
@@ -89,8 +90,9 @@
                     <div role="group" aria-label="{{ option.getTitle() }}" class="flex flex-col gap-2">
                         {% for value in option.getValues() %}
                             {% set amount = value.getPrice(true) %}
-                            <label class="flex items-center gap-2 text-sm text-ink">
+                            <label class="field-check text-sm text-ink">
                                 <input type="checkbox" name="options[{{ id }}][]" value="{{ value.getId() }}" data-option-input
+                                       class="field-check__input"
                                        {% if saved is iterable and value.getId() in saved %}checked{% endif %}>
                                 {{ value.getTitle() }}{% if amount > 0 %} <span class="text-ink-soft">+{{ view.formatPrice(amount) }}</span>{% endif %}
                             </label>
@@ -101,7 +103,7 @@
                     <select name="options[{{ id }}][]" id="option-{{ id }}" multiple data-option-input
                             aria-labelledby="opt-legend-{{ id }}"
                             {% if required %}required aria-required="true"{% endif %}
-                            class="w-full rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                            class="field__control w-full font-mono">
                         {% for value in option.getValues() %}
                             {% set amount = value.getPrice(true) %}
                             <option value="{{ value.getId() }}"{% if saved is iterable and value.getId() in saved %} selected{% endif %}>{{ value.getTitle() }}{% if amount > 0 %} (+{{ view.formatPrice(amount) }}){% endif %}</option>
@@ -115,7 +117,7 @@
                             {{ dateparts.select_range('options[' ~ id ~ '][month]', 1, 12, __('Month'), true, d.month|default(null)) }}
                             {{ dateparts.select_range('options[' ~ id ~ '][day]', 1, 31, __('Day'), true, d.day|default(null)) }}
                             <select name="options[{{ id }}][year]" aria-label="{{ __('Year') }}" data-option-input
-                                    class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                                    class="field__control font-mono">
                                 <option value="">{{ __('Year') }}</option>
                                 {% for year in years %}<option value="{{ year }}"{% if d.year is defined and d.year == year %} selected{% endif %}>{{ year }}</option>{% endfor %}
                             </select>
@@ -124,7 +126,7 @@
                             {{ dateparts.select_range('options[' ~ id ~ '][hour]', 1, 12, __('Hour'), true, d.hour|default(null)) }}
                             {{ dateparts.select_range('options[' ~ id ~ '][minute]', 0, 59, __('Minute'), true, d.minute|default(null)) }}
                             <select name="options[{{ id }}][day_part]" aria-label="{{ __('AM/PM') }}" data-option-input
-                                    class="rounded-edge border border-ash-300 bg-transparent px-3 py-2.5 font-mono text-sm text-ink focus:border-ink focus:outline-none">
+                                    class="field__control font-mono">
                                 <option value="am"{% if d.day_part|default('') == 'am' %} selected{% endif %}>{{ __('AM') }}</option>
                                 <option value="pm"{% if d.day_part|default('') == 'pm' %} selected{% endif %}>{{ __('PM') }}</option>
                             </select>
@@ -151,12 +153,12 @@
                         <p class="mt-1 font-mono text-[0.66rem] text-ash-500">{{ __('Choose a file to replace it.') }}</p>
                     {% endif %}
                     {% if extensions %}
-                        <p class="mt-1 font-mono text-[0.66rem] text-ash-500">{{ __('Allowed file types') }}: {{ extensions }}</p>
+                        <p class="field__hint mt-1">{{ __('Allowed file types') }}: {{ extensions }}</p>
                     {% endif %}
                     {% if amount > 0 %}<p class="mt-1 font-mono text-[0.66rem] text-ink-soft">+{{ view.formatPrice(amount) }}</p>{% endif %}
                 {% endif %}
             </div>
-            <p class="pdp__option-error mt-2 font-mono text-[0.66rem] text-sale" data-option-error role="alert" hidden></p>
+            <p class="pdp__option-error field__error mt-2" data-option-error role="alert"></p>
         </fieldset>
     {% endfor %}
 </div>
