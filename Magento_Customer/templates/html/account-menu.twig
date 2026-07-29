@@ -5,7 +5,7 @@
    customer/account, which natively redirects guests to sign-in. `account_state`
    is the AccountState ViewModel (layout argument). #}
 {% set acc = block.getAccountState() %}
-{% set placeholder %}<span class="hidden whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.12em] text-ink-soft sm:inline">{{ __('Sign In') }}</span>{% endset %}
+{% set placeholder %}<span class="mo-prepaint-guest whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.12em] text-ink-soft">{{ __('Sign In') }}</span>{% endset %}
 {{ render_vue('MageObsidian_Customer::account/AccountMenu', {
     accountUrl: acc.getAccountUrl(),
     loginUrl: acc.getLoginUrl(),
