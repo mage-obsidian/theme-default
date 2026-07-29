@@ -2,7 +2,7 @@
    POST to checkout/cart/couponPost (apply with a code, or remove=1); cart-page.js
    intercepts it for an AJAX morph-refresh. #}
 {% set code = block.getCouponCode() %}
-<form action="{{ block.getUrl('checkout/cart/couponPost')|escape_url }}" method="post" data-cart-coupon class="rounded-edge border border-ash-200 p-6">
+<form action="{{ block.getUrl('checkout/cart/couponPost')|escape_url }}" method="post" data-cart-coupon class="rounded-edge border border-ash-200 bg-alabaster-raised p-6">
     {{ block.getBlockHtml('formkey')|raw }}
     {% if code %}
         <input type="hidden" name="remove" value="1">
@@ -13,9 +13,9 @@
     {% else %}
         <input type="hidden" name="remove" value="0">
         <label for="coupon_code" class="mb-2 block font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">{{ __('Discount code') }}</label>
-        <div class="flex gap-2">
-            <input type="text" id="coupon_code" name="coupon_code" value="" autocomplete="off" class="h-10 flex-1 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none">
-            <button type="submit" class="rounded-edge border border-ash-300 px-4 font-mono text-xs uppercase tracking-[0.16em] text-ink-soft transition-colors hover:border-ink hover:text-ink">{{ __('Apply') }}</button>
+        <div class="flex items-stretch gap-2">
+            <input type="text" id="coupon_code" name="coupon_code" value="" autocomplete="off" class="h-10 min-w-0 flex-1 rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none">
+            <button type="submit" class="h-10 shrink-0 rounded-edge border border-ash-300 px-4 font-mono text-xs uppercase tracking-[0.16em] text-ink-soft transition-colors hover:border-ink hover:text-ink">{{ __('Apply') }}</button>
         </div>
     {% endif %}
 </form>
