@@ -12,7 +12,6 @@
 {% set hasRegions = regionOptions is not empty %}
 {% set regionId = edit.getRegionId() %}
 {% set streetLines = edit.getViewModel().addressGetStreetLines() %}
-{% set labelClass = 'field__label' %}
 
 <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ edit.getTitle()}}</h1>
 
@@ -130,23 +129,23 @@
     </div>
 
     {% if edit.isDefaultBilling() %}
-        <p class="{{ labelClass }} text-ink">{{ __("It's a default billing address.") }}</p>
+        <p class="field__label text-ink">{{ __("It's a default billing address.") }}</p>
     {% elseif edit.canSetAsDefaultBilling() %}
-        <label class="flex items-center gap-3 {{ labelClass }}">
-            <input type="checkbox" name="default_billing" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
-            {{ __('Use as my default billing address') }}
-        </label>
+        {{ form.checkbox({
+            name: 'default_billing',
+            label: __('Use as my default billing address')
+        }) }}
     {% else %}
         <input type="hidden" name="default_billing" value="1">
     {% endif %}
 
     {% if edit.isDefaultShipping() %}
-        <p class="{{ labelClass }} text-ink">{{ __("It's a default shipping address.") }}</p>
+        <p class="field__label text-ink">{{ __("It's a default shipping address.") }}</p>
     {% elseif edit.canSetAsDefaultShipping() %}
-        <label class="flex items-center gap-3 {{ labelClass }}">
-            <input type="checkbox" name="default_shipping" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
-            {{ __('Use as my default shipping address') }}
-        </label>
+        {{ form.checkbox({
+            name: 'default_shipping',
+            label: __('Use as my default shipping address')
+        }) }}
     {% else %}
         <input type="hidden" name="default_shipping" value="1">
     {% endif %}

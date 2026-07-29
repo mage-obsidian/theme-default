@@ -72,10 +72,10 @@
             autocomplete: 'new-password'
         }) }}
 
-        <label class="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
-            <input type="checkbox" name="is_subscribed" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
-            {{ __('Sign up for our newsletter') }}
-        </label>
+        {{ form.checkbox({
+            name: 'is_subscribed',
+            label: __('Sign up for our newsletter')
+        }) }}
 
         {# Remember-me (Magento_Persistent; the VM self-gates on the enable flags). #}
         {% include 'Magento_Persistent::remember-me.twig' with { remember: block.getRemember() } only %}

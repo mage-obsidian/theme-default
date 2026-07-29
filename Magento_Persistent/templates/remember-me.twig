@@ -3,12 +3,12 @@
    this renders nothing unless persistent + remember-me are enabled. Native POST
    field `persistent_remember_me`. #}
 {% if remember and remember.isEnabled() %}
-    <label class="flex items-start gap-3">
+    <label class="field-check items-start">
         <input type="checkbox" name="persistent_remember_me" value="1" {% if remember.isCheckedByDefault() %}checked{% endif %}
-               class="mt-0.5 h-4 w-4 rounded-edge border-ash-300 text-ink focus:ring-ink">
-        <span class="text-sm text-ink-soft">
+               class="field-check__input mt-0.5">
+        <span class="field-check__label normal-case tracking-normal">
             {{ __('Remember Me') }}
-            <span class="block text-xs text-ash-500">{{ __('Access your shopping cart on this computer even when not signed in.') }}</span>
+            <span class="mt-1 block text-[0.66rem] text-ash-500">{{ __('Access your shopping cart on this computer even when not signed in.') }}</span>
         </span>
     </label>
 {% endif %}

@@ -4,7 +4,6 @@
 {% import 'Magento_Theme::macros/form.twig' as form %}
 {% set edit = block.getChildBlock('form_data') %}
 {% set cust = edit.getCustomer() %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
 <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Account Information') }}</h1>
 
 <form
@@ -39,10 +38,10 @@
         }) }}
     </div>
 
-    <label class="flex items-center gap-3 {{ labelClass }}">
-        <input type="checkbox" name="change_email" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
-        {{ __('Change Email') }}
-    </label>
+    {{ form.checkbox({
+        name: 'change_email',
+        label: __('Change Email')
+    }) }}
     <div data-email-fields>
         {{ form.field({
             name: 'email',
@@ -55,10 +54,10 @@
         }) }}
     </div>
 
-    <label class="flex items-center gap-3 {{ labelClass }}">
-        <input type="checkbox" name="change_password" value="1" class="h-4 w-4 rounded-edge border-ash-300 text-accent focus:ring-accent">
-        {{ __('Change Password') }}
-    </label>
+    {{ form.checkbox({
+        name: 'change_password',
+        label: __('Change Password')
+    }) }}
     <div data-current-password-fields>
         {{ form.field({
             name: 'current_password',
