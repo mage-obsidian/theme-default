@@ -90,6 +90,12 @@
    the right affordance from one place. @layer base keeps low precedence so
    utilities still win. */
 @layer base {
+  /* The scrollbar appearing shifts every centered container by half its width,
+     so a page that grows past the viewport nudges the whole header sideways. */
+  html {
+    scrollbar-gutter: stable;
+  }
+
   :where(button, [role="button"]):not(:disabled, [aria-disabled="true"]) {
     cursor: pointer;
   }
