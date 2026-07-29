@@ -4,6 +4,7 @@
   contact/index/post; required + email validation are server-side, so it works
   with no JS. HTML5 attributes give a basic client-side check on top.
 #}
+{% import 'Magento_Theme::macros/form.twig' as form %}
 {% set vm = block.getViewModel() %}
 <div class="contact mx-auto w-full max-w-[640px] px-4 py-12 md:px-8">
     <p class="font-mono text-sm text-ink-soft">
@@ -13,39 +14,44 @@
     <form class="mt-8 flex flex-col gap-6" action="{{ block.getFormAction()|escape_url }}" method="post" id="contact-form">
         {{ block.getBlockHtml('formkey')|raw }}
 
-        <div class="flex flex-col gap-2">
-            <label for="name" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">
-                {{ __('Name') }} <span class="text-sale">*</span>
-            </label>
-            <input id="name" name="name" type="text" required value="{{ vm.getUserName()|escape_html_attr }}"
-                   class="rounded-edge border border-ash-300 bg-transparent px-4 py-3 text-sm text-ink focus:border-ink focus:outline-none">
-        </div>
+        {{ form.field({
+            name: 'name',
+            id: 'name',
+            label: __('Name'),
+            value: vm.getUserName(),
+            required: true,
+            autocomplete: 'name'
+        }) }}
 
-        <div class="flex flex-col gap-2">
-            <label for="email" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">
-                {{ __('Email') }} <span class="text-sale">*</span>
-            </label>
-            <input id="email" name="email" type="email" required value="{{ vm.getUserEmail()|escape_html_attr }}"
-                   class="rounded-edge border border-ash-300 bg-transparent px-4 py-3 text-sm text-ink focus:border-ink focus:outline-none">
-        </div>
+        {{ form.field({
+            name: 'email',
+            id: 'email',
+            label: __('Email'),
+            type: 'email',
+            value: vm.getUserEmail(),
+            required: true,
+            autocomplete: 'email'
+        }) }}
 
-        <div class="flex flex-col gap-2">
-            <label for="telephone" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">
-                {{ __('Phone Number') }}
-            </label>
-            <input id="telephone" name="telephone" type="tel" value="{{ vm.getUserTelephone()|escape_html_attr }}"
-                   class="rounded-edge border border-ash-300 bg-transparent px-4 py-3 text-sm text-ink focus:border-ink focus:outline-none">
-        </div>
+        {{ form.field({
+            name: 'telephone',
+            id: 'telephone',
+            label: __('Phone Number'),
+            type: 'tel',
+            value: vm.getUserTelephone(),
+            autocomplete: 'tel'
+        }) }}
 
-        <div class="flex flex-col gap-2">
-            <label for="comment" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">
-                {{ __('What’s on your mind?') }} <span class="text-sale">*</span>
-            </label>
-            <textarea id="comment" name="comment" rows="5" required
-                      class="rounded-edge border border-ash-300 bg-transparent px-4 py-3 text-sm text-ink focus:border-ink focus:outline-none"></textarea>
-        </div>
+        {{ form.field({
+            name: 'comment',
+            id: 'comment',
+            label: __('What’s on your mind?'),
+            type: 'textarea',
+            required: true,
+            attrs: { rows: 5 }
+        }) }}
 
-        <p class="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">{{ __('* Required Fields') }}</p>
+        {{ form.required_note(__('Required Fields')) }}
 
         <button type="submit"
                 class="inline-flex items-center justify-center self-start rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink">

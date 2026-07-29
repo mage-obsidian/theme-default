@@ -2,10 +2,9 @@
    labels, input types and the GET post URL. Native inputs, no JS. The legacy
    per-field validation widget is dropped; native number/date inputs and required
    server-side validation cover it. #}
+{% import 'Magento_Theme::macros/form.twig' as form %}
 {# Max query length cap on free-text inputs (Magento's default search limit). #}
 {% set maxlen = 128 %}
-{% set labelClass = 'font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ink-soft' %}
-{% set inputClass = 'h-10 w-full rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none' %}
 
 <div class="mx-auto w-full max-w-[760px] px-4 py-12 md:px-8">
     <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Advanced Search') }}</h1>
@@ -14,35 +13,42 @@
         {% for attribute in block.getSearchableAttributes() %}
             {% set code = attribute.getAttributeCode() %}
             {% set type = block.getAttributeInputType(attribute) %}
-            <div class="flex flex-col gap-1.5">
-                <label for="adv-{{ code }}" class="{{ labelClass }}">{{ __(block.getAttributeLabel(attribute)) }}</label>
-
-                {% if type == 'number' or type == 'price' %}
+            {% if type == 'number' or type == 'price' or type == 'date' %}
+                {# A range is two controls under one label, which the macro cannot
+                   express; the classes are the macro's own. #}
+                {% set numeric = type != 'date' %}
+                <div class="field">
+                    <label for="adv-{{ code }}" class="field__label">{{ __(block.getAttributeLabel(attribute)) }}</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <input type="number" step="any" id="adv-{{ code }}" name="{{ code }}[from]" value="{{ block.getAttributeValue(attribute, 'from') }}" placeholder="{{ __('From') }}" class="{{ inputClass }}">
+                        <input type="{{ numeric ? 'number' : 'date' }}"{{ numeric ? ' step="any"' : '' }} id="adv-{{ code }}" name="{{ code }}[from]" value="{{ block.getAttributeValue(attribute, 'from') }}"{{ numeric ? ' placeholder="' ~ __('From')|escape_html_attr ~ '"' : '' }} aria-describedby="adv-{{ code }}-error" class="field__control w-full">
                         <div class="flex items-center gap-2">
-                            <input type="number" step="any" id="adv-{{ code }}-to" name="{{ code }}[to]" value="{{ block.getAttributeValue(attribute, 'to') }}" placeholder="{{ __('To') }}" class="{{ inputClass }}">
+                            <input type="{{ numeric ? 'number' : 'date' }}"{{ numeric ? ' step="any"' : '' }} id="adv-{{ code }}-to" name="{{ code }}[to]" value="{{ block.getAttributeValue(attribute, 'to') }}"{{ numeric ? ' placeholder="' ~ __('To')|escape_html_attr ~ '"' : '' }} aria-label="{{ __('%1: to', __(block.getAttributeLabel(attribute)))|escape_html_attr }}" class="field__control w-full">
                             {% if type == 'price' %}
                                 <span class="font-mono text-xs text-ink-soft">{{ block.getCurrency(attribute) }}</span>
                                 <input type="hidden" name="{{ code }}[currency]" value="{{ block.getCurrency(attribute)|escape_html_attr }}">
                             {% endif %}
                         </div>
                     </div>
-                {% elseif type == 'date' %}
-                    <div class="grid grid-cols-2 gap-3">
-                        <input type="date" id="adv-{{ code }}" name="{{ code }}[from]" value="{{ block.getAttributeValue(attribute, 'from') }}" class="{{ inputClass }}">
-                        <input type="date" id="adv-{{ code }}-to" name="{{ code }}[to]" value="{{ block.getAttributeValue(attribute, 'to') }}" class="{{ inputClass }}">
-                    </div>
-                {% elseif type == 'select' or type == 'yesno' %}
-                    <select id="adv-{{ code }}" name="{{ code }}" class="{{ inputClass }}">
-                        {% for option in attribute.getSource().getAllOptions() %}
-                            <option value="{{ option.value|escape_html_attr }}" {% if block.getAttributeValue(attribute) == option.value %}selected{% endif %}>{{ option.label }}</option>
-                        {% endfor %}
-                    </select>
-                {% else %}
-                    <input type="text" id="adv-{{ code }}" name="{{ code }}" value="{{ block.getAttributeValue(attribute) }}" maxlength="{{ maxlen }}" class="{{ inputClass }}">
-                {% endif %}
-            </div>
+                    <p class="field__error" id="adv-{{ code }}-error" role="alert"></p>
+                </div>
+            {% elseif type == 'select' or type == 'yesno' %}
+                {{ form.field({
+                    name: code,
+                    id: 'adv-' ~ code,
+                    label: __(block.getAttributeLabel(attribute)),
+                    type: 'select',
+                    value: block.getAttributeValue(attribute),
+                    options: attribute.getSource().getAllOptions()
+                }) }}
+            {% else %}
+                {{ form.field({
+                    name: code,
+                    id: 'adv-' ~ code,
+                    label: __(block.getAttributeLabel(attribute)),
+                    value: block.getAttributeValue(attribute),
+                    attrs: { maxlength: maxlen }
+                }) }}
+            {% endif %}
         {% endfor %}
 
         <div class="mt-2">

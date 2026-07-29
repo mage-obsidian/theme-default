@@ -1,8 +1,7 @@
 {# "Email to a Friend" form. `block` is the core Block\Send: post URL, prefilled
    sender, max recipients. Recipient rows are static (no JS row-builder); blank
    rows are ignored on the server. Native POST — works with no JS. #}
-{% set labelClass = 'font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ink-soft' %}
-{% set inputClass = 'h-10 w-full rounded-edge border border-ash-300 bg-transparent px-3 text-sm text-ink focus:border-ink focus:outline-none' %}
+{% import 'Magento_Theme::macros/form.twig' as form %}
 {% set maxRecipients = block.getMaxRecipients() ?: 1 %}
 
 <div class="mx-auto w-full max-w-[760px] px-4 py-12 md:px-8">
@@ -11,20 +10,31 @@
     <form action="{{ block.getSendUrl()|escape_url }}" method="post" class="mt-8 flex flex-col gap-8">
         {{ block.getBlockHtml('formkey')|raw }}
 
-        <fieldset class="flex flex-col gap-4">
-            <legend class="{{ labelClass }} mb-2">{{ __('Sender') }}</legend>
-            <label class="flex flex-col gap-1.5">
-                <span class="{{ labelClass }}">{{ __('Name') }}</span>
-                <input type="text" name="sender[name]" value="{{ block.getUserName()|escape_html_attr }}" required class="{{ inputClass }}">
-            </label>
-            <label class="flex flex-col gap-1.5">
-                <span class="{{ labelClass }}">{{ __('Email') }}</span>
-                <input type="email" name="sender[email]" value="{{ block.getEmail()|escape_html_attr }}" required class="{{ inputClass }}">
-            </label>
-            <label class="flex flex-col gap-1.5">
-                <span class="{{ labelClass }}">{{ __('Message') }}</span>
-                <textarea name="sender[message]" rows="3" required class="rounded-edge border border-ash-300 bg-transparent px-3 py-2 text-sm text-ink focus:border-ink focus:outline-none">{{ block.getMessage() }}</textarea>
-            </label>
+        <fieldset class="flex flex-col gap-5">
+            <legend class="field__label mb-2">{{ __('Sender') }}</legend>
+            {{ form.field({
+                name: 'sender[name]',
+                label: __('Name'),
+                value: block.getUserName(),
+                required: true,
+                autocomplete: 'name'
+            }) }}
+            {{ form.field({
+                name: 'sender[email]',
+                label: __('Email'),
+                type: 'email',
+                value: block.getEmail(),
+                required: true,
+                autocomplete: 'email'
+            }) }}
+            {{ form.field({
+                name: 'sender[message]',
+                label: __('Message'),
+                type: 'textarea',
+                value: block.getMessage(),
+                required: true,
+                attrs: { rows: 3 }
+            }) }}
         </fieldset>
 
         {# One recipient row: the core form starts with zero rows and adds them via
@@ -32,18 +42,23 @@
            emails and fail server validation. A single row is the no-JS-correct
            equivalent (the dominant case — emailing one friend). #}
         <fieldset class="flex flex-col gap-4">
-            <legend class="{{ labelClass }} mb-2">{{ __('Invitee') }}</legend>
-            <div class="grid gap-3 sm:grid-cols-2">
-                <label class="flex flex-col gap-1.5">
-                    <span class="{{ labelClass }}">{{ __('Name') }}</span>
-                    <input type="text" name="recipients[name][0]" required class="{{ inputClass }}">
-                </label>
-                <label class="flex flex-col gap-1.5">
-                    <span class="{{ labelClass }}">{{ __('Email') }}</span>
-                    <input type="email" name="recipients[email][0]" required class="{{ inputClass }}">
-                </label>
+            <legend class="field__label mb-2">{{ __('Invitee') }}</legend>
+            <div class="grid gap-5 sm:grid-cols-2">
+                {{ form.field({
+                    name: 'recipients[name][0]',
+                    label: __('Name'),
+                    required: true
+                }) }}
+                {{ form.field({
+                    name: 'recipients[email][0]',
+                    label: __('Email'),
+                    type: 'email',
+                    required: true
+                }) }}
             </div>
         </fieldset>
+
+        {{ form.required_note(__('Required fields')) }}
 
         <div>
             <button type="submit" {% if not block.canSend() %}disabled{% endif %} class="h-11 rounded-edge bg-ink px-8 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-obsidian-800 disabled:opacity-60">{{ __('Send Email') }}</button>
