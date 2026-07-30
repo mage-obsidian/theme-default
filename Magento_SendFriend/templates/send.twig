@@ -61,7 +61,7 @@
         {{ form.required_note(__('Required fields')) }}
 
         <div>
-            <button type="submit" {% if not block.canSend() %}disabled{% endif %} class="h-11 rounded-edge bg-ink px-8 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-obsidian-800 disabled:opacity-60">{{ __('Send Email') }}</button>
+            <button type="submit" {% if not block.canSend() %}disabled{% endif %} class="btn btn--solid px-8">{{ __('Send Email') }}</button>
         </div>
     </form>
 </div>

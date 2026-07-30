@@ -13,8 +13,8 @@
                     {% if block.isAddressDefaultShipping(address) %}<br><strong class="text-ink">{{ __('Default Shipping') }}</strong>{% endif %}
                 </address>
                 <div class="mt-4 flex items-center gap-4">
-                    <a href="{{ block.getEditAddressUrl(address)|escape_url }}" class="text-sm text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Edit Address') }}</a>
-                    <a href="{{ block.getSetAddressUrl(address)|escape_url }}" class="inline-flex items-center justify-center rounded-edge bg-ink px-5 py-2 font-mono text-xs uppercase tracking-[0.14em] text-alabaster transition-colors hover:bg-obsidian-800">{{ __('Select Address') }}</a>
+                    <a href="{{ block.getEditAddressUrl(address)|escape_url }}" class="link text-sm text-ink-soft underline">{{ __('Edit Address') }}</a>
+                    <a href="{{ block.getSetAddressUrl(address)|escape_url }}" class="btn btn--solid btn--sm">{{ __('Select Address') }}</a>
                 </div>
             </li>
         {% endfor %}
@@ -22,6 +22,6 @@
 
     <div class="mt-8 flex items-center justify-between gap-4">
         <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Billing Information') }}</a>
-        <a href="{{ block.getAddNewUrl()|escape_url }}" class="rounded-edge border border-ash-300 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:border-ink hover:text-ink">{{ __('Add New Address') }}</a>
+        <a href="{{ block.getAddNewUrl()|escape_url }}" class="btn btn--outline btn--sm">{{ __('Add New Address') }}</a>
     </div>
 </section>

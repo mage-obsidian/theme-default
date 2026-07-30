@@ -1,7 +1,7 @@
 {#
   Loads the delegated add-to-cart enhancer on catalog pages (where the cards ship
-  add-to-cart forms). Rendered by a MageObsidian Template block so vite_url is
-  available. The enhancer is progressive: without JS the forms POST normally.
+  add-to-cart forms). The enhancer is progressive: without JS the forms POST
+  normally.
   Toast strings are translated client-side via the framework i18n runtime.
 #}
-<script type="module" src="{{ vite_url('MageObsidian_Storefront::js/cart-actions') }}"></script>
+{{ script('MageObsidian_Storefront::js/cart-actions') }}

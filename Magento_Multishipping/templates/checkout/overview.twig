@@ -20,14 +20,14 @@
                 <div>
                     <div class="flex items-center justify-between">
                         <h3 class="font-mono text-xs uppercase tracking-[0.12em] text-ink">{{ __('Billing Address') }}</h3>
-                        <a href="{{ block.getEditBillingAddressUrl(block.getBillingAddress())|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Change') }}</a>
+                        <a href="{{ block.getEditBillingAddressUrl(block.getBillingAddress())|escape_url }}" class="link text-xs text-ink-soft underline">{{ __('Change') }}</a>
                     </div>
                     <address class="mt-2 text-sm not-italic text-ink-soft">{{ block.getBillingAddress().format('html')|raw }}</address>
                 </div>
                 <div>
                     <div class="flex items-center justify-between">
                         <h3 class="font-mono text-xs uppercase tracking-[0.12em] text-ink">{{ __('Payment Method') }}</h3>
-                        <a href="{{ block.getEditBillingUrl()|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Change') }}</a>
+                        <a href="{{ block.getEditBillingUrl()|escape_url }}" class="link text-xs text-ink-soft underline">{{ __('Change') }}</a>
                     </div>
                     <div class="mt-2 text-sm text-ink-soft">{{ block.getPaymentHtml()|raw }}</div>
                 </div>
@@ -48,14 +48,14 @@
                             <div>
                                 <div class="flex items-center justify-between">
                                     <h4 class="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink-soft">{{ __('Shipping To') }}</h4>
-                                    <a href="{{ block.getEditShippingAddressUrl(address)|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Change') }}</a>
+                                    <a href="{{ block.getEditShippingAddressUrl(address)|escape_url }}" class="link text-xs text-ink-soft underline">{{ __('Change') }}</a>
                                 </div>
                                 <address class="mt-2 text-sm not-italic text-ink-soft">{{ address.format('html')|raw }}</address>
                             </div>
                             <div>
                                 <div class="flex items-center justify-between">
                                     <h4 class="font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink-soft">{{ __('Shipping Method') }}</h4>
-                                    <a href="{{ block.getEditShippingUrl()|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Change') }}</a>
+                                    <a href="{{ block.getEditShippingUrl()|escape_url }}" class="link text-xs text-ink-soft underline">{{ __('Change') }}</a>
                                 </div>
                                 {% set rate = block.getShippingAddressRate(address) %}
                                 {% if rate %}
@@ -104,7 +104,7 @@
                 <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Billing Information') }}</a>
                 <span class="flex items-center gap-3">
                     {{ block.getChildHtml('captcha')|raw }}
-                    <button type="submit" class="inline-flex items-center justify-center rounded-edge bg-ink px-8 py-3 font-mono text-xs uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800">{{ __('Place Order') }}</button>
+                    <button type="submit" class="btn btn--solid btn--lg">{{ __('Place Order') }}</button>
                 </span>
             </div>
         </div>

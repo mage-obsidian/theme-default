@@ -5,8 +5,8 @@
 #}
 <label class="field limiter flex items-center gap-2">
     <span class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Show') }}</span>
-    <select data-mage-obsidian-nav
-            class="h-9 rounded-edge border border-ash-300 bg-alabaster px-2 font-mono text-[0.72rem] text-ink">
+    <select data-nav-select
+            class="field__control field__control--compact">
         {% for key, limit in block.getAvailableLimit() %}
             <option value="{{ block.getPagerUrl({'product_list_limit': key})|escape_url }}"{{ block.isLimitCurrent(key) ? ' selected' }}>{{ limit|number }}</option>
         {% endfor %}

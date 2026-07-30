@@ -30,11 +30,11 @@
     {{ form.required_note(__('Required fields')) }}
     <div class="flex items-center gap-4">
         <button type="submit"
-                class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">
+                class="btn btn--solid">
             {{ __('Share Wish List') }}
         </button>
         <a href="{{ sharing.getBackUrl()|escape_url }}"
-           class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">
+           class="link link--meta">
             {{ __('Back') }}
         </a>
     </div>

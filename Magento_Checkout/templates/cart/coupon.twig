@@ -9,13 +9,13 @@
         <p class="mb-3 font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
             {{ __('Code applied') }}: <span class="text-ink">{{ code }}</span>
         </p>
-        <button type="submit" class="font-mono text-xs uppercase tracking-[0.16em] text-ash-500 underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Remove discount') }}</button>
+        <button type="submit" class="link link--meta tracking-[0.16em] text-ash-500">{{ __('Remove discount') }}</button>
     {% else %}
         <input type="hidden" name="remove" value="0">
         <label for="coupon_code" class="mb-2 block font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">{{ __('Discount code') }}</label>
         <div class="flex items-stretch gap-2">
             <input type="text" id="coupon_code" name="coupon_code" value="" autocomplete="off" class="field__control min-w-0 flex-1">
-            <button type="submit" class="h-10 shrink-0 rounded-edge border border-ash-300 px-4 font-mono text-xs uppercase tracking-[0.16em] text-ink-soft transition-colors hover:border-ink hover:text-ink">{{ __('Apply') }}</button>
+            <button type="submit" class="btn btn--outline btn--sm shrink-0">{{ __('Apply') }}</button>
         </div>
     {% endif %}
 </form>

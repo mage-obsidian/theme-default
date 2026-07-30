@@ -28,7 +28,7 @@
         <div class="flex items-center justify-between gap-4">
             <h2 class="font-display text-lg text-ink">{{ __('Refund #%1', creditmemo.getIncrementId()) }}</h2>
             <a href="{{ creditmemoBlock.getPrintCreditmemoUrl(creditmemo)|escape_url }}" target="_blank" rel="noopener"
-               class="print:hidden font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Print Refund') }}</a>
+               class="link link--meta print:hidden">{{ __('Print Refund') }}</a>
         </div>
         <div class="mt-4 overflow-x-auto">
             <table class="w-full border-collapse text-sm">
@@ -87,8 +87,8 @@
 
 <div class="mt-10 print:hidden">
     {% if is_guest %}
-        <a href="{{ block.getUrl('sales/guest/form')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Back to Order Lookup') }}</a>
+        <a href="{{ block.getUrl('sales/guest/form')|escape_url }}" class="link link--meta">{{ __('Back to Order Lookup') }}</a>
     {% else %}
-        <a href="{{ block.getUrl('sales/order/history')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Back to My Orders') }}</a>
+        <a href="{{ block.getUrl('sales/order/history')|escape_url }}" class="link link--meta">{{ __('Back to My Orders') }}</a>
     {% endif %}
 </div>

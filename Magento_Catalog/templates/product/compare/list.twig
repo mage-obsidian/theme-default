@@ -18,7 +18,7 @@
                                     <form action="{{ block.getUrl('checkout/cart/add') }}" method="post" data-add-to-cart>
                                         <input type="hidden" name="product" value="{{ item.getId() }}">
                                         {{ block.getBlockHtml('formkey')|raw }}
-                                        <button type="submit" class="w-full rounded-edge border border-ink bg-ink px-4 py-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-alabaster transition-colors hover:bg-transparent hover:text-ink">{{ __('Add to Cart') }}</button>
+                                        <button type="submit" class="btn btn--solid btn--sm btn--block">{{ __('Add to Cart') }}</button>
                                     </form>
                                     <form action="{{ block.getUrl('catalog/product_compare/remove') }}" method="post">
                                         <input type="hidden" name="product" value="{{ item.getId() }}">

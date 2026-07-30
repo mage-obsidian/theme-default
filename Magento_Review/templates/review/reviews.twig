@@ -93,7 +93,7 @@
 
                 {{ form.required_note(__('Required fields')) }}
 
-                <button type="submit" class="action submit inline-flex w-fit items-center justify-center rounded-edge border border-ink bg-ink px-8 py-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-transparent hover:text-ink">
+                <button type="submit" class="action submit btn btn--solid btn--lg w-fit">
                     {{ __('Submit Review') }}
                 </button>
             </form>
@@ -124,5 +124,5 @@
         <script type="application/ld+json">{{ ld|json_encode|raw }}</script>
     {% endif %}
 
-    <script type="module" src="{{ vite_url('MageObsidian_Review::js/review-form') }}"></script>
+    {{ script('MageObsidian_Review::js/review-form') }}
 </section>

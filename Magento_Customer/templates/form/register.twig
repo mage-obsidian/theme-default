@@ -80,15 +80,15 @@
         {# Remember-me (Magento_Persistent; the VM self-gates on the enable flags). #}
         {% include 'Magento_Persistent::remember-me.twig' with { remember: block.getRemember() } only %}
 
-        <button type="submit" class="mt-1 h-11 rounded-edge bg-ink font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Create an Account') }}</button>
+        <button type="submit" class="btn btn--solid mt-1">{{ __('Create an Account') }}</button>
 
         {{ form.required_note(__('Required fields')) }}
 
         <p class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
             {{ __('Already have an account?') }}
-            <a href="{{ block.getUrl('customer/account/login')|escape_url }}" class="underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Sign In') }}</a>
+            <a href="{{ block.getUrl('customer/account/login')|escape_url }}" class="link">{{ __('Sign In') }}</a>
         </p>
     </form>
 </section>
 
-<script type="module" src="{{ vite_url('MageObsidian_Customer::js/register-enhancer') }}"></script>
+{{ script('MageObsidian_Customer::js/register-enhancer') }}

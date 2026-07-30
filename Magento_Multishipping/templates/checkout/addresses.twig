@@ -30,7 +30,7 @@
                                            id="ship-{{ index }}-{{ item.getQuoteItemId() }}-qty"
                                            name="ship[{{ index }}][{{ item.getQuoteItemId() }}][qty]"
                                            value="{{ item.getQty() }}"
-                                           class="field__control w-16 px-2 text-center font-mono">
+                                           class="field__control field-qty w-16 px-2">
                                 </td>
                                 <td class="px-4 py-4 align-top">
                                     {% if item.getProduct().getIsVirtual() %}
@@ -43,7 +43,7 @@
                                     {% endif %}
                                 </td>
                                 <td class="px-4 py-4 align-top text-right">
-                                    <a href="{{ block.getItemDeleteUrl(item)|escape_url }}" class="text-sm text-ash-500 underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Remove item') }}</a>
+                                    <a href="{{ block.getItemDeleteUrl(item)|escape_url }}" class="link text-sm text-ash-500">{{ __('Remove item') }}</a>
                                 </td>
                             </tr>
                         {% endif %}
@@ -54,12 +54,12 @@
 
         <div class="mt-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div class="flex flex-wrap items-center gap-4">
-                <button type="submit" name="new_address" value="1" class="rounded-edge border border-ash-300 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:border-ink hover:text-ink">{{ __('Enter a New Address') }}</button>
-                <button type="submit" name="continue" value="0" class="rounded-edge border border-ash-300 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:border-ink hover:text-ink">{{ __('Update Qty & Addresses') }}</button>
+                <button type="submit" name="new_address" value="1" class="btn btn--outline btn--sm">{{ __('Enter a New Address') }}</button>
+                <button type="submit" name="continue" value="0" class="btn btn--outline btn--sm">{{ __('Update Qty & Addresses') }}</button>
                 <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Shopping Cart') }}</a>
             </div>
             <button type="submit" name="continue" value="1" {{ block.isContinueDisabled() ? 'disabled' : '' }}
-                    class="inline-flex items-center justify-center rounded-edge bg-ink px-6 py-3 font-mono text-xs uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800 disabled:opacity-50">
+                    class="btn btn--solid">
                 {{ __('Go to Shipping Information') }}
             </button>
         </div>

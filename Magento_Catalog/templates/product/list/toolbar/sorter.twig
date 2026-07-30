@@ -6,14 +6,14 @@
 {% set dir = block.getCurrentDirection() == 'desc' ? 'asc' : 'desc' %}
 <div class="toolbar-sorter sorter flex items-center gap-2">
     <label for="sorter" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Sort By') }}</label>
-    <select id="sorter" data-mage-obsidian-nav
-            class="h-9 rounded-edge border border-ash-300 bg-alabaster px-2 font-mono text-[0.72rem] text-ink">
+    <select id="sorter" data-nav-select
+            class="field__control field__control--compact">
         {% for key, order in block.getAvailableOrders() %}
             <option value="{{ block.getPagerUrl({'product_list_order': key})|escape_url }}"{{ block.isOrderCurrent(key) ? ' selected' }}>{{ __(order) }}</option>
         {% endfor %}
     </select>
     <a href="{{ block.getPagerUrl({'product_list_dir': dir})|escape_url }}"
-       class="inline-flex h-9 w-9 items-center justify-center rounded-edge border border-ash-300 text-ink-soft transition-colors hover:border-ink hover:text-ink"
+       class="btn btn--outline btn--icon"
        aria-label="{{ (dir == 'asc' ? __('Set Ascending Direction') : __('Set Descending Direction'))|escape_html_attr }}">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24" aria-hidden="true">
             {% if block.getCurrentDirection() == 'desc' %}

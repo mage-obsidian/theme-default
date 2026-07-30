@@ -4,7 +4,7 @@
 <section class="mx-auto w-full max-w-[760px] px-4 py-16 md:px-8">
     <p class="text-ink-soft">
         {% if orderIds %}{{ __('Not all items were included.') }} {% endif %}
-        {{ __('For details, see') }} <a href="#failed" class="underline underline-offset-4 hover:text-accent">{{ __('Failed to Order') }}</a> {{ __('section below') }}.
+        {{ __('For details, see') }} <a href="#failed" class="link underline">{{ __('Failed to Order') }}</a> {{ __('section below') }}.
     </p>
 
     {% if orderIds %}
@@ -12,7 +12,7 @@
         <ul class="mt-4 flex flex-col gap-4">
             {% for orderId, incrementId in orderIds %}
                 <li class="rounded-edge border border-ash-200 p-4">
-                    <a href="{{ block.getViewOrderUrl(orderId)|escape_url }}" class="font-mono text-ink underline underline-offset-4 hover:text-accent">{{ incrementId }}</a>
+                    <a href="{{ block.getViewOrderUrl(orderId)|escape_url }}" class="link font-mono text-ink underline">{{ incrementId }}</a>
                     {% set shippingAddress = block.getOrderShippingAddress(orderId) %}
                     <p class="mt-1 text-sm text-ink-soft">
                         {% if shippingAddress %}

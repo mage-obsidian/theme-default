@@ -81,6 +81,25 @@
     </label>
 {% endmacro %}
 
+{% macro radio(config) %}
+    {% set name = config.name %}
+    {% set id = config.id ?? ('field-' ~ (name ~ '-' ~ config.value)|replace({'[': '-', ']': '', '_': '-', '.': '-'})|trim('-')) %}
+
+    <label class="field-radio" for="{{ id }}">
+        <input
+                class="field-radio__input"
+                type="radio"
+                id="{{ id }}"
+                name="{{ name }}"
+                value="{{ config.value|default('')|escape_html_attr }}"
+                {% if config.checked|default(false) %}checked{% endif %}
+                {% if config.required|default(false) %}required{% endif %}
+                {% for attribute, attributeValue in config.attrs|default({}) %}{{ attribute }}="{{ attributeValue|escape_html_attr }}" {% endfor %}
+        >
+        <span class="field-radio__label">{{ config.label }}</span>
+    </label>
+{% endmacro %}
+
 {% macro required_note(label) %}
     <p class="field-note"><span class="field-note__marker">*</span> {{ label }}</p>
 {% endmacro %}

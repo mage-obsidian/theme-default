@@ -164,6 +164,6 @@
        approved-review list + submit form; empty when not installed. #}
     {{ child_html('reviews') }}
 
-    <script type="module" src="{{ vite_url('MageObsidian_Catalog::js/gallery') }}"></script>
+    {{ script('MageObsidian_Catalog::js/gallery') }}
 </article>
 {% endif %}

@@ -16,7 +16,7 @@
         checked: newsletter.getIsSubscribed()
     }) }}
     <div class="flex items-center gap-4">
-        <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Save') }}</button>
-        <a href="{{ block.getUrl('customer/account')|escape_url }}" class="{{ labelClass }} underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Back') }}</a>
+        <button type="submit" class="btn btn--solid">{{ __('Save') }}</button>
+        <a href="{{ block.getUrl('customer/account')|escape_url }}" class="{{ labelClass }} link">{{ __('Back') }}</a>
     </div>
 </form>

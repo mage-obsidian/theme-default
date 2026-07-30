@@ -17,7 +17,7 @@
             {% for review in reviews %}
                 {% set percent = review.getCount() ? (review.getSum() / review.getCount())|round : 0 %}
                 <li class="flex flex-wrap items-center justify-between gap-3 py-4">
-                    <a href="{{ recent.getReviewUrl(review.getReviewId())|escape_url }}" class="text-sm text-ink underline-offset-4 transition-colors hover:text-accent hover:underline">{{ review.getName() }}</a>
+                    <a href="{{ recent.getReviewUrl(review.getReviewId())|escape_url }}" class="link text-sm text-ink">{{ review.getName() }}</a>
                     <div>{{ stars(percent, __('%1 out of 5 stars', (percent / 20)|round(1))) }}</div>
                 </li>
             {% endfor %}

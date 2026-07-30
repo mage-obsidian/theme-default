@@ -3,7 +3,8 @@
   render shows the result amount + sort + limit; bottom render shows the pager.
   No grid/list view switcher (grid-only). The legacy `data-mage-init` jQuery
   widget is gone: sort/limit are <select>s whose option values are full URLs and
-  a tiny ESM navigates on change (no-JS users still have the direction link).
+  the shared nav-select enhancer navigates on change (no-JS users still have the
+  direction link).
 #}
 {% if block.getCollection().getSize() %}
     {% if block.getIsBottom() %}
@@ -18,12 +19,6 @@
                 {% include 'Magento_Catalog::product/list/toolbar/limiter.twig' %}
             </div>
         </div>
-        <script type="module">
-            document.querySelectorAll('select[data-mage-obsidian-nav]').forEach((el) => {
-                if (el.dataset.bound) return;
-                el.dataset.bound = '1';
-                el.addEventListener('change', () => { if (el.value) window.location.assign(el.value); });
-            });
-        </script>
+        {{ script('MageObsidian_Storefront::js/nav-select') }}
     {% endif %}
 {% endif %}

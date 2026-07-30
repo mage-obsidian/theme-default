@@ -12,7 +12,7 @@
 
 <div class="flex flex-wrap items-center justify-between gap-4">
     <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Address Book') }}</h1>
-    <a href="{{ grid.getAddAddressUrl()|escape_url }}" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase leading-[2.75rem] tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Add New Address') }}</a>
+    <a href="{{ grid.getAddAddressUrl()|escape_url }}" class="btn btn--solid">{{ __('Add New Address') }}</a>
 </div>
 
 <section class="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
@@ -54,7 +54,7 @@
                         <form action="{{ block.getUrl('customer/address/delete')|escape_url }}" method="post" data-delete-address class="inline">
                             {{ block.getBlockHtml('formkey')|raw }}
                             <input type="hidden" name="id" value="{{ address.getId()|escape_html_attr }}">
-                            <button type="submit" data-confirm="{{ __('Are you sure you want to delete this address?')|escape_html_attr }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Delete') }}</button>
+                            <button type="submit" data-confirm="{{ __('Are you sure you want to delete this address?')|escape_html_attr }}" class="link link--meta">{{ __('Delete') }}</button>
                         </form>
                     </div>
                 </li>
@@ -65,4 +65,4 @@
     {% endif %}
 </section>
 
-<script type="module" src="{{ vite_url('MageObsidian_Customer::js/address-book-enhancer') }}"></script>
+{{ script('MageObsidian_Customer::js/address-book-enhancer') }}

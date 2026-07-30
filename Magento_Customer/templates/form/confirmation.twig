@@ -20,7 +20,7 @@
 
         {{ form.required_note(__('Required fields')) }}
         <div class="flex items-center gap-4">
-            <button type="submit" class="h-11 rounded-edge bg-ink px-8 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-obsidian-800">{{ __('Send confirmation link') }}</button>
+            <button type="submit" class="btn btn--solid px-8">{{ __('Send confirmation link') }}</button>
             <a href="{{ block.getUrl('customer/account/login')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft underline underline-offset-4 transition-colors hover:text-ink">{{ __('Back to Sign In') }}</a>
         </div>
     </form>

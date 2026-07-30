@@ -25,7 +25,7 @@
                         <a href="{{ history.getViewUrl(order)|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('View Order') }}</a>
                         <form action="{{ history.getReorderUrl(order)|escape_url }}" method="post" class="inline">
                             {{ block.getBlockHtml('formkey')|raw }}
-                            <button type="submit" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Reorder') }}</button>
+                            <button type="submit" class="link link--meta">{{ __('Reorder') }}</button>
                         </form>
                         {% include 'Magento_Sales::account/cancel-order.twig' with { 'order': order, 'cancellation': cancellation } %}
                     </div>

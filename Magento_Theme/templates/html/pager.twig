@@ -1,7 +1,7 @@
 {#
   Collection pager (Magento\Theme\Block\Html\Pager). Two changes vs Luma:
-  - the per-page limiter redirects via a native ESM listener bound once per
-    select (Luma used data-mage-init redirectUrl, a RequireJS widget);
+  - the per-page limiter redirects via the shared nav-select enhancer (Luma
+    used data-mage-init redirectUrl, a RequireJS widget);
   - numbers are grouped per locale via the engine's `number` filter.
   OBSIDIAN renders it as a quiet mono toolbar.
 #}
@@ -29,7 +29,7 @@
                 {% if not block.isFirstPage() %}
                     {% set prevText = block.getAnchorTextForPrevious() %}
                     <li class="item pages-item-previous">
-                        <a class="previous flex h-9 items-center rounded-edge border border-ash-300 px-3 transition-colors hover:border-ink hover:text-ink"
+                        <a class="previous btn btn--outline btn--icon w-auto px-3"
                            href="{{ block.getPreviousPageUrl()|escape_url }}"
                            title="{{ prevText ? prevText : __('Previous') }}">
                             <span class="sr-only">{{ __('Page') }}</span>
@@ -97,7 +97,7 @@
                 {% if not block.isLastPage() %}
                     {% set nextText = block.getAnchorTextForNext() %}
                     <li class="item pages-item-next">
-                        <a class="next flex h-9 items-center rounded-edge border border-ash-300 px-3 transition-colors hover:border-ink hover:text-ink"
+                        <a class="next btn btn--outline btn--icon w-auto px-3"
                            href="{{ block.getNextPageUrl()|escape_url }}"
                            title="{{ nextText ? nextText : __('Next') }}">
                             <span class="sr-only">{{ __('Page') }}</span>
@@ -112,21 +112,15 @@
     {% if block.isShowPerPage() %}
         <label class="limiter flex items-center gap-2">
             <span class="limiter-label font-normal">{{ __('Show') }}</span>
-            <select data-mage-obsidian-limiter
-                    class="limiter-options h-9 rounded-edge border border-ash-300 bg-alabaster px-2 text-ink">
+            <select data-nav-select
+                    class="limiter-options field__control field__control--compact">
                 {% for key, limit in block.getAvailableLimit() %}
                     <option value="{{ block.getLimitUrl(key)|escape_url }}"{{ block.isLimitCurrent(key) ? ' selected' }}>{{ limit }}</option>
                 {% endfor %}
             </select>
             <span class="limiter-text">{{ __('per page') }}</span>
         </label>
-        <script type="module">
-            document.querySelectorAll('select[data-mage-obsidian-limiter]').forEach((el) => {
-                if (el.dataset.bound) return;
-                el.dataset.bound = '1';
-                el.addEventListener('change', () => { if (el.value) window.location.assign(el.value); });
-            });
-        </script>
+        {{ script('MageObsidian_Storefront::js/nav-select') }}
     {% endif %}
 
     {% if block.getUseContainer() %}</div>{% endif %}

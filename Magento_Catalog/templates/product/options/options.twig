@@ -71,17 +71,19 @@
                 {% elseif type == 'radio' %}
                     <div role="radiogroup" aria-label="{{ option.getTitle() }}" class="flex flex-col gap-2">
                         {% if not required %}
-                            <label class="flex items-center gap-2 text-sm text-ink">
-                                <input type="radio" name="options[{{ id }}]" value="" data-option-input{% if saved is null %} checked{% endif %}> {{ __('None') }}
+                            <label class="field-radio">
+                                <input type="radio" name="options[{{ id }}]" value="" data-option-input class="field-radio__input"{% if saved is null %} checked{% endif %}>
+                                <span class="field-radio__label">{{ __('None') }}</span>
                             </label>
                         {% endif %}
                         {% for value in option.getValues() %}
                             {% set amount = value.getPrice(true) %}
-                            <label class="flex items-center gap-2 text-sm text-ink">
+                            <label class="field-radio">
                                 <input type="radio" name="options[{{ id }}]" value="{{ value.getId() }}" data-option-input
+                                       class="field-radio__input"
                                        {% if saved is not null and saved == value.getId() %}checked{% endif %}
                                        {% if required %}required{% endif %}>
-                                {{ value.getTitle() }}{% if amount > 0 %} <span class="text-ink-soft">+{{ view.formatPrice(amount) }}</span>{% endif %}
+                                <span class="field-radio__label">{{ value.getTitle() }}{% if amount > 0 %} <span class="text-ink-soft">+{{ view.formatPrice(amount) }}</span>{% endif %}</span>
                             </label>
                         {% endfor %}
                     </div>

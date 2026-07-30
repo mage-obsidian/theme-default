@@ -14,7 +14,7 @@
                     <div>
                         <div class="flex items-center justify-between">
                             <h3 class="font-mono text-xs uppercase tracking-[0.12em] text-ink">{{ __('Shipping To') }}</h3>
-                            <a href="{{ block.getAddressEditUrl(address)|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Change') }}</a>
+                            <a href="{{ block.getAddressEditUrl(address)|escape_url }}" class="link text-xs text-ink-soft underline">{{ __('Change') }}</a>
                         </div>
                         <address class="mt-2 text-sm not-italic text-ink-soft">{{ address.format('html')|raw }}</address>
                     </div>
@@ -35,12 +35,12 @@
                                                     <p class="text-sm text-sale">{{ rate.getCarrierTitle() }}: {{ rate.getErrorMessage() }}</p>
                                                 {% else %}
                                                     {% set rid = 's_method_' ~ address.getId() ~ '_' ~ rate.getCode() %}
-                                                    <label for="{{ rid }}" class="flex cursor-pointer items-center justify-between gap-4 rounded-edge border border-ash-300 px-3 py-2 transition-colors hover:border-ink">
-                                                        <span class="flex items-center gap-3 text-sm text-ink">
+                                                    <label for="{{ rid }}" class="field-radio-card flex items-center justify-between gap-4 px-3 py-2">
+                                                        <span class="field-radio">
                                                             <input type="radio" id="{{ rid }}" name="shipping_method[{{ address.getId() }}]" value="{{ rate.getCode()|escape_html_attr }}"
-                                                                   class="h-4 w-4 accent-ink"
+                                                                   class="field-radio__input"
                                                                    {{ rate.getCode() == block.getAddressShippingMethod(address) ? 'checked' : '' }}>
-                                                            {{ rate.getMethodTitle() }}
+                                                            <span class="field-radio__label">{{ rate.getMethodTitle() }}</span>
                                                         </span>
                                                         <span class="font-mono text-sm text-ink">{{ block.getShippingPrice(address, rate.getPrice(), true)|raw }}</span>
                                                     </label>
@@ -57,7 +57,7 @@
                 <div class="mt-6 border-t border-ash-200 pt-4">
                     <div class="flex items-center justify-between">
                         <h3 class="font-mono text-xs uppercase tracking-[0.12em] text-ink">{{ __('Items') }}</h3>
-                        <a href="{{ block.getItemsEditUrl(address)|escape_url }}" class="text-xs text-ink-soft underline underline-offset-4 hover:text-accent">{{ __('Edit Items') }}</a>
+                        <a href="{{ block.getItemsEditUrl(address)|escape_url }}" class="link text-xs text-ink-soft underline">{{ __('Edit Items') }}</a>
                     </div>
                     <ul class="mt-2 text-sm text-ink-soft">
                         {% for item in block.getAddressItems(address) %}
@@ -70,7 +70,7 @@
 
         <div class="flex items-center justify-between gap-4">
             <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Select Addresses') }}</a>
-            <button type="submit" class="inline-flex items-center justify-center rounded-edge bg-ink px-6 py-3 font-mono text-xs uppercase tracking-[0.16em] text-alabaster transition-colors hover:bg-obsidian-800">{{ __('Continue to Billing Information') }}</button>
+            <button type="submit" class="btn btn--solid">{{ __('Continue to Billing Information') }}</button>
         </div>
     </form>
 </section>

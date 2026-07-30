@@ -87,9 +87,9 @@
     {{ form.required_note(__('Required fields')) }}
 
     <div class="flex items-center gap-4">
-        <button type="submit" class="h-11 rounded-edge bg-ink px-6 font-mono text-xs uppercase tracking-[0.18em] text-alabaster transition-colors hover:bg-ink-soft">{{ __('Save') }}</button>
-        <a href="{{ block.getUrl('customer/account')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Back') }}</a>
+        <button type="submit" class="btn btn--solid">{{ __('Save') }}</button>
+        <a href="{{ block.getUrl('customer/account')|escape_url }}" class="link link--meta">{{ __('Back') }}</a>
     </div>
 </form>
 
-<script type="module" src="{{ vite_url('MageObsidian_Customer::js/edit-enhancer') }}"></script>
+{{ script('MageObsidian_Customer::js/edit-enhancer') }}

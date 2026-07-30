@@ -33,7 +33,7 @@
                     <tr class="border-b border-ash-100 align-top">
                         <td class="py-3 pr-4">
                             <a href="{{ list.getOrderViewUrl(purchased.getOrderId())|escape_url }}"
-                               class="text-ink underline-offset-4 transition-colors hover:text-accent hover:underline">
+                               class="link text-ink">
                                 {{ purchased.getOrderIncrementId() }}
                             </a>
                         </td>
@@ -63,7 +63,7 @@
 
 <div class="mt-10">
     <a href="{{ list.getBackUrl()|escape_url }}"
-       class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">
+       class="link link--meta">
         {{ __('Back') }}
     </a>
 </div>

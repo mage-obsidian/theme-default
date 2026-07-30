@@ -38,7 +38,7 @@
                                 <form action="{{ stored.getDeleteUrl()|escape_url }}" method="post" class="inline">
                                     {{ block.getBlockHtml('formkey')|raw }}
                                     <input type="hidden" name="public_hash" value="{{ card.publicHash }}">
-                                    <button type="submit" class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft underline-offset-4 transition-colors hover:text-accent hover:underline">{{ __('Delete') }}</button>
+                                    <button type="submit" class="link link--meta">{{ __('Delete') }}</button>
                                 </form>
                             </td>
                         </tr>
