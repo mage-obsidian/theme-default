@@ -19,7 +19,7 @@
 #}
 <article class="product-card group flex flex-col">
     <div class="product-card__media-wrap relative">
-        <a href="{{ url|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised" tabindex="-1" data-prefetch>
+        <a href="{{ url|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised" tabindex="-1">
             {{ block.getImage(product, 'category_page_grid').toHtml()|raw }}
         </a>
         <form data-add-to-wishlist data-product-id="{{ product.getId() }}"

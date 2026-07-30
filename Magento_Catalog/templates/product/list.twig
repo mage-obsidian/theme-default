@@ -28,15 +28,4 @@
     {# ItemList structured data (reuses the already-loaded collection via the
        MageObsidian child block — no extra query, engine untouched). #}
     {{ child_html('item_list') }}
-
-    {# Near-instant PDP navigation: prefetch a card's target on hover intent. #}
-    <script type="speculationrules">
-    {
-        "prefetch": [{
-            "source": "document",
-            "where": { "selector_matches": "a[data-prefetch]" },
-            "eagerness": "moderate"
-        }]
-    }
-    </script>
 {% endif %}

@@ -25,7 +25,7 @@
         <nav class="subcategory-grid grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3"
              aria-label="{{ __('Shop by category')|escape_html_attr }}">
             {% for tile in tiles %}
-                <a class="subcategory-card group relative flex flex-col" href="{{ tile.url|escape_url }}" data-prefetch>
+                <a class="subcategory-card group relative flex flex-col" href="{{ tile.url|escape_url }}">
                     <span class="subcategory-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised">
                         {% if tile.image %}
                             <img class="subcategory-card__img h-full w-full object-cover"

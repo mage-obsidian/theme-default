@@ -8,7 +8,7 @@
         <ul class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
             {% for product in products %}
                 <li>
-                    <a href="{{ product.getProductUrl()|escape_url }}" class="group flex flex-col" data-prefetch>
+                    <a href="{{ product.getProductUrl()|escape_url }}" class="group flex flex-col">
                         <span class="block aspect-[4/5] overflow-hidden rounded-edge bg-ash-100">
                             {{ block.getImage(product, 'cart_cross_sell_products').toHtml()|raw }}
                         </span>
