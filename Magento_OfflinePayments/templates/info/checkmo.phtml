@@ -1,0 +1,39 @@
+<?php
+/**
+ * Check / Money order payment info for MageObsidian.
+ *
+ * The native template always opens a <dl> with a <dt> but emits the <dd>s only
+ * when "Make Check payable to" or "Send Check to" are configured — neither is by
+ * default, so the markup ships a definition list with no definition, which axe
+ * flags (definition-list, WCAG 1.3.1) on the multishipping overview and on any
+ * order view paid with this method. Here the <dl> only exists when it has
+ * content; a bare method name is a label, not a definition list.
+ *
+ * @var \Magento\OfflinePayments\Block\Info\Checkmo $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$title = $escaper->escapeHtml($block->getMethod()->getTitle());
+$payableTo = $block->getInfo()->getAdditionalInformation() ? $block->getPayableTo() : null;
+$mailingAddress = $block->getInfo()->getAdditionalInformation() ? $block->getMailingAddress() : null;
+?>
+<?php if ($payableTo || $mailingAddress): ?>
+    <dl class="payment-method checkmemo">
+        <dt class="title"><?= /* @noEscape */ $title ?></dt>
+        <?php if ($payableTo): ?>
+            <dd class="content">
+                <strong><?= $escaper->escapeHtml(__('Make Check payable to')) ?></strong>
+                <?= $escaper->escapeHtml($payableTo) ?>
+            </dd>
+        <?php endif; ?>
+        <?php if ($mailingAddress): ?>
+            <dd class="content">
+                <strong><?= $escaper->escapeHtml(__('Send Check to')) ?></strong>
+                <address class="checkmo mailing address">
+                    <?= /* @noEscape */ nl2br($escaper->escapeHtml($mailingAddress)) ?>
+                </address>
+            </dd>
+        <?php endif; ?>
+    </dl>
+<?php else: ?>
+    <p class="payment-method checkmemo"><?= /* @noEscape */ $title ?></p>
+<?php endif; ?>
