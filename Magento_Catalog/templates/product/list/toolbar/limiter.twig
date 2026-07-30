@@ -2,8 +2,12 @@
   Items-per-page control. Like the sorter, each <option> value is a full URL and
   the shared ESM navigates on change. Wrapped in a <label> so the visible
   "Show … per page" text is the accessible name.
+
+  No `field` class: that one is `flex-direction: column` and, defined in a module
+  stylesheet emitted after Tailwind, it beat the utilities here and stacked the
+  label, select and suffix into three lines. Only the control needs it.
 #}
-<label class="field limiter flex items-center gap-2">
+<label class="limiter flex items-center gap-2">
     <span class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Show') }}</span>
     <select data-nav-select
             class="field__control field__control--compact">
@@ -11,5 +15,7 @@
             <option value="{{ block.getPagerUrl({'product_list_limit': key})|escape_url }}"{{ block.isLimitCurrent(key) ? ' selected' }}>{{ limit|number }}</option>
         {% endfor %}
     </select>
-    <span class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('per page') }}</span>
+    {# Hidden from sight on mobile, where the row does not fit and "Show 12" already
+       reads fine — kept for screen readers so the accessible name stays whole. #}
+    <span class="sr-only font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft lg:not-sr-only">{{ __('per page') }}</span>
 </label>

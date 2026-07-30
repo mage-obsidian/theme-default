@@ -5,7 +5,9 @@
 #}
 {% set dir = block.getCurrentDirection() == 'desc' ? 'asc' : 'desc' %}
 <div class="toolbar-sorter sorter flex items-center gap-2">
-    <label for="sorter" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ __('Sort By') }}</label>
+    {# Visually dropped on mobile, where the row does not fit: the select shows the
+       current order and the direction toggle sits next to it. #}
+    <label for="sorter" class="sr-only font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft lg:not-sr-only">{{ __('Sort By') }}</label>
     <select id="sorter" data-nav-select
             class="field__control field__control--compact">
         {% for key, order in block.getAvailableOrders() %}

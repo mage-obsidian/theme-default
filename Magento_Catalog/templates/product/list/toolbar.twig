@@ -5,6 +5,11 @@
   widget is gone: sort/limit are <select>s whose option values are full URLs and
   the shared nav-select enhancer navigates on change (no-JS users still have the
   direction link).
+
+  The mobile "Filters" trigger lives here rather than in the sidebar because the
+  sidebar leaves the flow on narrow viewports. It renders only where the layout
+  passed the filter_state argument, so listings without a layered-navigation
+  sidebar get no dead button.
 #}
 {% if block.getCollection().getSize() %}
     {% if block.getIsBottom() %}
@@ -12,13 +17,29 @@
             {{ block.getPagerHtml()|raw }}
         </div>
     {% else %}
-        <div class="toolbar toolbar-products toolbar-top mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-ash-200 pb-4">
-            {% include 'Magento_Catalog::product/list/toolbar/amount.twig' %}
-            <div class="flex items-center gap-5">
+        {% set filterState = block.getFilterState() %}
+        {% set vite = block.getVite() %}
+        {% set hasFilters = filterState and filterState.hasFilters() %}
+        <div class="toolbar toolbar-products toolbar-top mb-8 border-b border-ash-200 pb-4">
+            <div class="toolbar__row toolbar__row--summary">
+                {% if hasFilters %}
+                    {% set applied = filterState.getActiveCount() %}
+                    <button type="button" class="ln-trigger" data-filter-open
+                            aria-haspopup="dialog" aria-controls="{{ filterState.getDialogId() }}"
+                            aria-expanded="false">
+                        {% if vite %}{{ vite.getHeroIcon('adjustments-horizontal', 'outline', '24')|raw }}{% endif %}
+                        <span>{{ __('Filters') }}</span>
+                        {% if applied %}<span class="ln-trigger__count">{{ applied }}</span>{% endif %}
+                    </button>
+                {% endif %}
+                {% include 'Magento_Catalog::product/list/toolbar/amount.twig' %}
+            </div>
+            <div class="toolbar__row toolbar__row--controls">
                 {% include 'Magento_Catalog::product/list/toolbar/sorter.twig' %}
                 {% include 'Magento_Catalog::product/list/toolbar/limiter.twig' %}
             </div>
         </div>
         {{ script('MageObsidian_Storefront::js/nav-select') }}
+        {% if hasFilters %}{{ script('MageObsidian_Catalog::js/filter-drawer') }}{% endif %}
     {% endif %}
 {% endif %}

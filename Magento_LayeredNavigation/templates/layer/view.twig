@@ -1,78 +1,94 @@
 {#
   Layered navigation sidebar (category + search). `block` is the Navigation
   block; the State child carries the active filters. Every filter item is a
-  native link to the filtered URL — the whole sidebar works with no JS. The
-  disclosure is `open` by default: a closed <details> collapses its own box to
-  height 0 even when its content is forced visible via CSS, which would hide the
-  whole sidebar on desktop. On mobile the "Filters" <summary> toggle (shown
-  below 1024px) still lets it collapse.
+  native link to the filtered URL — the whole sidebar works with no JS.
+
+  The panel is a <dialog>, not a <details>: CSS can force a dialog visible
+  (`display` beats `dialog:not([open])`), so desktop lays this out as a plain
+  sidebar while mobile opens the very same markup as an off-canvas drawer via
+  showModal(). A <details> could not do that — its box collapses to height 0
+  without the `open` attribute, which only JS can set, and CSS cannot open it.
+
+  Groups render expanded (that is the desktop reading); the drawer enhancer
+  collapses them on first open. Nothing marks the applied ones because the core
+  drops a filter from getFilters() once it is applied — the chips above are the
+  only trace left of it.
 #}
 {% if block.canShowBlock() %}
     {% set state = block.getChildBlock('state') %}
     {% set active = state ? state.getActiveFilters() : [] %}
     {% set filters = block.getFilters() %}
     {% set swatchVm = block.getSwatchViewModel() %}
+    {% set filterState = block.getFilterState() %}
+    {% set vite = block.getVite() %}
 
-    <details class="ln-disclosure" open>
-        <summary class="ln-toggle">{{ __('Filters') }}</summary>
-        <div class="ln-body">
-            <nav class="ln" aria-label="{{ __('Shopping options')|escape_html_attr }}">
-                {% if active is not empty %}
-                    <div class="ln__active">
-                        <div class="ln__active-head">
-                            <span>{{ __('Now Shopping by') }}</span>
-                            <a href="{{ block.getClearUrl()|escape_url }}" class="ln__clear" rel="nofollow">{{ __('Clear All') }}</a>
-                        </div>
-                        <ul class="ln__chips">
-                            {% for item in active %}
-                                <li>
-                                    <a href="{{ item.getRemoveUrl()|escape_url }}" class="ln__chip" rel="nofollow">
-                                        <span>{{ item.getFilter().getName() }}: {{ item.getLabel()|raw }}</span>
-                                        <span aria-hidden="true">&times;</span>
-                                        <span class="sr-only">{{ __('Remove This Item') }}</span>
-                                    </a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-
-                {% for filter in filters %}
-                    {% if filter.getItemsCount() > 0 %}
-                        <details class="ln__filter" open>
-                            <summary class="ln__filter-title">{{ filter.getName() }}</summary>
-                            {% if swatchVm and swatchVm.isSwatch(filter) %}
-                                <ul class="ln__swatches">
-                                    {% for opt in swatchVm.getData(filter) %}
-                                        <li>
-                                            <a href="{{ opt.link|escape_url }}" class="ln__swatch" rel="nofollow"
-                                               title="{{ opt.label|escape_html_attr }}">
-                                                {% if opt.color %}
-                                                    <span class="ln__swatch-color" style="background-color: {{ opt.color|raw }}"></span>
-                                                {% else %}
-                                                    <span class="ln__swatch-text">{{ opt.label }}</span>
-                                                {% endif %}
-                                                <span class="sr-only">{{ opt.label }}</span>
-                                            </a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <ul class="ln__items">
-                                    {% for item in filter.getItems() %}
-                                        <li>
-                                            <a href="{{ item.getUrl()|escape_url }}" class="ln__item" rel="nofollow">
-                                                <span class="ln__item-label">{{ item.getLabel()|raw }}</span>
-                                                <span class="ln__item-count">{{ item.getCount() }}</span>
-                                            </a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </details>
-                    {% endif %}
-                {% endfor %}
-            </nav>
+    <dialog class="ln-dialog" data-filter-dialog
+            {% if filterState %}id="{{ filterState.getDialogId() }}"{% endif %}
+            aria-label="{{ __('Filters')|escape_html_attr }}">
+        <div class="ln-dialog__head">
+            <span class="ln-dialog__title">{{ __('Filters') }}</span>
+            <button type="button" class="ln-dialog__close" data-filter-close
+                    aria-label="{{ __('Close')|escape_html_attr }}">
+                {% if vite %}{{ vite.getHeroIcon('x-mark', 'outline', '24')|raw }}{% else %}&times;{% endif %}
+            </button>
         </div>
-    </details>
+
+        <nav class="ln" aria-label="{{ __('Shopping options')|escape_html_attr }}">
+            {% if active is not empty %}
+                <div class="ln__active">
+                    <div class="ln__active-head">
+                        <span>{{ __('Now Shopping by') }}</span>
+                        <a href="{{ block.getClearUrl()|escape_url }}" class="ln__clear" rel="nofollow">{{ __('Clear All') }}</a>
+                    </div>
+                    <ul class="ln__chips">
+                        {% for item in active %}
+                            <li>
+                                <a href="{{ item.getRemoveUrl()|escape_url }}" class="ln__chip" rel="nofollow">
+                                    <span>{{ item.getFilter().getName() }}: {{ item.getLabel()|raw }}</span>
+                                    <span aria-hidden="true">&times;</span>
+                                    <span class="sr-only">{{ __('Remove This Item') }}</span>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {% for filter in filters %}
+                {% if filter.getItemsCount() > 0 %}
+                    <details class="ln__filter" open>
+                        <summary class="ln__filter-title">{{ filter.getName() }}</summary>
+                        {% if swatchVm and swatchVm.isSwatch(filter) %}
+                            <ul class="ln__swatches">
+                                {% for opt in swatchVm.getData(filter) %}
+                                    <li>
+                                        <a href="{{ opt.link|escape_url }}" class="ln__swatch" rel="nofollow"
+                                           title="{{ opt.label|escape_html_attr }}">
+                                            {% if opt.color %}
+                                                <span class="ln__swatch-color" style="background-color: {{ opt.color|raw }}"></span>
+                                            {% else %}
+                                                <span class="ln__swatch-text">{{ opt.label }}</span>
+                                            {% endif %}
+                                            <span class="sr-only">{{ opt.label }}</span>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <ul class="ln__items">
+                                {% for item in filter.getItems() %}
+                                    <li>
+                                        <a href="{{ item.getUrl()|escape_url }}" class="ln__item" rel="nofollow">
+                                            <span class="ln__item-label">{{ item.getLabel()|raw }}</span>
+                                            <span class="ln__item-count">{{ item.getCount() }}</span>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </details>
+                {% endif %}
+            {% endfor %}
+        </nav>
+    </dialog>
 {% endif %}
