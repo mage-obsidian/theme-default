@@ -421,7 +421,13 @@
 
 /* Subtle scroll-driven entrance for cards. Guarded by @supports and
    no-preference so unsupported browsers and reduced-motion users see static
-   cards (the keyframe only hides them while the animation is actually running). */
+   cards.
+
+   Transform only, no fade: the animation is scroll-driven, so a card below the
+   fold sits at whatever the range says — measured at 0.25 — and every colour it
+   paints is read at that opacity. accent needs at least 0.88 to clear 4.5:1 and
+   ash-500 fails at any value under 1, so no opacity floor works. The 14px slide
+   carries the entrance on its own and nothing about it depends on a token. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .products-grid .product-item,
@@ -433,8 +439,8 @@
   }
 }
 @keyframes obsidian-card-in {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { transform: translateY(14px); }
+  to { transform: translateY(0); }
 }
 
 /* Reduced-motion for the view-transition pseudos moved inline with the rest of
