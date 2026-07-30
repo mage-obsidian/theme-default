@@ -21,7 +21,7 @@ $locked = $block->getButtonLockManager()->isDisabled('newsletter_form_submit');
                placeholder="<?= $escaper->escapeHtmlAttr(__('Enter your email address')) ?>"
                class="w-full rounded-edge border border-obsidian-700 bg-transparent px-3 py-2.5 text-sm text-on-obsidian placeholder:text-on-obsidian-soft focus:border-on-obsidian focus:outline-none">
         <button type="submit"
-                class="mt-3 inline-flex items-center justify-center rounded-edge border border-on-obsidian bg-on-obsidian px-5 py-2.5 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-obsidian-950 transition-colors hover:bg-transparent hover:text-on-obsidian disabled:cursor-not-allowed disabled:opacity-50"
+                class="btn btn--sm btn--invert mt-3 disabled:cursor-not-allowed"
                 aria-label="<?= $escaper->escapeHtmlAttr(__('Subscribe')) ?>"
                 <?= $locked ? 'disabled="disabled"' : '' ?>>
             <?= $escaper->escapeHtml(__('Subscribe')) ?>
