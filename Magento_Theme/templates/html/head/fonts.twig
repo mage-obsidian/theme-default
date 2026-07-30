@@ -1,9 +1,15 @@
 {#
   Self-hosted OBSIDIAN type families. The @font-face rules live in the theme CSS
   (web/css/theme.source.css) and are served from our own origin via Vite — no
-  Google Fonts round-trip, no preconnects. Here we only preload the display face
-  (the hero LCP) so its swap settles sooner; body/mono load on demand.
-  font-display:swap keeps text visible meanwhile.
+  Google Fonts round-trip, no preconnects. font-display:swap keeps text visible
+  meanwhile.
+
+  Display and body are both preloaded: they carry the hero LCP and the bulk of
+  the page's text, and their swap is what reflows the layout — waiting for the
+  stylesheet to request them puts that reflow half a second in. Mono is left on
+  demand; it dresses small fragments that do not move the page when they change.
 #}
 <link rel="preload" as="font" type="font/woff2" crossorigin
       href="{{ block.getViteFileUrl('bodoni-moda-latin-wght-normal.woff2') }}">
+<link rel="preload" as="font" type="font/woff2" crossorigin
+      href="{{ block.getViteFileUrl('hanken-grotesk-latin-wght-normal.woff2') }}">
