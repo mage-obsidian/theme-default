@@ -1,8 +1,9 @@
 {#
   One-page checkout. `block` is the MageObsidian Template (obsidian.checkout). The
   whole flow is a single Vue island seeded from the CheckoutConfig + DirectoryData
-  ViewModels (server-primed quote + auth mode + countries/regions), so the first
-  paint needs no REST round-trip; the REST mutations layer on through the store.
+  ViewModels. `getInlineConfig()`, not `getConfig()`: on the cacheable path only
+  the store-scoped half may reach the HTML, and the quote arrives through the
+  `obsidian-checkout` customer-data section instead.
   Mounted eager — the checkout IS the page — while the per-step UIs are code-split
   inside the island. The <h1> is server-rendered above the island for hierarchy.
 #}
@@ -14,7 +15,7 @@
    footer down (cuts layout shift / CLS); content fills this once hydrated. #}
 <div style="min-height:60vh">
 {{ render_vue('MageObsidian_Checkout::checkout/Checkout', {
-    config: block.getCheckoutConfig().getConfig(),
+    config: block.getCheckoutConfig().getInlineConfig(),
     directory: block.getDirectoryData().getData(),
     loginUrl: block.getUrl('customer/account/login'),
     labels: {
