@@ -1,0 +1,18 @@
+{
+  "name": "@mage-obsidian/theme-default-e2e",
+  "version": "0.1.0",
+  "description": "End-to-end suite for the OBSIDIAN account area, authentication and header navigation.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "seed": "zento compose exec -T php-noxdebug php app/design/frontend/MageObsidian/default/tests/e2e/tools/seed.php",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}
