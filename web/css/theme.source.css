@@ -1058,6 +1058,16 @@
   max-width: none;
   padding: 0;
 }
+
+.category-what-is-new .columns:has(.sidebar-main),
+.category-sale .columns:has(.sidebar-main) {
+  display: block;
+}
+
+.category-what-is-new .sidebar-main,
+.category-sale .sidebar-main {
+  display: none;
+}
 .cms-index-index footer,
 .category-what-is-new footer,
 .category-sale footer {
