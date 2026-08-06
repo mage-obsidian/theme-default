@@ -14,7 +14,7 @@
                 <div data-nav-item data-nav-index="{{ loop.index0 }}" class="relative">
                     <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %} aria-haspopup="true" aria-expanded="false" class="inline-flex items-center gap-1 whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink-soft transition-colors hover:text-ink">{{ link.label }} {{ icon.chevron('h-3 w-3')|trim|raw }}</a>
                     <div class="absolute left-0 top-full z-40 pt-3" style="display:none;">
-                        <ul aria-label="{{ link.label }}" class="min-w-[12rem] rounded-edge border border-ash-200 bg-alabaster/95 py-1 shadow-xl backdrop-blur-md">
+                        <ul aria-label="{{ link.label }}" class="max-h-[calc(100dvh-9rem)] min-w-[12rem] overflow-y-auto overscroll-contain rounded-edge border border-ash-200 bg-alabaster py-1 shadow-xl">
                         {%- apply island_list -%}
                             {%- for child in link.children -%}
                                 <li>
