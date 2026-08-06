@@ -1,58 +1,105 @@
-{# Recent orders on the account dashboard. `block` is a MageObsidian Template (so
+{# Orders on the account dashboard. `block` is a MageObsidian Template (so
    render_vue works for the cancel island); `recent` is the core Order\Recent data
-   source (getOrders, getViewUrl, getReorderUrl, formatDate). Reorder is a native
-   POST form; View Order is a GET link. #}
-{% set recent = block.getChildBlock('recent') %}
-{% set orders = recent.getOrders() %}
-{% set cancellation = block.getCancellation() %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+   source (getOrders, getViewUrl, getReorderUrl, formatDate); `order_presentation`
+   adds the thumbnails, the chip tone and the fulfilment track.
 
-<section class="mt-8">
-    <div class="flex items-center justify-between gap-4">
-        <h2 class="font-display text-lg text-ink">{{ __('Recent Orders') }}</h2>
-        {% if orders|length > 0 %}
-            <a href="{{ block.getUrl('sales/order/history')|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('View All') }}</a>
+   The newest order gets the full treatment — images, status line, actions — and
+   the rest fall back to compact rows: a customer opening the dashboard is nearly
+   always asking about the last one. Reorder is a native POST form. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
+
+{% set recent = block.getChildBlock('recent') %}
+{% set cancellation = block.getCancellation() %}
+{% set presentation = block.getOrderPresentation() %}
+
+{# The collection is not an array; materialise it once so it can be sliced. #}
+{% set list = [] %}
+{% for order in recent.getOrders() %}{% set list = list|merge([order]) %}{% endfor %}
+
+{% if list|length > 0 %}
+    {% set latest = list|first %}
+    {% set rest = list|slice(1) %}
+    {% set thumbs = presentation.getThumbnails(list) %}
+    {% set trackLabels = {
+        received: __('Received'),
+        processing: __('Preparing'),
+        shipped: __('Shipped'),
+        delivered: __('Delivered')
+    } %}
+
+    {% set latestBody %}
+        <div class="flex flex-wrap items-start justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-4">
+                {% set shot = thumbs[latest.getEntityId()]|default(null) %}
+                {% if shot %}{{ account.order_thumbs(shot.thumbs, shot.total) }}{% endif %}
+                <div class="flex flex-col gap-1">
+                    <span class="account-stat__label">#{{ latest.getRealOrderId() }} · {{ recent.formatDate(latest.getCreatedAt()) }}</span>
+                    <span class="font-display text-2xl text-ink">{{ latest.formatPrice(latest.getGrandTotal())|raw }}</span>
+                </div>
+            </div>
+            {{ account.chip(latest.getStatusLabel(), presentation.getStateTone(latest)) }}
+        </div>
+
+        {% if presentation.isTrackable(latest) %}
+            <div class="mt-8">
+                {% set steps = [] %}
+                {% for step in presentation.getTrack(latest) %}
+                    {% set steps = steps|merge([{ label: trackLabels[step.key], state: step.state }]) %}
+                {% endfor %}
+                {{ account.order_track(steps) }}
+            </div>
         {% endif %}
+
+        <div class="mt-8 flex flex-wrap items-center gap-5">
+            <a href="{{ recent.getViewUrl(latest)|escape_url }}" class="link link--meta text-accent">{{ __('View Order') }}</a>
+            <form action="{{ recent.getReorderUrl(latest)|escape_url }}" method="post" class="inline">
+                {{ block.getBlockHtml('formkey')|raw }}
+                <button type="submit" class="link link--meta">{{ __('Reorder') }}</button>
+            </form>
+            {% include 'Magento_Sales::account/cancel-order.twig' with { 'order': latest, 'cancellation': cancellation } %}
+        </div>
+    {% endset %}
+
+    {% set viewAll %}<a href="{{ block.getUrl('sales/order/history')|escape_url }}" class="link link--meta">{{ __('View All') }}</a>{% endset %}
+
+    <div class="mt-8">
+        {{ account.panel({ title: __('Latest Order'), action: viewAll, content: latestBody }) }}
     </div>
 
-    {% if orders|length > 0 %}
-        <div class="mt-4 overflow-x-auto">
-            <table class="w-full border-collapse text-sm">
-                <caption class="sr-only">{{ __('Recent Orders') }}</caption>
-                <thead>
-                    <tr class="border-b border-ash-300 text-left {{ labelClass }}">
-                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Order #') }}</th>
-                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Date') }}</th>
-                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Ship To') }}</th>
-                        <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Order Total') }}</th>
-                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Status') }}</th>
-                        <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Action') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in orders %}
-                        <tr class="border-b border-ash-100 align-top">
-                            <td class="py-3 pr-4 text-ink">{{ order.getRealOrderId() }}</td>
-                            <td class="py-3 pr-4 text-ink-soft">{{ recent.formatDate(order.getCreatedAt()) }}</td>
-                            <td class="py-3 pr-4 text-ink-soft">{{ order.getShippingAddress() ? order.getShippingAddress().getName() : '' }}</td>
-                            <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(order.getGrandTotal())|raw }}</td>
-                            <td class="py-3 pr-4 text-ink-soft">{{ order.getStatusLabel() }}</td>
-                            <td class="py-3 text-right">
-                                <div class="flex items-center justify-end gap-4">
-                                    <a href="{{ recent.getViewUrl(order)|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('View Order') }}</a>
-                                    <form action="{{ recent.getReorderUrl(order)|escape_url }}" method="post" class="inline">
-                                        {{ block.getBlockHtml('formkey')|raw }}
-                                        <button type="submit" class="link link--meta">{{ __('Reorder') }}</button>
-                                    </form>
-                                    {% include 'Magento_Sales::account/cancel-order.twig' with { 'order': order, 'cancellation': cancellation } %}
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    {% if rest|length > 0 %}
+        {% set restBody %}
+            <ul class="flex flex-col divide-y divide-ash-200">
+                {% for order in rest %}
+                    <li class="flex flex-wrap items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
+                        <div class="flex items-center gap-4">
+                            {% set shot = thumbs[order.getEntityId()]|default(null) %}
+                            {% if shot %}{{ account.order_thumbs(shot.thumbs|slice(0, 3), shot.total) }}{% endif %}
+                            <div class="flex flex-col gap-0.5">
+                                <span class="account-stat__label">#{{ order.getRealOrderId() }}</span>
+                                <span class="text-sm text-ink-soft">{{ recent.formatDate(order.getCreatedAt()) }}</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-5">
+                            {{ account.chip(order.getStatusLabel(), presentation.getStateTone(order)) }}
+                            <span class="font-display text-lg text-ink">{{ order.formatPrice(order.getGrandTotal())|raw }}</span>
+                            <a href="{{ recent.getViewUrl(order)|escape_url }}" class="link link--meta text-accent">{{ __('View') }}</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endset %}
+        <div class="mt-6">
+            {{ account.panel({ title: __('Earlier Orders'), content: restBody }) }}
         </div>
-    {% else %}
-        <p class="mt-4 text-sm text-ink-soft">{{ __('You have placed no orders.') }}</p>
     {% endif %}
-</section>
+{% else %}
+    <div class="mt-8">
+        {{ account.empty_state(block, {
+            icon: 'archive-box',
+            title: __('No orders yet'),
+            body: __('When you place an order it will show up here, with its status and everything you bought.'),
+            cta: __('Start Shopping'),
+            cta_url: block.getUrl('')
+        }) }}
+    </div>
+{% endif %}

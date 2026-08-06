@@ -1,26 +1,53 @@
-{# Account shell: sidebar nav (AccountNav ViewModel) + the page content slot.
-   `block` is the MageObsidian Template wrapper. #}
+{# Account shell: the obsidian rail (AccountNav + AccountSummary ViewModels) and
+   the page content slot. `block` is the MageObsidian Template wrapper.
+
+   One <nav> serves both layouts — under md the CSS lays the same list down into a
+   scroll-snapped strip. A second copy for mobile would mean two landmarks and two
+   tab stops for the same links.
+
+   Reading the customer here is only safe because every account content block is
+   cacheable="false"; see AccountSummary. #}
 {% set nav = block.getAccountNav() %}
+{% set summary = block.getAccountSummary() %}
+
 <section class="mx-auto w-full max-w-[1320px] px-4 py-12 md:px-8">
-    <div class="grid grid-cols-1 gap-10 md:grid-cols-[220px_1fr]">
-        <aside>
+    <div class="account-shell">
+        <aside class="account-rail">
+            <div class="account-rail__id">
+                <span class="account-rail__monogram" aria-hidden="true">{{ summary.getInitials() }}</span>
+                <span class="min-w-0">
+                    <span class="account-rail__name">{{ summary.getName() }}</span>
+                    <span class="account-rail__email" title="{{ summary.getEmail()|escape_html_attr }}">{{ summary.getEmail() }}</span>
+                </span>
+            </div>
+
             <nav aria-label="{{ __('Account')|escape_html_attr }}">
-                <ul class="flex flex-col gap-1">
+                <ul class="account-rail__list">
                     {% for link in nav.getLinks() %}
                         <li>
                             <a
                                 href="{{ link.url|escape_url }}"
+                                class="account-rail__link"
                                 {% if link.active %}aria-current="page"{% endif %}
-                                class="block rounded-edge px-3 py-2 font-mono text-xs uppercase tracking-[0.14em] transition-colors {{ link.active ? 'bg-ash-100 text-ink' : 'text-ink-soft hover:bg-ash-100 hover:text-ink' }}"
-                            >{{ link.label }}</a>
+                            >
+                                {% if link.icon %}{{ hero_icon(link.icon, 'outline', '24', 'account-rail__icon') }}{% endif %}
+                                <span>{{ link.label }}</span>
+                                {% if link.count %}<span class="account-rail__count">{{ link.count }}</span>{% endif %}
+                            </a>
                         </li>
                     {% endfor %}
-                    <li class="mt-2 border-t border-ash-200 pt-2">
-                        <a href="{{ nav.getLogoutUrl()|escape_url }}" class="block rounded-edge px-3 py-2 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:bg-ash-100 hover:text-ink">{{ __('Sign Out') }}</a>
+                    <li class="account-rail__out">
+                        <a href="{{ nav.getLogoutUrl()|escape_url }}" class="account-rail__link">
+                            {{ hero_icon('arrow-right-start-on-rectangle', 'outline', '24', 'account-rail__icon') }}
+                            <span>{{ __('Sign Out') }}</span>
+                        </a>
                     </li>
                 </ul>
             </nav>
         </aside>
-        <div>{{ child_html('account_content') }}</div>
+
+        <div class="min-w-0">{{ child_html('account_content') }}</div>
     </div>
 </section>
+
+{{ script('MageObsidian_Customer::js/account-rail') }}

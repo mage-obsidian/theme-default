@@ -1,0 +1,17 @@
+{# Obsidian panel beside the auth forms. Included with `only`, so `block` is passed
+   explicitly: hero_icon() reads the rendering block out of the context.
+
+   Hidden below lg by the .auth-split CSS — on a phone the sign-in page stays the
+   single centred column it has always been, so the funnel is untouched. Decorative
+   by definition: nothing here is said only here. #}
+<aside class="auth-split__aside" aria-hidden="true">
+    <p class="auth-split__line">{{ line }}</p>
+    <ul class="auth-split__list">
+        {% for item in items %}
+            <li class="auth-split__item">
+                {{ hero_icon('check', 'outline', '24') }}
+                <span>{{ item }}</span>
+            </li>
+        {% endfor %}
+    </ul>
+</aside>

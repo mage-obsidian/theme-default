@@ -1,15 +1,25 @@
 {# Edit account information. `form_data` is the core Form\Edit block (post data,
    min length). Native POST to editPost; edit-enhancer.ts toggles the email /
-   password fieldsets and validates conditionally. #}
+   password fieldsets and validates conditionally.
+
+   The panels are written out rather than taken from the account macro: they are
+   sections of one <form>, and the macro would have to capture each body whole. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
 {% import 'Magento_Theme::macros/form.twig' as form %}
+
 {% set edit = block.getChildBlock('form_data') %}
 {% set cust = edit.getCustomer() %}
-<h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Account Information') }}</h1>
+
+{{ account.page_header({
+    eyebrow: __('Account'),
+    title: __('Account Information'),
+    lead: __('Your name is what we put on orders; the email and password are how you get in.')
+}) }}
 
 <form
     action="{{ block.getUrl('customer/account/editPost')|escape_url }}"
     method="post"
-    class="mt-8 flex max-w-lg flex-col gap-5"
+    class="mt-8 flex max-w-2xl flex-col gap-6"
     data-edit-form
     data-password-min-length="{{ edit.getMinimumPasswordLength()|escape_html_attr }}"
     data-err-required="{{ __('This is a required field.')|escape_html_attr }}"
@@ -19,76 +29,88 @@
 >
     {{ block.getBlockHtml('formkey')|raw }}
 
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        {{ form.field({
-            name: 'firstname',
-            id: 'edit-firstname',
-            label: __('First Name'),
-            value: cust.getFirstname(),
-            required: true,
-            autocomplete: 'given-name'
-        }) }}
-        {{ form.field({
-            name: 'lastname',
-            id: 'edit-lastname',
-            label: __('Last Name'),
-            value: cust.getLastname(),
-            required: true,
-            autocomplete: 'family-name'
-        }) }}
-    </div>
+    <section class="account-panel">
+        <div class="account-panel__head">
+            <h2 class="account-panel__title">{{ __('Personal Details') }}</h2>
+        </div>
+        <div class="account-panel__body grid grid-cols-1 gap-5 sm:grid-cols-2">
+            {{ form.field({
+                name: 'firstname',
+                id: 'edit-firstname',
+                label: __('First Name'),
+                value: cust.getFirstname(),
+                required: true,
+                autocomplete: 'given-name'
+            }) }}
+            {{ form.field({
+                name: 'lastname',
+                id: 'edit-lastname',
+                label: __('Last Name'),
+                value: cust.getLastname(),
+                required: true,
+                autocomplete: 'family-name'
+            }) }}
+        </div>
+    </section>
 
-    {{ form.checkbox({
-        name: 'change_email',
-        label: __('Change Email')
-    }) }}
-    <div data-email-fields>
-        {{ form.field({
-            name: 'email',
-            id: 'edit-email',
-            label: __('Email'),
-            type: 'email',
-            value: cust.getEmail(),
-            autocomplete: 'email',
-            attrs: { autocapitalize: 'off' }
-        }) }}
-    </div>
+    <section class="account-panel">
+        <div class="account-panel__head">
+            <h2 class="account-panel__title">{{ __('Sign-in') }}</h2>
+        </div>
+        <div class="account-panel__body flex flex-col gap-5">
+            {{ form.checkbox({
+                name: 'change_email',
+                label: __('Change Email')
+            }) }}
+            <div data-email-fields>
+                {{ form.field({
+                    name: 'email',
+                    id: 'edit-email',
+                    label: __('Email'),
+                    type: 'email',
+                    value: cust.getEmail(),
+                    autocomplete: 'email',
+                    attrs: { autocapitalize: 'off' }
+                }) }}
+            </div>
 
-    {{ form.checkbox({
-        name: 'change_password',
-        label: __('Change Password')
-    }) }}
-    <div data-current-password-fields>
-        {{ form.field({
-            name: 'current_password',
-            id: 'edit-current-password',
-            label: __('Current Password'),
-            type: 'password',
-            autocomplete: 'current-password'
-        }) }}
-    </div>
-    <div data-password-fields class="flex flex-col gap-5">
-        {{ form.field({
-            name: 'password',
-            id: 'edit-password',
-            label: __('New Password'),
-            type: 'password',
-            autocomplete: 'new-password'
-        }) }}
-        {{ form.field({
-            name: 'password_confirmation',
-            id: 'edit-password-confirmation',
-            label: __('Confirm New Password'),
-            type: 'password',
-            autocomplete: 'new-password'
-        }) }}
-    </div>
+            {{ form.checkbox({
+                name: 'change_password',
+                label: __('Change Password')
+            }) }}
+            <div data-current-password-fields>
+                {{ form.field({
+                    name: 'current_password',
+                    id: 'edit-current-password',
+                    label: __('Current Password'),
+                    type: 'password',
+                    autocomplete: 'current-password'
+                }) }}
+            </div>
+            <div data-password-fields class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {{ form.field({
+                    name: 'password',
+                    id: 'edit-password',
+                    label: __('New Password'),
+                    type: 'password',
+                    autocomplete: 'new-password'
+                }) }}
+                {{ form.field({
+                    name: 'password_confirmation',
+                    id: 'edit-password-confirmation',
+                    label: __('Confirm New Password'),
+                    type: 'password',
+                    autocomplete: 'new-password'
+                }) }}
+            </div>
+        </div>
+    </section>
 
     {{ form.required_note(__('Required fields')) }}
 
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-5">
         <button type="submit" class="btn btn--solid">{{ __('Save') }}</button>
-        <a href="{{ block.getUrl('customer/account')|escape_url }}" class="link link--meta">{{ __('Back') }}</a>
+        <a href="{{ block.getUrl('customer/account')|escape_url }}" class="link link--meta">{{ __('Cancel') }}</a>
     </div>
 </form>
 

@@ -1,27 +1,38 @@
+{# One of the customer's own reviews. `block` is the core Customer\View (product,
+   review, per-code ratings). Read-only: Magento gives no front-end edit. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
 {% from 'Magento_Review::review/stars.twig' import stars %}
+
 {% set product = block.getProductData() %}
 {% set review = block.getReviewData() %}
+{% set ratings = block.getRating() %}
 
-<div class="account-review-view">
-    <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft underline">{{ __('Back to My Reviews') }}</a>
+{% set backAction %}<a href="{{ block.getBackUrl()|escape_url }}" class="link link--meta">{{ __('Back to My Reviews') }}</a>{% endset %}
+{{ account.page_header({
+    eyebrow: __('My Review'),
+    title: product.getName(),
+    action: backAction
+}) }}
 
-    <h1 class="mt-4 font-display text-3xl text-ink">{{ product.getName() }}</h1>
+<div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+    {% set reviewBody %}
+        <h2 class="font-display text-xl text-ink">{{ review.getTitle() }}</h2>
+        <p class="mt-3 text-sm leading-relaxed text-ink-soft">{{ review.getDetail() }}</p>
+        <footer class="account-stat__label mt-6">{{ review.getNickname() }} · {{ block.dateFormat(review.getCreatedAt()) }}</footer>
+    {% endset %}
+    {{ account.panel({ title: __('What you wrote'), content: reviewBody }) }}
 
-    {% set ratings = block.getRating() %}
     {% if ratings and ratings.getSize() %}
-        <dl class="mt-6 flex flex-col gap-3">
-            {% for rating in ratings %}
-                <div class="flex items-center gap-4">
-                    <dt class="w-40 font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ rating.getRatingCode() }}</dt>
-                    <dd>{{ stars(rating.getPercent(), __('%1 out of 5 stars', (rating.getPercent() / 20)|round(1))) }}</dd>
-                </div>
-            {% endfor %}
-        </dl>
+        {% set ratingBody %}
+            <dl class="flex flex-col gap-4">
+                {% for rating in ratings %}
+                    <div class="flex items-center justify-between gap-4">
+                        <dt class="account-stat__label">{{ rating.getRatingCode() }}</dt>
+                        <dd>{{ stars(rating.getPercent(), __('%1 out of 5 stars', (rating.getPercent() / 20)|round(1))) }}</dd>
+                    </div>
+                {% endfor %}
+            </dl>
+        {% endset %}
+        {{ account.panel({ title: __('Your rating'), content: ratingBody }) }}
     {% endif %}
-
-    <h2 class="mt-8 font-display text-xl text-ink">{{ review.getTitle() }}</h2>
-    <p class="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft">{{ review.getDetail() }}</p>
-    <footer class="mt-4 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">
-        {{ review.getNickname() }} · {{ block.dateFormat(review.getCreatedAt()) }}
-    </footer>
 </div>

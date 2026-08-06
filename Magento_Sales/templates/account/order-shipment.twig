@@ -2,6 +2,7 @@
    giving the order and its shipment collection (with tracking); `info` for
    addresses. One table per shipment with shipped quantities and tracking
    numbers, mirroring Magento_Shipping::items.phtml. No prices on a shipment. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
 {% set shipmentBlock = block.getChildBlock('shipment') %}
 {% set info = block.getChildBlock('info') %}
 {% set order = shipmentBlock.getOrder() %}
@@ -9,77 +10,78 @@
 {% set billing = order.getBillingAddress() %}
 {% set shipping = order.getShippingAddress() %}
 {% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
-{% set cardClass = 'rounded-edge border border-ash-200 p-6' %}
 {% set route_prefix = block.getData('route_prefix')|default('sales/order') %}
 {% set is_guest = block.getData('is_guest')|default(false) %}
+{% set presentation = block.getOrderPresentation() %}
 
-<div class="flex flex-wrap items-start justify-between gap-4">
-    <div class="flex flex-col gap-1">
-        <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Order') }} #{{ order.getRealOrderId() }}</h1>
-        <span class="text-sm text-ink-soft">{{ order.getCreatedAt()|date_format('long') }}</span>
-    </div>
-    <span class="inline-flex items-center rounded-full border border-ash-300 px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink">{{ order.getStatusLabel() }}</span>
-</div>
+{% set statusChip %}
+    {%- if presentation -%}
+        {{ account.chip(order.getStatusLabel(), presentation.getStateTone(order)) }}
+    {%- endif -%}
+{% endset %}
+{{ account.page_header({
+    eyebrow: order.getCreatedAt()|date_format('long'),
+    title: __('Order') ~ ' #' ~ order.getRealOrderId(),
+    action: statusChip
+}) }}
 
 {% include 'Magento_Sales::order/info/links.twig' with { 'order_id': order.getId(), 'current': 'shipment', 'route_prefix': route_prefix } %}
 
 {% for shipment in order.getShipmentsCollection() %}
-    <section class="mt-8">
-        <div class="flex items-center justify-between gap-4">
-            <h2 class="font-display text-lg text-ink">{{ __('Shipment #%1', shipment.getIncrementId()) }}</h2>
+    <section class="account-panel mt-6">
+        <div class="account-panel__head">
+            <h2 class="account-panel__title">{{ __('Shipment #%1', shipment.getIncrementId()) }}</h2>
             <a href="{{ shipmentBlock.getPrintShipmentUrl(shipment)|escape_url }}" target="_blank" rel="noopener"
                class="link link--meta print:hidden">{{ __('Print Shipment') }}</a>
         </div>
-        {% set tracks = shipment.getTracksCollection() %}
-        {% if tracks.getSize() > 0 %}
-            <dl class="mt-3 flex flex-wrap items-baseline gap-2 text-sm">
-                <dt class="{{ labelClass }}">{{ __('Tracking Number(s):') }}</dt>
-                <dd class="text-ink">
+        <div class="account-panel__body">
+            {% set tracks = shipment.getTracksCollection() %}
+                {% if tracks.getSize() > 0 %}
+                    <dl class="mt-3 flex flex-wrap items-baseline gap-2 text-sm">
+                    <dt class="{{ labelClass }}">{{ __('Tracking Number(s):') }}</dt>
+                    <dd class="text-ink">
                     {% for track in tracks %}{{ track.getNumber() }}{% if not loop.last %}, {% endif %}{% endfor %}
-                </dd>
-            </dl>
-        {% endif %}
-        <div class="mt-4 overflow-x-auto">
-            <table class="w-full border-collapse text-sm">
-                <caption class="sr-only">{{ __('Items Shipped') }}</caption>
-                <thead>
-                    <tr class="border-b border-ash-300 text-left {{ labelClass }}">
-                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Product') }}</th>
-                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('SKU') }}</th>
-                        <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Qty Shipped') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in shipment.getAllItems() %}
-                        {% if not item.getOrderItem().getParentItem() %}
-                            <tr class="border-b border-ash-100 align-top">
-                                <td class="py-3 pr-4 text-ink">
-                                    {{ item.getName() }}
-                                    {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order, show_price: false } %}
-                                </td>
-                                <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
-                                <td class="py-3 text-right text-ink">{{ item.getQty()|round }}</td>
+                    </dd>
+                    </dl>
+                {% endif %}
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse text-sm">
+                        <caption class="sr-only">{{ __('Items Shipped') }}</caption>
+                        <thead>
+                            <tr class="border-b border-ash-300 text-left {{ labelClass }}">
+                                <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Product') }}</th>
+                                <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('SKU') }}</th>
+                                <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Qty Shipped') }}</th>
                             </tr>
-                        {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            {% for item in shipment.getAllItems() %}
+                                {% if not item.getOrderItem().getParentItem() %}
+                                    <tr class="border-b border-ash-100 align-top">
+                                        <td class="py-3 pr-4 text-ink">
+                                        {{ item.getName() }}
+                                        {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order, show_price: false } %}
+                                        </td>
+                                        <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
+                                        <td class="py-3 text-right text-ink">{{ item.getQty()|round }}</td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
         </div>
     </section>
 {% endfor %}
 
 <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
     {% if billing %}
-        <section class="{{ cardClass }}">
-            <h2 class="{{ labelClass }}">{{ __('Billing Address') }}</h2>
-            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(billing)|raw }}</address>
-        </section>
+        {% set billingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(billing)|raw }}</address>{% endset %}
+        {{ account.panel({ title: __('Billing Address'), content: billingBody }) }}
     {% endif %}
     {% if shipping %}
-        <section class="{{ cardClass }}">
-            <h2 class="{{ labelClass }}">{{ __('Shipping Address') }}</h2>
-            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(shipping)|raw }}</address>
-        </section>
+        {% set shippingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(shipping)|raw }}</address>{% endset %}
+        {{ account.panel({ title: __('Shipping Address'), content: shippingBody }) }}
     {% endif %}
 </div>
 

@@ -1,26 +1,40 @@
+{# "My Product Reviews". `block` is our subclass of the core Customer\ListCustomer,
+   which drops the ten-review cap core applies through a pager it never renders.
+   No pager here on purpose — see the block. No JS. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
 {% from 'Magento_Review::review/stars.twig' import stars %}
+
 {% set reviews = block.getReviews() %}
 
-<div class="account-reviews">
-    <h1 class="font-display text-3xl text-ink">{{ __('My Product Reviews') }}</h1>
+{{ account.page_header({
+    eyebrow: __('Account'),
+    title: __('My Product Reviews')
+}) }}
 
-    {% if reviews and reviews.getSize() > 0 %}
-        <ol class="mt-8 flex flex-col divide-y divide-ash-200 border-y border-ash-200" role="list">
-            {% for review in reviews %}
-                <li class="flex flex-col gap-2 py-6">
-                    <div class="flex flex-wrap items-center justify-between gap-3">
-                        <a href="{{ block.getProductUrl(review)|escape_url }}" class="font-display text-lg text-ink underline-offset-4 hover:underline">{{ review.getName() }}</a>
-                        {{ stars(review.getSum(), __('%1 out of 5 stars', (review.getSum() / 20)|round(1))) }}
-                    </div>
-                    <p class="text-sm leading-relaxed text-ink-soft">{{ review.getDetail() }}</p>
-                    <footer class="mt-1 flex flex-wrap items-center gap-3 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">
-                        <span>{{ block.dateFormat(review.getReviewCreatedAt()) }}</span>
-                        <a href="{{ block.getReviewUrl(review)|escape_url }}" class="text-ink underline">{{ __('See Details') }}</a>
-                    </footer>
-                </li>
-            {% endfor %}
-        </ol>
-    {% else %}
-        <p class="mt-6 font-mono text-sm text-ink-soft">{{ __('You have submitted no reviews.') }}</p>
-    {% endif %}
-</div>
+{% if reviews and reviews.getSize() > 0 %}
+    <ol class="mt-8 flex flex-col gap-6" role="list">
+        {% for review in reviews %}
+            {% set body %}
+                <div class="flex flex-wrap items-baseline justify-between gap-3">
+                    <a href="{{ block.getProductUrl(review)|escape_url }}" class="font-display text-lg text-ink underline-offset-4 hover:underline">{{ review.getName() }}</a>
+                    {{ stars(review.getSum(), __('%1 out of 5 stars', (review.getSum() / 20)|round(1))) }}
+                </div>
+                <p class="mt-3 text-sm leading-relaxed text-ink-soft">{{ review.getDetail() }}</p>
+                <footer class="mt-4 flex flex-wrap items-center gap-4">
+                    <span class="account-stat__label">{{ block.dateFormat(review.getReviewCreatedAt()) }}</span>
+                    <a href="{{ block.getReviewUrl(review)|escape_url }}" class="link link--meta">{{ __('See Details') }}</a>
+                </footer>
+            {% endset %}
+            <li>{{ account.panel({ content: body }) }}</li>
+        {% endfor %}
+    </ol>
+{% else %}
+    <div class="mt-8">
+        {# No icon: this page renders on core's review block, and hero_icon() needs a
+           block extending MageObsidian's Template to resolve. #}
+        {{ account.empty_state(block, {
+            title: __('No reviews yet'),
+            body: __('Once you have lived with something for a while, tell the next person what it is really like.')
+        }) }}
+    </div>
+{% endif %}

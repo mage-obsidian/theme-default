@@ -4,57 +4,74 @@
    to loginPost; login-enhancer.ts adds inline validation and an AJAX sign-in. #}
 {% import 'Magento_Theme::macros/form.twig' as form %}
 {% set login = block.getChildBlock('form_data') %}
-<section class="mx-auto w-full max-w-md px-4 py-16">
-    <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Sign In') }}</h1>
-    <p class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Welcome back to OBSIDIAN') }}</p>
 
-    <form
-        action="{{ login.getPostActionUrl()|escape_url }}"
-        method="post"
-        class="mt-8 flex flex-col gap-5"
-        data-login-form
-        data-ajax-login="{{ block.getUrl('customer/ajax/login')|escape_url }}"
-        data-redirect="{{ block.getUrl('customer/account')|escape_url }}"
-        data-err-required="{{ __('This is a required field.') }}"
-        data-err-email="{{ __('Please enter a valid email address.') }}"
-        data-err-failed="{{ __('We could not sign you in. Check your details and try again.') }}"
-    >
-        {{ block.getBlockHtml('formkey')|raw }}
+<section class="mx-auto w-full max-w-[1320px] px-4 md:px-8">
+    <div class="auth-split">
+        <div class="auth-split__form">
+            <div class="auth-split__inner">
+                <p class="account-head__eyebrow">{{ __('Account') }}</p>
+                <h1 class="mt-2 font-display text-3xl tracking-[0.04em] text-ink">{{ __('Sign In') }}</h1>
 
-        <p data-login-error role="alert" class="form-banner"></p>
+                <form
+                    action="{{ login.getPostActionUrl()|escape_url }}"
+                    method="post"
+                    class="mt-8 flex flex-col gap-5"
+                    data-login-form
+                    data-ajax-login="{{ block.getUrl('customer/ajax/login')|escape_url }}"
+                    data-redirect="{{ block.getUrl('customer/account')|escape_url }}"
+                    data-err-required="{{ __('This is a required field.') }}"
+                    data-err-email="{{ __('Please enter a valid email address.') }}"
+                    data-err-failed="{{ __('We could not sign you in. Check your details and try again.') }}"
+                >
+                    {{ block.getBlockHtml('formkey')|raw }}
 
-        {{ form.field({
-            name: 'login[username]',
-            id: 'login-email',
-            label: __('Email'),
-            type: 'email',
-            value: login.getUsername(),
-            required: true,
-            autocomplete: 'email',
-            attrs: { autocapitalize: 'off' }
-        }) }}
+                    <p data-login-error role="alert" class="form-banner"></p>
 
-        {{ form.field({
-            name: 'login[password]',
-            id: 'login-password',
-            label: __('Password'),
-            type: 'password',
-            required: true,
-            autocomplete: 'current-password'
-        }) }}
+                    {{ form.field({
+                        name: 'login[username]',
+                        id: 'login-email',
+                        label: __('Email'),
+                        type: 'email',
+                        value: login.getUsername(),
+                        required: true,
+                        autocomplete: 'email',
+                        attrs: { autocapitalize: 'off' }
+                    }) }}
 
-        {# Remember-me (Magento_Persistent; the VM self-gates on the enable flags). #}
-        {% include 'Magento_Persistent::remember-me.twig' with { remember: block.getRemember() } only %}
+                    {{ form.field({
+                        name: 'login[password]',
+                        id: 'login-password',
+                        label: __('Password'),
+                        type: 'password',
+                        required: true,
+                        autocomplete: 'current-password'
+                    }) }}
 
-        <button type="submit" class="btn btn--solid mt-1">{{ __('Sign In') }}</button>
+                    {# Remember-me (Magento_Persistent; the VM self-gates on the enable flags). #}
+                    {% include 'Magento_Persistent::remember-me.twig' with { remember: block.getRemember() } only %}
 
-        {{ form.required_note(__('Required fields')) }}
+                    <button type="submit" class="btn btn--solid mt-1">{{ __('Sign In') }}</button>
 
-        <div class="flex items-center justify-between font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
-            <a href="{{ login.getForgotPasswordUrl()|escape_url }}" class="link">{{ __('Forgot your password?') }}</a>
-            <a href="{{ block.getUrl('customer/account/create')|escape_url }}" class="link">{{ __('Create an account') }}</a>
+                    {{ form.required_note(__('Required fields')) }}
+
+                    <div class="flex flex-wrap items-center justify-between gap-4">
+                        <a href="{{ login.getForgotPasswordUrl()|escape_url }}" class="link link--meta">{{ __('Forgot your password?') }}</a>
+                        <a href="{{ block.getUrl('customer/account/create')|escape_url }}" class="link link--meta">{{ __('Create an account') }}</a>
+                    </div>
+                </form>
+            </div>
         </div>
-    </form>
+
+        {% include 'Magento_Customer::form/auth-aside.twig' with {
+            block: block,
+            line: __('Everything you have with us, waiting where you left it.'),
+            items: [
+                __('Every order and its documents'),
+                __('Addresses ready at checkout'),
+                __('A wish list that follows you')
+            ]
+        } only %}
+    </div>
 </section>
 
 {{ script('MageObsidian_Customer::js/login-enhancer') }}

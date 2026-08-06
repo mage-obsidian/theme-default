@@ -1,14 +1,15 @@
 {# Order detail. Data sources: `view` (Order\View, payment HTML), `items`
    (Order\Items), `totals` (Order\Totals), `info` (Order\Info, formatted
-   addresses). Reorder is a native POST form; print is a GET link. No JS. #}
+   addresses), `order_presentation` (chip tone + fulfilment track). No JS. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
+
 {% set view = block.getChildBlock('view') %}
 {% set items = block.getChildBlock('items') %}
 {% set info = block.getChildBlock('info') %}
 {% set order = view.getOrder() %}
 {% set billing = order.getBillingAddress() %}
 {% set shipping = order.getShippingAddress() %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
-{% set cardClass = 'rounded-edge border border-ash-200 p-6' %}
+{% set presentation = block.getOrderPresentation() %}
 {# route_prefix/is_guest let the same template serve the guest order area
    (sales/guest/*, standalone, no account shell). They default to the customer
    routes when the handle does not set them. #}
@@ -23,88 +24,100 @@
 {% set giftMessage = block.getGiftMessage() %}
 {% set orderGift = giftMessage ? giftMessage.getOrderMessage(order) : null %}
 
-<div class="flex flex-wrap items-start justify-between gap-4">
-    <div class="flex flex-col gap-1">
-        <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Order') }} #{{ order.getRealOrderId() }}</h1>
-        <span class="text-sm text-ink-soft">{{ order.getCreatedAt()|date_format('long') }}</span>
-    </div>
-    <span class="inline-flex items-center rounded-full border border-ash-300 px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-ink">{{ order.getStatusLabel() }}</span>
-</div>
+{# Three handles render this template (customer, guest, print); `presentation` is
+   guarded so a handle that does not inject it degrades to no chip and no track
+   instead of a fatal. #}
+{% set statusChip %}
+    {%- if presentation -%}
+        {{ account.chip(order.getStatusLabel(), presentation.getStateTone(order)) }}
+    {%- endif -%}
+{% endset %}
+{{ account.page_header({
+    eyebrow: order.getCreatedAt()|date_format('long'),
+    title: __('Order') ~ ' #' ~ order.getRealOrderId(),
+    action: statusChip
+}) }}
+
+{% if presentation and presentation.isTrackable(order) %}
+    {% set trackLabels = {
+        received: __('Received'),
+        processing: __('Preparing'),
+        shipped: __('Shipped'),
+        delivered: __('Delivered')
+    } %}
+    {% set steps = [] %}
+    {% for step in presentation.getTrack(order) %}
+        {% set steps = steps|merge([{ label: trackLabels[step.key], state: step.state }]) %}
+    {% endfor %}
+    <div class="mt-8 print:hidden">{{ account.order_track(steps) }}</div>
+{% endif %}
 
 {% include 'Magento_Sales::order/info/links.twig' with { 'order_id': order.getId(), 'current': 'view', 'route_prefix': route_prefix } %}
 
 {% if orderGift and orderGift.message %}
-    <div class="mt-8 {{ cardClass }}">
-        <p class="{{ labelClass }}">{{ __('Gift Message') }}</p>
-        <dl class="mt-3 grid gap-1 text-sm sm:grid-cols-[auto_1fr] sm:gap-x-4">
+    {% set giftBody %}
+        <dl class="grid gap-1 text-sm sm:grid-cols-[auto_1fr] sm:gap-x-4">
             <dt class="text-ink-soft">{{ __('From') }}</dt><dd class="text-ink">{{ orderGift.sender }}</dd>
             <dt class="text-ink-soft">{{ __('To') }}</dt><dd class="text-ink">{{ orderGift.recipient }}</dd>
             <dt class="text-ink-soft">{{ __('Message') }}</dt><dd class="text-ink">{{ orderGift.message }}</dd>
         </dl>
-    </div>
+    {% endset %}
+    <div class="mt-8">{{ account.panel({ title: __('Gift Message'), content: giftBody }) }}</div>
 {% endif %}
 
-<div class="mt-8 overflow-x-auto">
-    <table class="w-full border-collapse text-sm">
-        <caption class="sr-only">{{ __('Items Ordered') }}</caption>
-        <thead>
-            <tr class="border-b border-ash-300 text-left {{ labelClass }}">
-                <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Product') }}</th>
-                <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('SKU') }}</th>
-                <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Price') }}</th>
-                <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Qty') }}</th>
-                <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Subtotal') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in items.getItems() %}
-                {% if not item.getParentItem() %}
-                    <tr class="border-b border-ash-100 align-top">
-                        <td class="py-3 pr-4 text-ink">
-                            {{ item.getName() }}
-                            {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order } %}
-                        </td>
-                        <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
-                        <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getPrice())|raw }}</td>
-                        <td class="py-3 pr-4 text-right text-ink">{{ item.getQtyOrdered()|round }}</td>
-                        <td class="py-3 text-right text-ink">{{ order.formatPrice(item.getRowTotal())|raw }}</td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+{% set itemsBody %}
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse text-sm">
+            <caption class="sr-only">{{ __('Items Ordered') }}</caption>
+            <thead>
+                <tr class="border-b border-ash-300 text-left">
+                    <th scope="col" class="account-stat__label py-3 pr-4 font-normal">{{ __('Product') }}</th>
+                    <th scope="col" class="account-stat__label py-3 pr-4 font-normal">{{ __('SKU') }}</th>
+                    <th scope="col" class="account-stat__label py-3 pr-4 text-right font-normal">{{ __('Price') }}</th>
+                    <th scope="col" class="account-stat__label py-3 pr-4 text-right font-normal">{{ __('Qty') }}</th>
+                    <th scope="col" class="account-stat__label py-3 text-right font-normal">{{ __('Subtotal') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items.getItems() %}
+                    {% if not item.getParentItem() %}
+                        <tr class="border-b border-ash-100 align-top">
+                            <td class="py-3 pr-4 text-ink">
+                                {{ item.getName() }}
+                                {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order } %}
+                            </td>
+                            <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
+                            <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getPrice())|raw }}</td>
+                            <td class="py-3 pr-4 text-right text-ink">{{ item.getQtyOrdered()|round }}</td>
+                            <td class="py-3 text-right text-ink">{{ order.formatPrice(item.getRowTotal())|raw }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-6 flex justify-end">{{ child_html('totals')|raw }}</div>
+{% endset %}
+<div class="mt-8">{{ account.panel({ title: __('Items Ordered'), content: itemsBody }) }}</div>
 
-<div class="mt-6 flex justify-end">
-    {{ child_html('totals')|raw }}
-</div>
-
-<div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
+<div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
     {% if billing %}
-        <section class="{{ cardClass }}">
-            <h2 class="{{ labelClass }}">{{ __('Billing Address') }}</h2>
-            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(billing)|raw }}</address>
-        </section>
+        {% set billingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(billing)|raw }}</address>{% endset %}
+        {{ account.panel({ title: __('Billing Address'), content: billingBody }) }}
     {% endif %}
     {% if shipping %}
-        <section class="{{ cardClass }}">
-            <h2 class="{{ labelClass }}">{{ __('Shipping Address') }}</h2>
-            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(shipping)|raw }}</address>
-        </section>
+        {% set shippingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(shipping)|raw }}</address>{% endset %}
+        {{ account.panel({ title: __('Shipping Address'), content: shippingBody }) }}
     {% endif %}
-    <section class="{{ cardClass }}">
-        <h2 class="{{ labelClass }}">{{ __('Payment Method') }}</h2>
-        <p class="mt-3 text-sm text-ink-soft">{{ order.getPayment().getMethodInstance().getTitle() }}</p>
-    </section>
+    {% set paymentBody %}<p class="text-sm text-ink-soft">{{ order.getPayment().getMethodInstance().getTitle() }}</p>{% endset %}
+    {{ account.panel({ title: __('Payment Method'), content: paymentBody }) }}
     {% if shipping and order.getShippingDescription() %}
-        <section class="{{ cardClass }}">
-            <h2 class="{{ labelClass }}">{{ __('Shipping Method') }}</h2>
-            <p class="mt-3 text-sm text-ink-soft">{{ order.getShippingDescription() }}</p>
-        </section>
+        {% set methodBody %}<p class="text-sm text-ink-soft">{{ order.getShippingDescription() }}</p>{% endset %}
+        {{ account.panel({ title: __('Shipping Method'), content: methodBody }) }}
     {% endif %}
 </div>
 
-<div class="mt-10 flex flex-wrap items-center gap-4 print:hidden">
+<div class="mt-10 flex flex-wrap items-center gap-5 print:hidden">
     <form action="{{ block.getUrl(route_prefix ~ '/reorder', {'order_id': order.getId()})|escape_url }}" method="post" class="inline">
         {{ block.getBlockHtml('formkey')|raw }}
         <button type="submit" class="btn btn--solid">{{ __('Reorder') }}</button>

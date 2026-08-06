@@ -1,17 +1,26 @@
 {# Wish list. `wishlist` is the core Customer\Wishlist block (item collection,
    add-all params). Item actions are native POST forms (work without JS):
    move-to-cart → wishlist/index/cart, remove → wishlist/index/remove. The
-   cart controller redirects configurable products to the PDP to pick options. #}
+   cart controller redirects configurable products to the PDP to pick options.
+
+   The cards borrow the storefront's `.product-card` classes so a saved product
+   reads the same here as it does in a listing. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
+
 {% set wishlist = block.getChildBlock('wishlist') %}
 {% set thumbnail = block.getThumbnail() %}
 {% set items = wishlist.getWishlistItems() %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
 {% set inputClass = 'field__control field-qty w-16 px-2' %}
 
-<div class="flex flex-wrap items-center justify-between gap-4">
-    <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('My Wish List') }}</h1>
+{# The pager core sets up in Customer\Wishlist::_prepareLayout is what caps the
+   collection to a page, so not rendering it hid the rest of the list. Rendered
+   here and printed at the foot: read after the loop, a loaded collection can
+   report the rows in hand as the total. #}
+{% set pager = wishlist.getChildHtml('wishlist_item_pager') %}
+
+{% set headerActions %}
     {% if items.getSize() > 0 %}
-        <div class="flex flex-wrap items-center gap-4">
+        <div class="flex flex-wrap items-center gap-5">
             <a href="{{ block.getUrl('wishlist/index/share')|escape_url }}" class="link link--meta">{{ __('Share Wish List') }}</a>
             <form action="{{ block.getUrl('wishlist/index/allcart')|escape_url }}" method="post" class="inline">
                 {{ block.getBlockHtml('formkey')|raw }}
@@ -19,45 +28,76 @@
             </form>
         </div>
     {% endif %}
-</div>
+{% endset %}
+
+{{ account.page_header({
+    eyebrow: __('Account'),
+    title: __('My Wish List'),
+    action: headerActions
+}) }}
 
 {% if items.getSize() > 0 %}
-    <ul class="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+    <ul class="mt-8 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
         {% for item in items %}
             {% set product = item.getProduct() %}
             {% set img = thumbnail.get(product) %}
-            <li class="flex flex-col gap-3 rounded-edge border border-ash-200 p-4">
-                <a href="{{ product.getProductUrl()|escape_url }}" class="block overflow-hidden rounded-edge bg-ash-50">
-                    <img src="{{ img.url|escape_url }}" width="{{ img.width }}" height="{{ img.height }}" alt="{{ img.label|escape_html_attr }}" loading="lazy" class="h-auto w-full object-cover">
+            <li class="product-card group flex flex-col">
+                <a href="{{ product.getProductUrl()|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised" tabindex="-1">
+                    <img src="{{ img.url|escape_url }}" width="{{ img.width }}" height="{{ img.height }}" alt="{{ img.label|escape_html_attr }}" loading="lazy" class="h-full w-full object-cover">
                 </a>
-                <a href="{{ product.getProductUrl()|escape_url }}" class="link text-sm text-ink">{{ product.getName() }}</a>
-                <span class="font-display text-lg text-ink">{{ product.getFinalPrice()|price }}</span>
 
-                {% if not product.isSaleable() %}
-                    <span class="mt-auto {{ labelClass }} text-ash-500">{{ __('Out of stock') }}</span>
-                {% elseif product.getTypeInstance().canConfigure(product) %}
-                    {# Configurable/bundle/grouped need options → send to the PDP (same
-                       as ProductCard); a direct cart POST would hit the configure page. #}
-                    <a href="{{ product.getProductUrl()|escape_url }}" class="btn btn--solid btn--sm mt-auto">{{ __('View Options') }}</a>
-                {% else %}
-                    <form action="{{ block.getUrl('wishlist/index/cart')|escape_url }}" method="post" class="mt-auto flex items-center gap-2">
+                <div class="product-card__body mt-4 flex flex-1 flex-col gap-2">
+                    <h2 class="product-card__name font-display text-base leading-snug text-ink">
+                        <a href="{{ product.getProductUrl()|escape_url }}" class="transition-colors hover:text-accent">{{ product.getName() }}</a>
+                    </h2>
+                    <span class="product-card__price font-mono text-sm text-ink">{{ product.getFinalPrice()|price }}</span>
+
+                    <div class="product-card__action mt-auto pt-2">
+                        {% if not product.isSaleable() %}
+                            {{ account.chip(__('Out of stock'), 'dead') }}
+                        {% elseif product.getTypeInstance().canConfigure(product) %}
+                            {# Configurable/bundle/grouped need options → send to the PDP (same
+                               as ProductCard); a direct cart POST would hit the configure page. #}
+                            <a href="{{ product.getProductUrl()|escape_url }}" class="btn btn--outline btn--sm btn--block">{{ __('View Options') }}</a>
+                        {% else %}
+                            <form action="{{ block.getUrl('wishlist/index/cart')|escape_url }}" method="post" class="flex items-center gap-2">
+                                {{ block.getBlockHtml('formkey')|raw }}
+                                <input type="hidden" name="item" value="{{ item.getId()|escape_html_attr }}">
+                                <label class="sr-only" for="qty-{{ item.getId() }}">{{ __('Quantity') }}</label>
+                                <input type="number" id="qty-{{ item.getId() }}" name="qty" value="{{ item.getQty()|round }}" min="1" class="{{ inputClass }}">
+                                <button type="submit" class="btn btn--outline btn--sm flex-1">{{ __('Add to Cart') }}</button>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    <form
+                        action="{{ block.getUrl('wishlist/index/remove')|escape_url }}"
+                        method="post"
+                        data-confirm-title="{{ __('Remove from your wish list?')|escape_html_attr }}"
+                        data-confirm-body="{{ __('%1 will no longer be saved here. You can always add it again.', product.getName())|escape_html_attr }}"
+                        data-confirm-ok="{{ __('Remove')|escape_html_attr }}"
+                        data-confirm-cancel="{{ __('Keep it')|escape_html_attr }}"
+                    >
                         {{ block.getBlockHtml('formkey')|raw }}
                         <input type="hidden" name="item" value="{{ item.getId()|escape_html_attr }}">
-                        <label class="sr-only" for="qty-{{ item.getId() }}">{{ __('Quantity') }}</label>
-                        <input type="number" id="qty-{{ item.getId() }}" name="qty" value="{{ item.getQty()|round }}" min="1" class="{{ inputClass }}">
-                        <button type="submit" class="btn btn--solid btn--sm flex-1">{{ __('Add to Cart') }}</button>
+                        <button type="submit" class="link link--meta">{{ __('Remove') }}</button>
                     </form>
-                {% endif %}
-
-                <form action="{{ block.getUrl('wishlist/index/remove')|escape_url }}" method="post">
-                    {{ block.getBlockHtml('formkey')|raw }}
-                    <input type="hidden" name="item" value="{{ item.getId()|escape_html_attr }}">
-                    <button type="submit" class="{{ labelClass }} link">{{ __('Remove') }}</button>
-                </form>
+                </div>
             </li>
         {% endfor %}
     </ul>
+
+    <div class="mt-10">{{ pager|raw }}</div>
 {% else %}
-    <p class="mt-8 text-sm text-ink-soft">{{ __('You have no items in your wish list.') }}</p>
-    <a href="{{ wishlist.getBackUrl()|escape_url }}" class="mt-4 inline-block font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('Continue Shopping') }}</a>
+    <div class="mt-8">
+        {{ account.empty_state(block, {
+            icon: 'heart',
+            title: __('Nothing saved yet'),
+            body: __('Tap the heart on anything you want to come back to. It will be waiting here.'),
+            cta: __('Continue Shopping'),
+            cta_url: wishlist.getBackUrl()
+        }) }}
+    </div>
 {% endif %}
+
+{{ script('MageObsidian_Storefront::js/confirm-action') }}

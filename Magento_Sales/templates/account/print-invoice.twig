@@ -1,6 +1,7 @@
 {# Printable invoice. Data source: `print` (PrintOrder\Invoice) — a single
    invoice when printing one, otherwise the whole collection ("print all").
    Standalone: the theme header/footer are print:hidden, so only this prints. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
 {% set printBlock = block.getChildBlock('print') %}
 {% set order = printBlock.getOrder() %}
 {% set itemOptions = block.getItemOptions() %}
@@ -9,12 +10,11 @@
 {% set billing = order.getBillingAddress() %}
 {% set shipping = order.getShippingAddress() %}
 {% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
-{% set cardClass = 'rounded-edge border border-ash-200 p-6' %}
 
-<div class="flex flex-col gap-1">
-    <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Order') }} #{{ order.getRealOrderId() }}</h1>
-    <span class="text-sm text-ink-soft">{{ order.getCreatedAt()|date_format('long') }}</span>
-</div>
+{{ account.page_header({
+    eyebrow: order.getCreatedAt()|date_format('long'),
+    title: __('Order') ~ ' #' ~ order.getRealOrderId()
+}) }}
 
 {% for invoice in invoices %}
     <section class="mt-8">
@@ -57,15 +57,11 @@
 
 <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
     {% if billing %}
-        <section class="{{ cardClass }}">
-            <h2 class="{{ labelClass }}">{{ __('Billing Address') }}</h2>
-            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.formatAddress(billing, 'html')|raw }}</address>
-        </section>
+        {% set billingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.formatAddress(billing, 'html')|raw }}</address>{% endset %}
+        {{ account.panel({ title: __('Billing Address'), content: billingBody }) }}
     {% endif %}
     {% if shipping %}
-        <section class="{{ cardClass }}">
-            <h2 class="{{ labelClass }}">{{ __('Shipping Address') }}</h2>
-            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.formatAddress(shipping, 'html')|raw }}</address>
-        </section>
+        {% set shippingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.formatAddress(shipping, 'html')|raw }}</address>{% endset %}
+        {{ account.panel({ title: __('Shipping Address'), content: shippingBody }) }}
     {% endif %}
 </div>

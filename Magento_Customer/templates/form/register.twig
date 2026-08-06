@@ -6,89 +6,107 @@
 {% import 'Magento_Theme::macros/form.twig' as form %}
 {% set register = block.getChildBlock('form_data') %}
 {% set fd = register.getFormData() %}
-<section class="mx-auto w-full max-w-md px-4 py-16">
-    <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Create an Account') }}</h1>
-    <p class="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Join OBSIDIAN') }}</p>
 
-    <form
-        action="{{ register.getPostActionUrl()|escape_url }}"
-        method="post"
-        class="mt-8 flex flex-col gap-5"
-        data-register-form
-        data-password-min-length="8"
-        data-err-required="{{ __('This is a required field.') }}"
-        data-err-email="{{ __('Please enter a valid email address.') }}"
-        data-err-minlength="{{ __('Please use at least 8 characters.') }}"
-        data-err-match="{{ __('The two passwords do not match.') }}"
-    >
-        {{ block.getBlockHtml('formkey')|raw }}
+<section class="mx-auto w-full max-w-[1320px] px-4 md:px-8">
+    <div class="auth-split">
+        <div class="auth-split__form">
+            <div class="auth-split__inner">
+                <p class="account-head__eyebrow">{{ __('Account') }}</p>
+                <h1 class="mt-2 font-display text-3xl tracking-[0.04em] text-ink">{{ __('Create an Account') }}</h1>
 
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            {{ form.field({
-                name: 'firstname',
-                id: 'reg-firstname',
-                label: __('First Name'),
-                value: fd.getFirstname(),
-                required: true,
-                autocomplete: 'given-name'
-            }) }}
-            {{ form.field({
-                name: 'lastname',
-                id: 'reg-lastname',
-                label: __('Last Name'),
-                value: fd.getLastname(),
-                required: true,
-                autocomplete: 'family-name'
-            }) }}
+                <form
+                    action="{{ register.getPostActionUrl()|escape_url }}"
+                    method="post"
+                    class="mt-8 flex flex-col gap-5"
+                    data-register-form
+                    data-password-min-length="8"
+                    data-err-required="{{ __('This is a required field.') }}"
+                    data-err-email="{{ __('Please enter a valid email address.') }}"
+                    data-err-minlength="{{ __('Please use at least 8 characters.') }}"
+                    data-err-match="{{ __('The two passwords do not match.') }}"
+                >
+                    {{ block.getBlockHtml('formkey')|raw }}
+
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        {{ form.field({
+                            name: 'firstname',
+                            id: 'reg-firstname',
+                            label: __('First Name'),
+                            value: fd.getFirstname(),
+                            required: true,
+                            autocomplete: 'given-name'
+                        }) }}
+                        {{ form.field({
+                            name: 'lastname',
+                            id: 'reg-lastname',
+                            label: __('Last Name'),
+                            value: fd.getLastname(),
+                            required: true,
+                            autocomplete: 'family-name'
+                        }) }}
+                    </div>
+
+                    {{ form.field({
+                        name: 'email',
+                        id: 'reg-email',
+                        label: __('Email'),
+                        type: 'email',
+                        value: fd.getEmail(),
+                        required: true,
+                        autocomplete: 'email',
+                        attrs: { autocapitalize: 'off' }
+                    }) }}
+
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        {{ form.field({
+                            name: 'password',
+                            id: 'reg-password',
+                            label: __('Password'),
+                            type: 'password',
+                            required: true,
+                            autocomplete: 'new-password',
+                            attrs: { minlength: 8 }
+                        }) }}
+                        {{ form.field({
+                            name: 'password_confirmation',
+                            id: 'reg-password-confirmation',
+                            label: __('Confirm Password'),
+                            type: 'password',
+                            required: true,
+                            autocomplete: 'new-password'
+                        }) }}
+                    </div>
+
+                    {{ form.checkbox({
+                        name: 'is_subscribed',
+                        label: __('Sign up for our newsletter')
+                    }) }}
+
+                    {# Remember-me (Magento_Persistent; the VM self-gates on the enable flags). #}
+                    {% include 'Magento_Persistent::remember-me.twig' with { remember: block.getRemember() } only %}
+
+                    <button type="submit" class="btn btn--solid mt-1">{{ __('Create an Account') }}</button>
+
+                    {{ form.required_note(__('Required fields')) }}
+
+                    <p class="text-sm text-ink-soft">
+                        {{ __('Already have an account?') }}
+                        <a href="{{ block.getUrl('customer/account/login')|escape_url }}" class="link link--meta">{{ __('Sign In') }}</a>
+                    </p>
+                </form>
+            </div>
         </div>
 
-        {{ form.field({
-            name: 'email',
-            id: 'reg-email',
-            label: __('Email'),
-            type: 'email',
-            value: fd.getEmail(),
-            required: true,
-            autocomplete: 'email',
-            attrs: { autocapitalize: 'off' }
-        }) }}
-
-        {{ form.field({
-            name: 'password',
-            id: 'reg-password',
-            label: __('Password'),
-            type: 'password',
-            required: true,
-            autocomplete: 'new-password',
-            attrs: { minlength: 8 }
-        }) }}
-
-        {{ form.field({
-            name: 'password_confirmation',
-            id: 'reg-password-confirmation',
-            label: __('Confirm Password'),
-            type: 'password',
-            required: true,
-            autocomplete: 'new-password'
-        }) }}
-
-        {{ form.checkbox({
-            name: 'is_subscribed',
-            label: __('Sign up for our newsletter')
-        }) }}
-
-        {# Remember-me (Magento_Persistent; the VM self-gates on the enable flags). #}
-        {% include 'Magento_Persistent::remember-me.twig' with { remember: block.getRemember() } only %}
-
-        <button type="submit" class="btn btn--solid mt-1">{{ __('Create an Account') }}</button>
-
-        {{ form.required_note(__('Required fields')) }}
-
-        <p class="font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
-            {{ __('Already have an account?') }}
-            <a href="{{ block.getUrl('customer/account/login')|escape_url }}" class="link">{{ __('Sign In') }}</a>
-        </p>
-    </form>
+        {% include 'Magento_Customer::form/auth-aside.twig' with {
+            block: block,
+            line: __('One account, and checkout stops asking twice.'),
+            items: [
+                __('Your orders and their documents in one place'),
+                __('Addresses saved for next time'),
+                __('A wish list that survives the tab')
+            ]
+        } only %}
+    </div>
 </section>
 
 {{ script('MageObsidian_Customer::js/register-enhancer') }}

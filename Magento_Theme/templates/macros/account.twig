@@ -1,0 +1,124 @@
+{#
+  Presentational primitives for the account area. The classes are the contract
+  (see the "Account" section of web/css/theme.source.css); these macros are the
+  Twig shorthand over them, so a page never hand-rolls a heading or a card again.
+
+  Imported with `{% import 'Magento_Theme::macros/account.twig' as account %}`.
+
+  Macros that inline an icon take `block` as their first argument: hero_icon()
+  reads the rendering block out of the Twig context, and a macro does not inherit
+  the caller's context — only its own arguments. Naming the argument `block` is
+  what puts it back where hero_icon() looks for it.
+
+  Where a macro needs markup rather than a string (an action button, a card body),
+  capture it first: `{% set body %}…{% endset %}`.
+#}
+
+{# Page heading. Replaces the hand-copied <h1> at the top of every account page. #}
+{% macro page_header(config) %}
+    <header class="account-head">
+        {% if config.eyebrow ?? false %}
+            <p class="account-head__eyebrow">{{ config.eyebrow }}</p>
+        {% endif %}
+        <div class="account-head__row">
+            <h1 class="account-head__title">{{ config.title }}</h1>
+            {% if config.action ?? false %}
+                <div class="account-head__action">{{ config.action }}</div>
+            {% endif %}
+        </div>
+        {% if config.lead ?? false %}
+            <p class="account-head__lead">{{ config.lead }}</p>
+        {% endif %}
+    </header>
+{% endmacro %}
+
+{# Content surface. `--quiet` drops the border and keeps only the rule under the
+   head, for sections that sit inside another panel or run full-width. #}
+{% macro panel(config) %}
+    <section class="account-panel {{ config.quiet ?? false ? 'account-panel--quiet' : '' }} {{ config.class ?? '' }}">
+        {% if config.title ?? false %}
+            <div class="account-panel__head">
+                <h2 class="account-panel__title">{{ config.title }}</h2>
+                {% if config.action ?? false %}
+                    <div class="account-panel__action">{{ config.action }}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="account-panel__body">{{ config.content }}</div>
+    </section>
+{% endmacro %}
+
+{# One metric. Wrap a row of them in <div class="account-stats">. #}
+{% macro stat(config) %}
+    <div class="account-stat">
+        <span class="account-stat__value">{{ config.value }}</span>
+        <span class="account-stat__label">{{ config.label }}</span>
+        {% if config.meta ?? false %}
+            <span class="account-stat__meta">{{ config.meta }}</span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{# Status pill. `tone` is semantic, resolved in PHP from the order STATE (states
+   are fixed; merchants add their own statuses), never from the status code. #}
+{% macro chip(label, tone = 'neutral') %}
+    <span class="chip chip--{{ tone }}">{{ label }}</span>
+{% endmacro %}
+
+{# Empty state: an icon, a line worth reading, and a way out. Pass `icon` only when
+   the page renders on a block extending MageObsidian's Template — hero_icon() has
+   nothing to resolve against on a core block, and throws. #}
+{% macro empty_state(block, config) %}
+    <div class="account-empty">
+        {% if config.icon ?? false %}
+            {{ hero_icon(config.icon, 'outline', '24', 'account-empty__icon') }}
+        {% endif %}
+        <p class="account-empty__title">{{ config.title }}</p>
+        {% if config.body ?? false %}
+            <p class="account-empty__body">{{ config.body }}</p>
+        {% endif %}
+        {% if config.cta ?? false %}
+            <a href="{{ config.cta_url|escape_url }}" class="btn btn--solid mt-6">{{ config.cta }}</a>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{# Overlapping stack of product images for an order row. `thumbs` is a list of
+   {url, width, height, label}; `total` is the real item count, so the overflow
+   badge stays honest when the list is capped. #}
+{# A lone "+3" with no image reads as a bug, so when nothing could be resolved
+   (deleted product, image-less catalog) the whole stack sits this one out. #}
+{% macro order_thumbs(thumbs, total = 0) %}
+    {% set shown = thumbs|length %}
+    {% if shown > 0 %}
+        <div class="order-thumbs">
+            {% for thumb in thumbs %}
+                <img
+                    class="order-thumbs__item"
+                    src="{{ thumb.url|escape_url }}"
+                    width="{{ thumb.width }}"
+                    height="{{ thumb.height }}"
+                    alt="{{ thumb.label|escape_html_attr }}"
+                    loading="lazy"
+                >
+            {% endfor %}
+            {% if total > shown %}
+                <span class="order-thumbs__more">+{{ total - shown }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{# Fulfilment progress. `steps` is a list of {label, state} where state is one of
+   done | current | pending. Decorative on its own — the chip carries the status
+   for screen readers, so the list is hidden from them. #}
+{% macro order_track(steps) %}
+    <ol class="order-track" aria-hidden="true">
+        {% for step in steps %}
+            <li class="order-track__step order-track__step--{{ step.state }}">
+                <span class="order-track__dot"></span>
+                <span class="order-track__label">{{ step.label }}</span>
+            </li>
+        {% endfor %}
+    </ol>
+{% endmacro %}

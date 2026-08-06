@@ -2,6 +2,7 @@
    shipment or the whole collection ("print all"), with per-shipment items,
    tracking and shipping address. Standalone (header/footer print:hidden). No
    prices on a shipment. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
 {# The PrintOrder\Shipment block lazily fills its shipment collection and tracks
    in _beforeToHtml, which never runs when the block is only a data source. Read
    the collection and tracks straight off the order/shipment models instead; the
@@ -12,12 +13,11 @@
 {% set single = printBlock.getShipment() %}
 {% set shipments = single ? [single] : order.getShipmentsCollection() %}
 {% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
-{% set cardClass = 'rounded-edge border border-ash-200 p-6' %}
 
-<div class="flex flex-col gap-1">
-    <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Order') }} #{{ order.getRealOrderId() }}</h1>
-    <span class="text-sm text-ink-soft">{{ order.getCreatedAt()|date_format('long') }}</span>
-</div>
+{{ account.page_header({
+    eyebrow: order.getCreatedAt()|date_format('long'),
+    title: __('Order') ~ ' #' ~ order.getRealOrderId()
+}) }}
 
 {% for shipment in shipments %}
     <section class="mt-8">
@@ -57,14 +57,10 @@
                 </tbody>
             </table>
         </div>
-        <div class="mt-6">
-            <h3 class="{{ labelClass }}">{{ __('Shipping Address') }}</h3>
-            <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.getShipmentAddressFormattedHtml(shipment)|raw }}</address>
-        </div>
+        {% set shipmentAddressBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.getShipmentAddressFormattedHtml(shipment)|raw }}</address>{% endset %}
+        <div class="mt-6 sm:max-w-sm">{{ account.panel({ title: __('Shipping Address'), content: shipmentAddressBody }) }}</div>
     </section>
 {% endfor %}
 
-<div class="mt-10 {{ cardClass }} sm:max-w-sm">
-    <h2 class="{{ labelClass }}">{{ __('Billing Address') }}</h2>
-    <address class="mt-3 text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.getBillingAddressFormattedHtml(order)|raw }}</address>
-</div>
+{% set billingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.getBillingAddressFormattedHtml(order)|raw }}</address>{% endset %}
+<div class="mt-10 sm:max-w-sm">{{ account.panel({ title: __('Billing Address'), content: billingBody }) }}</div>

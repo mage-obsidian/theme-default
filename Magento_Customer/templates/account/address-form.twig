@@ -3,7 +3,9 @@
    country/region option lists. The region select is rendered server-side for the
    current country so the form works without JS; address-form-enhancer.ts swaps
    regions when the country changes. Native POST to the save URL. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
 {% import 'Magento_Theme::macros/form.twig' as form %}
+
 {% set edit = block.getChildBlock('edit') %}
 {% set addressForm = block.getAddressForm() %}
 {% set addr = edit.getAddress() %}
@@ -13,12 +15,15 @@
 {% set regionId = edit.getRegionId() %}
 {% set streetLines = edit.getViewModel().addressGetStreetLines() %}
 
-<h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ edit.getTitle()}}</h1>
+{{ account.page_header({
+    eyebrow: __('Address Book'),
+    title: edit.getTitle()
+}) }}
 
 <form
     action="{{ edit.getSaveUrl()|escape_url }}"
     method="post"
-    class="mt-8 flex max-w-xl flex-col gap-5"
+    class="mt-8 flex max-w-2xl flex-col gap-6"
     data-address-form
     data-err-required="{{ __('This is a required field.')|escape_html_attr }}"
 >
@@ -32,129 +37,156 @@
     <input type="hidden" name="success_url" value="{{ edit.getSuccessUrl()|escape_url }}">
     <input type="hidden" name="error_url" value="{{ edit.getErrorUrl()|escape_url }}">
 
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        {{ form.field({
-            name: 'firstname',
-            id: 'addr-firstname',
-            label: __('First Name'),
-            value: addr.getFirstname(),
-            required: true,
-            autocomplete: 'given-name'
-        }) }}
-        {{ form.field({
-            name: 'lastname',
-            id: 'addr-lastname',
-            label: __('Last Name'),
-            value: addr.getLastname(),
-            required: true,
-            autocomplete: 'family-name'
-        }) }}
-    </div>
-
-    {{ form.field({
-        name: 'company',
-        id: 'addr-company',
-        label: __('Company'),
-        value: addr.getCompany(),
-        autocomplete: 'organization'
-    }) }}
-
-    {{ form.field({
-        name: 'telephone',
-        id: 'addr-telephone',
-        label: __('Phone Number'),
-        type: 'tel',
-        value: addr.getTelephone(),
-        required: true,
-        autocomplete: 'tel'
-    }) }}
-
-    {# Multi-line street: one label over N controls, so it is assembled by hand
-       from the same `.field*` classes the macro emits. #}
-    <div class="field">
-        <label for="street_1" class="field__label">{{ __('Street Address') }}<span class="field__required" aria-hidden="true">*</span></label>
-        <input type="text" id="street_1" name="street[0]" value="{{ edit.getStreetLine(1)|escape_html_attr }}" required aria-required="true" autocomplete="address-line1" aria-describedby="street_1-error" class="field__control">
-        {% if streetLines > 1 %}
-            {% for i in 1..(streetLines - 1) %}
-                <input type="text" name="street[{{ i }}]" value="{{ edit.getStreetLine(i + 1)|escape_html_attr }}" autocomplete="address-line{{ i + 1 }}" aria-label="{{ __('Street Address: Line %1', i + 1)|escape_html_attr }}" class="field__control">
-            {% endfor %}
-        {% endif %}
-        <p class="field__error" id="street_1-error" role="alert"></p>
-    </div>
-
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <div class="field">
-            <label for="country" class="field__label">{{ __('Country') }}<span class="field__required" aria-hidden="true">*</span></label>
-            <select id="country" name="country_id" required aria-required="true" autocomplete="country" data-country aria-describedby="country-error" class="field__control">
-                {% for option in addressForm.getCountryOptions() %}
-                    <option value="{{ option.value|escape_html_attr }}"{{ option.value == currentCountry ? ' selected' : '' }}>{{ option.label}}</option>
-                {% endfor %}
-            </select>
-            <p class="field__error" id="country-error" role="alert"></p>
+    <section class="account-panel">
+        <div class="account-panel__head">
+            <h2 class="account-panel__title">{{ __('Contact') }}</h2>
         </div>
-        {# Region is a select or a free-text input depending on the country, and the
-           enhancer swaps them; one label covers whichever is live. #}
-        <div class="field" data-region-field>
-            <label for="region_id" class="field__label">{{ __('State/Province') }}</label>
-            <select id="region_id" name="region_id" data-region-select{{ hasRegions ? '' : ' disabled' }} aria-describedby="region_id-error" class="field__control{{ hasRegions ? '' : ' hidden' }}">
-                <option value="">{{ __('Please select a region, state or province.') }}</option>
-                {% for option in regionOptions %}
-                    <option value="{{ option.value|escape_html_attr }}"{{ option.value == regionId ? ' selected' : '' }}>{{ option.label}}</option>
-                {% endfor %}
-            </select>
-            <input type="text" id="region" name="region" value="{{ edit.getRegion()|escape_html_attr }}" data-region-input autocomplete="address-level1"{{ hasRegions ? ' disabled' : '' }} aria-describedby="region-error" class="field__control{{ hasRegions ? ' hidden' : '' }}">
-            <p class="field__error" id="region_id-error" role="alert"></p>
-            <p class="field__error" id="region-error" role="alert"></p>
+        <div class="account-panel__body flex flex-col gap-5">
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {{ form.field({
+                    name: 'firstname',
+                    id: 'addr-firstname',
+                    label: __('First Name'),
+                    value: addr.getFirstname(),
+                    required: true,
+                    autocomplete: 'given-name'
+                }) }}
+                {{ form.field({
+                    name: 'lastname',
+                    id: 'addr-lastname',
+                    label: __('Last Name'),
+                    value: addr.getLastname(),
+                    required: true,
+                    autocomplete: 'family-name'
+                }) }}
+            </div>
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {{ form.field({
+                    name: 'company',
+                    id: 'addr-company',
+                    label: __('Company'),
+                    value: addr.getCompany(),
+                    autocomplete: 'organization'
+                }) }}
+                {{ form.field({
+                    name: 'telephone',
+                    id: 'addr-telephone',
+                    label: __('Phone Number'),
+                    type: 'tel',
+                    value: addr.getTelephone(),
+                    required: true,
+                    autocomplete: 'tel'
+                }) }}
+            </div>
         </div>
-    </div>
+    </section>
 
-    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        {{ form.field({
-            name: 'city',
-            id: 'city',
-            label: __('City'),
-            value: addr.getCity(),
-            required: true,
-            autocomplete: 'address-level2'
-        }) }}
-        {{ form.field({
-            name: 'postcode',
-            id: 'zip',
-            label: __('Zip/Postal Code'),
-            value: addr.getPostcode(),
-            required: true,
-            autocomplete: 'postal-code',
-            attrs: { 'data-postcode': '' }
-        }) }}
-    </div>
+    <section class="account-panel">
+        <div class="account-panel__head">
+            <h2 class="account-panel__title">{{ __('Address') }}</h2>
+        </div>
+        <div class="account-panel__body flex flex-col gap-5">
+            {# Multi-line street: one label over N controls, so it is assembled by
+               hand from the same `.field*` classes the macro emits. #}
+            <div class="field">
+                <label for="street_1" class="field__label">{{ __('Street Address') }}<span class="field__required" aria-hidden="true">*</span></label>
+                <input type="text" id="street_1" name="street[0]" value="{{ edit.getStreetLine(1)|escape_html_attr }}" required aria-required="true" autocomplete="address-line1" aria-describedby="street_1-error" class="field__control">
+                {% if streetLines > 1 %}
+                    {% for i in 1..(streetLines - 1) %}
+                        <input type="text" name="street[{{ i }}]" value="{{ edit.getStreetLine(i + 1)|escape_html_attr }}" autocomplete="address-line{{ i + 1 }}" aria-label="{{ __('Street Address: Line %1', i + 1)|escape_html_attr }}" class="field__control">
+                    {% endfor %}
+                {% endif %}
+                <p class="field__error" id="street_1-error" role="alert"></p>
+            </div>
 
-    {% if edit.isDefaultBilling() %}
-        <p class="field__label text-ink">{{ __("It's a default billing address.") }}</p>
-    {% elseif edit.canSetAsDefaultBilling() %}
-        {{ form.checkbox({
-            name: 'default_billing',
-            label: __('Use as my default billing address')
-        }) }}
-    {% else %}
-        <input type="hidden" name="default_billing" value="1">
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div class="field">
+                    <label for="country" class="field__label">{{ __('Country') }}<span class="field__required" aria-hidden="true">*</span></label>
+                    <select id="country" name="country_id" required aria-required="true" autocomplete="country" data-country aria-describedby="country-error" class="field__control">
+                        {% for option in addressForm.getCountryOptions() %}
+                            <option value="{{ option.value|escape_html_attr }}"{{ option.value == currentCountry ? ' selected' : '' }}>{{ option.label }}</option>
+                        {% endfor %}
+                    </select>
+                    <p class="field__error" id="country-error" role="alert"></p>
+                </div>
+                {# Region is a select or a free-text input depending on the country,
+                   and the enhancer swaps them; one label covers whichever is live. #}
+                <div class="field" data-region-field>
+                    <label for="region_id" class="field__label">{{ __('State/Province') }}</label>
+                    <select id="region_id" name="region_id" data-region-select{{ hasRegions ? '' : ' disabled' }} aria-describedby="region_id-error" class="field__control{{ hasRegions ? '' : ' hidden' }}">
+                        <option value="">{{ __('Please select a region, state or province.') }}</option>
+                        {% for option in regionOptions %}
+                            <option value="{{ option.value|escape_html_attr }}"{{ option.value == regionId ? ' selected' : '' }}>{{ option.label }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="text" id="region" name="region" value="{{ edit.getRegion()|escape_html_attr }}" data-region-input autocomplete="address-level1"{{ hasRegions ? ' disabled' : '' }} aria-describedby="region-error" class="field__control{{ hasRegions ? ' hidden' : '' }}">
+                    <p class="field__error" id="region_id-error" role="alert"></p>
+                    <p class="field__error" id="region-error" role="alert"></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {{ form.field({
+                    name: 'city',
+                    id: 'city',
+                    label: __('City'),
+                    value: addr.getCity(),
+                    required: true,
+                    autocomplete: 'address-level2'
+                }) }}
+                {{ form.field({
+                    name: 'postcode',
+                    id: 'zip',
+                    label: __('Zip/Postal Code'),
+                    value: addr.getPostcode(),
+                    required: true,
+                    autocomplete: 'postal-code',
+                    attrs: { 'data-postcode': '' }
+                }) }}
+            </div>
+        </div>
+    </section>
+
+    {# The very first address is silently made the default for both, so there is
+       nothing to ask and no panel to draw — only the two hidden inputs. #}
+    {% set billingChoice = edit.isDefaultBilling() or edit.canSetAsDefaultBilling() %}
+    {% set shippingChoice = edit.isDefaultShipping() or edit.canSetAsDefaultShipping() %}
+
+    {% if billingChoice or shippingChoice %}
+        <section class="account-panel">
+            <div class="account-panel__head">
+                <h2 class="account-panel__title">{{ __('Defaults') }}</h2>
+            </div>
+            <div class="account-panel__body flex flex-col items-start gap-4">
+                {% if edit.isDefaultBilling() %}
+                    {{ account.chip(__('Default billing address'), 'good') }}
+                {% elseif edit.canSetAsDefaultBilling() %}
+                    {{ form.checkbox({
+                        name: 'default_billing',
+                        label: __('Use as my default billing address')
+                    }) }}
+                {% endif %}
+
+                {% if edit.isDefaultShipping() %}
+                    {{ account.chip(__('Default shipping address'), 'good') }}
+                {% elseif edit.canSetAsDefaultShipping() %}
+                    {{ form.checkbox({
+                        name: 'default_shipping',
+                        label: __('Use as my default shipping address')
+                    }) }}
+                {% endif %}
+            </div>
+        </section>
     {% endif %}
 
-    {% if edit.isDefaultShipping() %}
-        <p class="field__label text-ink">{{ __("It's a default shipping address.") }}</p>
-    {% elseif edit.canSetAsDefaultShipping() %}
-        {{ form.checkbox({
-            name: 'default_shipping',
-            label: __('Use as my default shipping address')
-        }) }}
-    {% else %}
-        <input type="hidden" name="default_shipping" value="1">
-    {% endif %}
+    {% if not billingChoice %}<input type="hidden" name="default_billing" value="1">{% endif %}
+    {% if not shippingChoice %}<input type="hidden" name="default_shipping" value="1">{% endif %}
 
     {{ form.required_note(__('Required fields')) }}
 
-    <div class="flex items-center gap-4 pt-2">
+    <div class="flex items-center gap-5">
         <button type="submit" class="btn btn--solid">{{ __('Save Address') }}</button>
-        <a href="{{ edit.getBackUrl()|escape_url }}" class="link link--meta">{{ __('Go back') }}</a>
+        <a href="{{ edit.getBackUrl()|escape_url }}" class="link link--meta">{{ __('Cancel') }}</a>
     </div>
 </form>
 

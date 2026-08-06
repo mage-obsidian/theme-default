@@ -1,37 +1,72 @@
 {# Account dashboard. `info` and `address` are the core Dashboard\Info /
-   Dashboard\Address blocks used as data sources. #}
+   Dashboard\Address blocks used as data sources; `account_nav` is the same
+   ViewModel the rail uses — the metric tiles ARE its counters, so a module that
+   contributes a counted entry gets a tile for free. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
+{% import 'Magento_Theme::macros/button.twig' as button %}
+
 {% set info = block.getChildBlock('info') %}
 {% set address = block.getChildBlock('address') %}
-<h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Account Dashboard') }}</h1>
+{% set summary = block.getAccountSummary() %}
+{% set counted = block.getAccountNav().getLinks()|filter(link => link.count is not null) %}
 
-<div class="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2">
-    <section class="rounded-edge border border-ash-200 p-6">
-        <h2 class="font-mono text-xs uppercase tracking-[0.16em] text-ink-soft">{{ __('Contact Information') }}</h2>
-        <p class="mt-3 text-sm text-ink">{{ info.getName() }}</p>
-        <p class="text-sm text-ink-soft">{{ info.getCustomer().getEmail() }}</p>
-        <div class="mt-4 flex gap-5 font-mono text-xs uppercase tracking-[0.12em]">
-            <a href="{{ block.getUrl('customer/account/edit')|escape_url }}" class="text-accent underline-offset-4 transition-colors hover:underline">{{ __('Edit') }}</a>
-            <a href="{{ info.getChangePasswordUrl()|escape_url }}" class="text-accent underline-offset-4 transition-colors hover:underline">{{ __('Change Password') }}</a>
-        </div>
-    </section>
+{{ account.page_header({
+    eyebrow: __('Account'),
+    title: __('Hello, %1', summary.getFirstName() ?: summary.getName()),
+    lead: __('Everything you have with us — orders, addresses and preferences — in one place.')
+}) }}
 
-    <section class="rounded-edge border border-ash-200 p-6">
-        <h2 class="font-mono text-xs uppercase tracking-[0.16em] text-ink-soft">{{ __('Default Addresses') }}</h2>
-        <div class="mt-4 grid grid-cols-1 gap-4">
-            <div>
-                <h3 class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ash-500">{{ __('Billing') }}</h3>
-                <div class="mt-1 text-sm leading-relaxed text-ink-soft">{{ address.getPrimaryBillingAddressHtml()|raw }}</div>
-            </div>
-            <div>
-                <h3 class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ash-500">{{ __('Shipping') }}</h3>
-                <div class="mt-1 text-sm leading-relaxed text-ink-soft">{{ address.getPrimaryShippingAddressHtml()|raw }}</div>
-            </div>
-        </div>
-        <a href="{{ block.getUrl('customer/address')|escape_url }}" class="mt-4 inline-block font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('Manage Addresses') }}</a>
-    </section>
+<div class="account-stats mt-8">
+    {% for link in counted %}
+        {{ account.stat({ value: link.count, label: link.label }) }}
+    {% endfor %}
+    {{ account.stat({ value: summary.getAddressCount(), label: __('Addresses') }) }}
+    {% if summary.getMemberSinceYear() %}
+        {{ account.stat({ value: summary.getMemberSinceYear(), label: __('Member Since') }) }}
+    {% endif %}
 </div>
 
-{# Extension slot: modules add dashboard widgets here (e.g. Sales' recent orders,
-   Review's recent reviews). #}
+{# Extension slot: Magento_Sales' latest order + recent list. #}
 {{ child_html('recent_orders')|raw }}
+
+<div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+    {% set contact %}
+        <p class="text-sm text-ink">{{ info.getName() }}</p>
+        <p class="text-sm text-ink-soft">{{ info.getCustomer().getEmail() }}</p>
+        <div class="mt-5 flex flex-wrap gap-5">
+            <a href="{{ block.getUrl('customer/account/edit')|escape_url }}" class="link link--meta">{{ __('Edit') }}</a>
+            <a href="{{ info.getChangePasswordUrl()|escape_url }}" class="link link--meta">{{ __('Change Password') }}</a>
+        </div>
+    {% endset %}
+    {{ account.panel({ title: __('Contact Information'), content: contact }) }}
+
+    {% set addresses %}
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+                <h3 class="account-stat__label">{{ __('Billing') }}</h3>
+                <div class="mt-2 text-sm leading-relaxed text-ink-soft">{{ address.getPrimaryBillingAddressHtml()|raw }}</div>
+            </div>
+            <div>
+                <h3 class="account-stat__label">{{ __('Shipping') }}</h3>
+                <div class="mt-2 text-sm leading-relaxed text-ink-soft">{{ address.getPrimaryShippingAddressHtml()|raw }}</div>
+            </div>
+        </div>
+    {% endset %}
+    {% set manage %}<a href="{{ block.getUrl('customer/address')|escape_url }}" class="link link--meta">{{ __('Manage') }}</a>{% endset %}
+    {{ account.panel({ title: __('Default Addresses'), action: manage, content: addresses }) }}
+</div>
+
+{# Extension slot: modules add their own dashboard sections here. #}
 {{ child_html('recent_reviews')|raw }}
+
+{% set shortcuts %}
+    <div class="flex flex-wrap gap-3">
+        {{ button.link({ href: block.getUrl('customer/address/new'), label: __('Add an Address'), variant: 'outline', size: 'sm' }) }}
+        {{ button.link({ href: block.getUrl('customer/account/edit'), label: __('Account Information'), variant: 'outline', size: 'sm' }) }}
+        {{ button.link({ href: block.getUrl('newsletter/manage'), label: __('Newsletter'), variant: 'outline', size: 'sm' }) }}
+        {{ button.link({ href: block.getUrl('wishlist'), label: __('Wish List'), variant: 'outline', size: 'sm' }) }}
+    </div>
+{% endset %}
+<div class="mt-8">
+    {{ account.panel({ title: __('Shortcuts'), content: shortcuts }) }}
+</div>

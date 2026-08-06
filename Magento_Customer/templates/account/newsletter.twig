@@ -1,22 +1,37 @@
 {# Newsletter subscriptions. `newsletter` is the core Customer\Newsletter block
    (current subscription state + save URL). Native POST to newsletter/manage/save;
    works without JS (a single checkbox). #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
 {% import 'Magento_Theme::macros/form.twig' as form %}
+
 {% set newsletter = block.getChildBlock('newsletter') %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
 
-<h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Newsletter Subscriptions') }}</h1>
+{{ account.page_header({
+    eyebrow: __('Account'),
+    title: __('Newsletter Subscriptions'),
+    lead: __('New arrivals and the odd note worth reading. Nothing else, and you can leave whenever you like.')
+}) }}
 
-<form action="{{ newsletter.getAction()|escape_url }}" method="post" class="mt-8 flex max-w-lg flex-col gap-6">
+<form action="{{ newsletter.getAction()|escape_url }}" method="post" class="mt-8 flex max-w-2xl flex-col gap-6">
     {{ block.getBlockHtml('formkey')|raw }}
-    {{ form.checkbox({
-        name: 'is_subscribed',
-        id: 'subscription',
-        label: __('General Subscription'),
-        checked: newsletter.getIsSubscribed()
-    }) }}
-    <div class="flex items-center gap-4">
+
+    <section class="account-panel">
+        <div class="account-panel__head">
+            <h2 class="account-panel__title">{{ __('Subscriptions') }}</h2>
+            {{ account.chip(newsletter.getIsSubscribed() ? __('Subscribed') : __('Not subscribed'), newsletter.getIsSubscribed() ? 'good' : 'neutral') }}
+        </div>
+        <div class="account-panel__body">
+            {{ form.checkbox({
+                name: 'is_subscribed',
+                id: 'subscription',
+                label: __('General Subscription'),
+                checked: newsletter.getIsSubscribed()
+            }) }}
+        </div>
+    </section>
+
+    <div class="flex items-center gap-5">
         <button type="submit" class="btn btn--solid">{{ __('Save') }}</button>
-        <a href="{{ block.getUrl('customer/account')|escape_url }}" class="{{ labelClass }} link">{{ __('Back') }}</a>
+        <a href="{{ block.getUrl('customer/account')|escape_url }}" class="link link--meta">{{ __('Cancel') }}</a>
     </div>
 </form>

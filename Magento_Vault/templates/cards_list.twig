@@ -1,50 +1,56 @@
 {# Account "Stored Payment Methods" page. `stored` is the StoredCards ViewModel;
    it reads each token's detail JSON so rows render without the provider's KO card
    renderer. The delete form POSTs natively to the vault delete controller, which
-   redirects back to this list, so removal works without JS. #}
+   redirects back to this list, so removal works without JS — confirm-action only
+   asks first. #}
+{% import 'Magento_Theme::macros/account.twig' as account %}
+
 {% set stored = block.getStoredCards() %}
 {% set cards = stored.getCards() %}
-<section>
-    <h1 class="font-display text-3xl tracking-[0.06em] text-ink">{{ __('Stored Payment Methods') }}</h1>
 
-    {% if cards is empty %}
-        <p class="mt-6 rounded-edge border border-ash-200 bg-alabaster-raised px-4 py-3 text-sm text-ink-soft">{{ __('You have no stored payment methods.') }}</p>
-    {% else %}
-        <div class="mt-8 overflow-x-auto rounded-edge border border-ash-200">
-            <table class="w-full text-left text-sm">
-                <caption class="sr-only">{{ __('Stored Payment Methods') }}</caption>
-                <thead class="border-b border-ash-200 font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
-                    <tr>
-                        <th class="px-4 py-3" scope="col">{{ __('Card Number') }}</th>
-                        <th class="px-4 py-3" scope="col">{{ __('Expiration Date') }}</th>
-                        <th class="px-4 py-3" scope="col">{{ __('Type') }}</th>
-                        <th class="px-4 py-3" scope="col"><span class="sr-only">{{ __('Actions') }}</span></th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-ash-200">
-                    {% for card in cards %}
-                        <tr>
-                            <td class="px-4 py-4 align-middle text-ink">
-                                <span class="text-ink-soft">{{ __('ending') }}</span> {{ card.last4 }}
-                            </td>
-                            <td class="px-4 py-4 align-middle text-ink-soft">{{ card.expiration }}</td>
-                            <td class="px-4 py-4 align-middle">
-                                <span class="inline-flex items-center gap-2 text-ink">
-                                    {{ hero_icon('credit-card', 'outline', '24') }}
-                                    {{ card.typeLabel }}
-                                </span>
-                            </td>
-                            <td class="px-4 py-4 align-middle text-right">
-                                <form action="{{ stored.getDeleteUrl()|escape_url }}" method="post" class="inline">
-                                    {{ block.getBlockHtml('formkey')|raw }}
-                                    <input type="hidden" name="public_hash" value="{{ card.publicHash }}">
-                                    <button type="submit" class="link link--meta">{{ __('Delete') }}</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% endif %}
-</section>
+{{ account.page_header({
+    eyebrow: __('Account'),
+    title: __('Stored Payment Methods'),
+    lead: __('Cards you have chosen to keep for a faster checkout. We only ever hold the last four digits.')
+}) }}
+
+{% if cards is empty %}
+    <div class="mt-8">
+        {{ account.empty_state(block, {
+            icon: 'credit-card',
+            title: __('No cards stored'),
+            body: __('At checkout you can choose to save a card here for next time.')
+        }) }}
+    </div>
+{% else %}
+    <ul class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
+        {% for card in cards %}
+            <li class="address-card">
+                <div class="address-card__body flex items-start gap-4">
+                    {{ hero_icon('credit-card', 'outline', '24', 'h-6 w-6 shrink-0 text-ash-500') }}
+                    <div class="min-w-0">
+                        <span class="address-card__name font-mono tracking-[0.12em]">•••• {{ card.last4 }}</span>
+                        <span class="block">{{ card.typeLabel }}</span>
+                        <span class="account-stat__label mt-2 block">{{ __('Expires %1', card.expiration) }}</span>
+                    </div>
+                </div>
+                <div class="address-card__actions">
+                    <form
+                        action="{{ stored.getDeleteUrl()|escape_url }}"
+                        method="post"
+                        data-confirm-title="{{ __('Delete this card?')|escape_html_attr }}"
+                        data-confirm-body="{{ __('It will be removed from your account. Orders already placed are unaffected.')|escape_html_attr }}"
+                        data-confirm-ok="{{ __('Delete')|escape_html_attr }}"
+                        data-confirm-cancel="{{ __('Keep it')|escape_html_attr }}"
+                    >
+                        {{ block.getBlockHtml('formkey')|raw }}
+                        <input type="hidden" name="public_hash" value="{{ card.publicHash }}">
+                        <button type="submit" class="link link--meta">{{ __('Delete') }}</button>
+                    </form>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{{ script('MageObsidian_Storefront::js/confirm-action') }}

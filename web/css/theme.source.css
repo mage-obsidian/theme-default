@@ -392,6 +392,589 @@
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12);
 }
 
+/* ── Account: the private counterpart of the storefront. One obsidian rail
+   against an alabaster well — contrast, not a dark mode. The classes below are
+   the contract for Magento_Theme::macros/account.twig; layered as components so
+   a call site can still override any of them with a Tailwind utility. ── */
+@layer components {
+  .account-shell {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (min-width: 48rem) {
+    .account-shell {
+      grid-template-columns: 248px minmax(0, 1fr);
+      gap: 3rem;
+    }
+  }
+
+  .account-rail {
+    background: var(--color-obsidian-950);
+    color: var(--color-on-obsidian-soft);
+    border: 1px solid var(--color-obsidian-800);
+    border-radius: var(--radius-edge);
+  }
+
+  @media (min-width: 48rem) {
+    .account-rail {
+      position: sticky;
+      top: 6rem;
+      align-self: start;
+      padding-block: 1.75rem 0.75rem;
+    }
+  }
+
+  .account-rail__id {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--color-obsidian-800);
+  }
+
+  /* The one place the signature sheen is spent in the account area: a single
+     surface, not ten hover targets. */
+  .account-rail__monogram {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    background: var(--color-obsidian-800);
+    border: 1px solid var(--color-obsidian-700);
+    border-radius: var(--radius-edge);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    letter-spacing: 0.06em;
+    color: var(--color-on-obsidian);
+  }
+
+  .account-rail__name {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--color-on-obsidian);
+  }
+
+  /* Truncated, not wrapped: `overflow-wrap: anywhere` splits a long address
+     mid-domain, which reads as a rendering fault. The full value is on the
+     element's title. */
+  .account-rail__email {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.04em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .account-rail__list {
+    display: flex;
+    flex-direction: column;
+    padding-block: 0.75rem;
+  }
+
+  .account-rail__link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-on-obsidian-soft);
+    transition:
+      background-color 0.2s var(--ease-obsidian),
+      color 0.2s var(--ease-obsidian);
+  }
+
+  .account-rail__link:hover {
+    background: var(--color-obsidian-900);
+    color: var(--color-on-obsidian);
+  }
+
+  .account-rail__link[aria-current="page"] {
+    background: var(--color-obsidian-800);
+    color: var(--color-on-obsidian);
+  }
+
+  /* sheen-teal, not accent: on near-black the accent green reads as a smudge. */
+  .account-rail__link[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 2px;
+    background: var(--color-sheen-teal);
+  }
+
+  .account-rail__icon {
+    flex-shrink: 0;
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .account-rail__count {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.06em;
+  }
+
+  .account-rail__out {
+    margin-top: 0.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-obsidian-800);
+  }
+
+  /* Under md the rail lies down into a scroll-snapped strip. Same DOM: two
+     copies of the nav would mean two landmarks and two tab stops. */
+  @media (max-width: 47.999rem) {
+    .account-rail__id {
+      display: none;
+    }
+
+    .account-rail__list {
+      flex-direction: row;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      padding-block: 0;
+      scrollbar-width: none;
+    }
+
+    .account-rail__list::-webkit-scrollbar {
+      display: none;
+    }
+
+    .account-rail__link {
+      scroll-snap-align: center;
+      white-space: nowrap;
+    }
+
+    .account-rail__link[aria-current="page"]::before {
+      inset-block: auto 0;
+      inset-inline: 0;
+      width: auto;
+      height: 2px;
+    }
+
+    .account-rail__out {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
+      border-left: 1px solid var(--color-obsidian-800);
+    }
+
+    .account-rail__count {
+      margin-left: 0.5rem;
+    }
+  }
+
+  .account-head {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-ash-200);
+  }
+
+  .account-head__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-ash-500);
+  }
+
+  .account-head__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .account-head__title {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: 1.1;
+    letter-spacing: 0.04em;
+    color: var(--color-ink);
+  }
+
+  .account-head__lead {
+    margin-top: 0.75rem;
+    max-width: 60ch;
+    font-size: 0.875rem;
+    color: var(--color-ink-soft);
+  }
+
+  .account-panel {
+    background: var(--color-paper);
+    border: 1px solid var(--color-ash-200);
+    border-radius: var(--radius-edge);
+  }
+
+  .account-panel__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.125rem 1.5rem;
+    border-bottom: 1px solid var(--color-ash-200);
+  }
+
+  .account-panel__title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--color-ink-soft);
+  }
+
+  .account-panel__body {
+    padding: 1.5rem;
+  }
+
+  .account-panel--quiet {
+    background: transparent;
+    border: 0;
+  }
+
+  .account-panel--quiet .account-panel__head,
+  .account-panel--quiet .account-panel__body {
+    padding-inline: 0;
+  }
+
+  /* Hairlines drawn with the grid gap over a tinted backdrop, so the rules stay
+     correct at every column count without per-breakpoint nth-child rules. */
+  .account-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--color-ash-200);
+    border: 1px solid var(--color-ash-200);
+    border-radius: var(--radius-edge);
+  }
+
+  @media (min-width: 40rem) {
+    .account-stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .account-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--color-paper);
+  }
+
+  .account-stat__value {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);
+  }
+
+  .account-stat__label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--color-ash-500);
+  }
+
+  .account-stat__meta {
+    font-size: 0.75rem;
+    color: var(--color-ink-soft);
+  }
+
+  /* The tone rides a dot and a tint, never the label: coloured 11px text cannot
+     clear 4.5:1 for half these hues, and the status must stay readable. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.25rem 0.7rem;
+    border: 1px solid color-mix(in srgb, var(--chip-tone) 45%, var(--color-ash-200));
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--chip-tone) 7%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+    color: var(--color-ink);
+  }
+
+  .chip::before {
+    content: "";
+    flex-shrink: 0;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 9999px;
+    background: var(--chip-tone);
+  }
+
+  .chip--neutral {
+    --chip-tone: var(--color-ash-400);
+  }
+
+  .chip--progress {
+    --chip-tone: var(--color-sheen-violet);
+  }
+
+  .chip--good {
+    --chip-tone: var(--color-accent);
+  }
+
+  .chip--warn {
+    --chip-tone: var(--color-sheen-bronze);
+  }
+
+  .chip--dead {
+    --chip-tone: var(--color-ash-500);
+  }
+
+  .account-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 1.5rem;
+    border: 1px dashed var(--color-ash-300);
+    border-radius: var(--radius-edge);
+  }
+
+  .account-empty__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: var(--color-ash-400);
+  }
+
+  .account-empty__title {
+    margin-top: 1rem;
+    font-family: var(--font-display);
+    font-size: var(--text-lead);
+    color: var(--color-ink);
+  }
+
+  .account-empty__body {
+    margin-top: 0.5rem;
+    max-width: 44ch;
+    font-size: 0.875rem;
+    color: var(--color-ink-soft);
+  }
+
+  .address-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-paper);
+    border: 1px solid var(--color-ash-200);
+    border-radius: var(--radius-edge);
+  }
+
+  .address-card__body {
+    flex: 1 1 auto;
+    padding: 1.5rem;
+    font-size: 0.875rem;
+    font-style: normal;
+    line-height: 1.7;
+    color: var(--color-ink-soft);
+  }
+
+  .address-card__name {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--color-ink);
+  }
+
+  .address-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 0.9rem 1.5rem;
+    border-top: 1px solid var(--color-ash-200);
+  }
+
+  .order-thumbs {
+    display: flex;
+    align-items: center;
+  }
+
+  .order-thumbs__item {
+    width: 3.25rem;
+    height: 3.25rem;
+    object-fit: cover;
+    background: var(--color-alabaster-raised);
+    border: 1px solid var(--color-ash-200);
+    border-radius: var(--radius-edge);
+  }
+
+  /* The paper ring is what keeps the overlap legible against a white panel. */
+  .order-thumbs__item + .order-thumbs__item {
+    margin-left: -0.65rem;
+    box-shadow: -2px 0 0 0 var(--color-paper);
+  }
+
+  .order-thumbs__more {
+    margin-left: 0.65rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--color-ash-500);
+  }
+
+  .order-track {
+    display: flex;
+  }
+
+  .order-track__step {
+    position: relative;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+  }
+
+  .order-track__step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 0.3rem;
+    left: 0.85rem;
+    right: 0.35rem;
+    height: 1px;
+    background: var(--color-ash-200);
+  }
+
+  .order-track__step--done::after {
+    background: var(--color-accent);
+  }
+
+  .order-track__dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border: 1px solid var(--color-ash-300);
+    border-radius: 9999px;
+    background: var(--color-paper);
+  }
+
+  .order-track__step--done .order-track__dot {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .order-track__step--current .order-track__dot {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+
+  .order-track__label {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-ash-500);
+  }
+
+  .order-track__step--done .order-track__label,
+  .order-track__step--current .order-track__label {
+    color: var(--color-ink);
+  }
+
+  .auth-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  @media (min-width: 64rem) {
+    .auth-split {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      min-height: 34rem;
+    }
+  }
+
+  .auth-split__form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: 3rem;
+  }
+
+  .auth-split__inner {
+    width: 100%;
+    max-width: 26rem;
+    margin-inline: auto;
+  }
+
+  /* Hidden, not stacked: below lg the sign-in page stays exactly the single
+     centred column it is today, so the funnel is untouched on mobile. */
+  .auth-split__aside {
+    display: none;
+  }
+
+  @media (min-width: 64rem) {
+    .auth-split__aside {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2rem;
+      padding: 4rem 3rem;
+      background: var(--color-obsidian-950);
+      color: var(--color-on-obsidian-soft);
+      border-radius: var(--radius-edge);
+    }
+  }
+
+  .auth-split__line {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: 1.15;
+    color: var(--color-on-obsidian);
+  }
+
+  .auth-split__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .auth-split__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .auth-split__item svg {
+    flex-shrink: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    color: var(--color-sheen-teal);
+  }
+}
+
+@media print {
+  .account-rail,
+  .account-head__action {
+    display: none;
+  }
+
+  .account-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* ── View animations (front enhancement) ── */
 
 /* Smooth cross-document navigation crossfade (category ↔ PDP, pagination, sort).
