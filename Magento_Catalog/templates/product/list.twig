@@ -4,28 +4,35 @@
   grid/list switch is dropped for a cleaner, faster premium grid). The toolbar is
   rendered top (sort/limit/amount) and bottom (pager); each card comes from the
   shared card partial. `block` is Magento\Catalog\Block\Product\ListProduct.
+
+  The single `data-obsidian-section` root is the anchor MageObsidian_Search swaps
+  when a filter, a sort or a page is picked. It has to sit outside the empty-state
+  branch, or a filter combination with no results would leave nothing to swap back.
+  Without that module installed it is an inert attribute.
 #}
 {% set products = block.getLoadedProductCollection() %}
-{% if not products.count() %}
-    <div class="message info empty py-16 text-center font-mono text-sm uppercase tracking-[0.16em] text-ink-soft">
-        {{ __('We can’t find products matching the selection.') }}
-    </div>
-{% else %}
-    {{ block.getToolbarHtml()|raw }}
-    {{ block.getAdditionalHtml()|raw }}
+<div data-obsidian-section="listing">
+    {% if not products.count() %}
+        <div class="message info empty py-16 text-center font-mono text-sm uppercase tracking-[0.16em] text-ink-soft">
+            {{ __('We can’t find products matching the selection.') }}
+        </div>
+    {% else %}
+        {{ block.getToolbarHtml()|raw }}
+        {{ block.getAdditionalHtml()|raw }}
 
-    <ol class="products-grid grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-4"
-        aria-label="{{ __('Products')|escape_html_attr }}">
-        {% for product in products %}
-            <li class="product-item" style="view-transition-name: product-{{ product.getId() }}; view-transition-class: obsidian-card">
-                {% include 'Magento_Catalog::product/card.twig' with { product: product, index: loop.index0 } %}
-            </li>
-        {% endfor %}
-    </ol>
+        <ol class="products-grid grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-4"
+            aria-label="{{ __('Products')|escape_html_attr }}">
+            {% for product in products %}
+                <li class="product-item" style="view-transition-name: product-{{ product.getId() }}; view-transition-class: obsidian-card">
+                    {% include 'Magento_Catalog::product/card.twig' with { product: product, index: loop.index0 } %}
+                </li>
+            {% endfor %}
+        </ol>
 
-    {{ block.getChildBlock('toolbar').setIsBottom(true).toHtml()|raw }}
+        {{ block.getChildBlock('toolbar').setIsBottom(true).toHtml()|raw }}
 
-    {# ItemList structured data (reuses the already-loaded collection via the
-       MageObsidian child block — no extra query, engine untouched). #}
-    {{ child_html('item_list') }}
-{% endif %}
+        {# ItemList structured data (reuses the already-loaded collection via the
+           MageObsidian child block — no extra query, engine untouched). #}
+        {{ child_html('item_list') }}
+    {% endif %}
+</div>

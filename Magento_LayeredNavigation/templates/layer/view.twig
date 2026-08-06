@@ -13,7 +13,13 @@
   collapses them on first open. Nothing marks the applied ones because the core
   drops a filter from getFilters() once it is applied — the chips above are the
   only trace left of it.
+
+  The `data-obsidian-section` root is the anchor MageObsidian_Search swaps after a
+  filter is applied (the counts change with every one). It wraps the visibility
+  check rather than sitting inside it, so a listing that stops offering filters
+  still leaves something to swap. Inert without that module.
 #}
+<div data-obsidian-section="filters">
 {% if block.canShowBlock() %}
     {% set state = block.getChildBlock('state') %}
     {% set active = state ? state.getActiveFilters() : [] %}
@@ -92,3 +98,4 @@
         </nav>
     </dialog>
 {% endif %}
+</div>

@@ -8,8 +8,13 @@
   same value the native mini form prints with @noEscape), so it is output with
   `|raw` to avoid the autoescape double-escaping it (see the escape_html_attr
   note in the theme); the value is safe because the query is pre-escaped.
+
+  This whole region — heading, count and grid — is what MageObsidian_Search swaps
+  on the results page, rather than the grid inside it: getResultCount() runs
+  before the grid and is what settles the toolbar's sort state, so a fragment
+  built from the grid alone would not match the page. Inert without that module.
 #}
-<div class="search-results mx-auto max-w-[1320px] px-4 py-10 md:px-8">
+<div class="search-results mx-auto max-w-[1320px] px-4 py-10 md:px-8" data-obsidian-section="results">
     <header class="search-results__head mb-8">
         <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-ink-soft">{{ __('Search') }}</p>
         <h1 class="mt-2 font-display text-h3 leading-tight text-ink">{{ block.getSearchQueryText()|raw }}</h1>
