@@ -1,15 +1,7 @@
 <?xml version="1.0"?>
-<!--
-  Checkout chrome. Presentation, so it lives in the theme rather than in
-  module-checkout: the blocks being dropped are declared by this theme and by
-  module-storefront, and a merchant on another skin should keep their own header.
--->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <!-- Removed, not just unrendered: primary_nav, mobile_menu and footer_nav
-             carry a ttl, so leaving them declared would still build (and ESI) a
-             category tree for a header that no longer shows one. -->
         <referenceBlock name="obsidian.primary_nav" remove="true"/>
         <referenceBlock name="obsidian.mobile_menu" remove="true"/>
         <referenceBlock name="obsidian.search" remove="true"/>
