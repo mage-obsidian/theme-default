@@ -38,6 +38,16 @@ export const happyPath = [
 /** Pages Varnish serves from cache, and which therefore may be restored on Back. */
 export const cacheablePath = happyPath.filter((step) => !step.path.startsWith("/checkout"));
 
+/**
+ * The happy path plus the two product types whose buy box and availability panel
+ * ship their own server snapshot: an out-of-stock product renders neither.
+ */
+export const hydrationPath = [
+    ...happyPath.filter((step) => step.path !== "/checkout/"),
+    { name: "pdp-in-stock", path: "/driven-backpack.html" },
+    { name: "pdp-configurable", path: "/chaz-kangeroo-hoodie.html" },
+];
+
 export interface IslandReport {
     component: string;
     strategy: string;
