@@ -16,6 +16,8 @@
              cluster. Removing here — child-theme presentation replacing parent-
              theme presentation — is the right layer: these blocks come from a
              theme, not a core module. -->
+        <referenceContainer name="footer-container" htmlClass=""/>
+
         <referenceBlock name="store_language" remove="true"/>
         <referenceBlock name="currency" remove="true"/>
 
