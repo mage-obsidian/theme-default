@@ -20,7 +20,7 @@
                                         {{ block.getBlockHtml('formkey')|raw }}
                                         <button type="submit" class="btn btn--solid btn--sm btn--block">{{ __('Add to Cart') }}</button>
                                     </form>
-                                    <form action="{{ block.getUrl('catalog/product_compare/remove') }}" method="post">
+                                    <form action="{{ block.getUrl('catalog/product_compare/remove') }}" method="post" data-busy-submit>
                                         <input type="hidden" name="product" value="{{ item.getId() }}">
                                         {{ block.getBlockHtml('formkey')|raw }}
                                         <button type="submit" class="font-mono text-[0.64rem] uppercase tracking-[0.14em] text-sale underline">{{ __('Remove') }}</button>
@@ -46,3 +46,4 @@
         <p class="mt-6 font-mono text-sm text-ink-soft">{{ __('You have no items to compare.') }}</p>
     {% endif %}
 </div>
+{{ script('MageObsidian_Storefront::js/form-busy') }}

@@ -7,7 +7,7 @@
 
 <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('Share Wish List') }}</h1>
 
-<form action="{{ sharing.getSendUrl()|escape_url }}" method="post" class="mt-8 flex max-w-xl flex-col gap-6">
+<form action="{{ sharing.getSendUrl()|escape_url }}" method="post" class="mt-8 flex max-w-xl flex-col gap-6" data-busy-submit>
     {{ block.getBlockHtml('formkey')|raw }}
     {{ form.field({
         name: 'emails',
@@ -39,3 +39,4 @@
         </a>
     </div>
 </form>
+{{ script('MageObsidian_Storefront::js/form-busy') }}

@@ -9,7 +9,7 @@
 {% set items = grouped ? grouped.getAssociatedProducts() : [] %}
 
 <form class="pdp__form pdp__group flex flex-col gap-6"
-      action="{{ view.getAddToCartAction()|escape_url }}" method="post" enctype="multipart/form-data">
+      action="{{ view.getAddToCartAction()|escape_url }}" method="post" enctype="multipart/form-data" data-busy-submit>
     <input type="hidden" name="product" value="{{ view.getProductId() }}">
     <input type="hidden" name="uenc" value="{{ view.getUenc()|escape_html_attr }}">
     {{ block.getBlockHtml('formkey')|raw }}
@@ -55,3 +55,4 @@
         {{ view.getSubmitLabel() }}
     </button>
 </form>
+{{ script('MageObsidian_Storefront::js/form-busy') }}

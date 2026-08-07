@@ -22,7 +22,7 @@
     {% if items.getSize() > 0 %}
         <div class="flex flex-wrap items-center gap-5">
             <a href="{{ block.getUrl('wishlist/index/share')|escape_url }}" class="link link--meta">{{ __('Share Wish List') }}</a>
-            <form action="{{ block.getUrl('wishlist/index/allcart')|escape_url }}" method="post" class="inline">
+            <form action="{{ block.getUrl('wishlist/index/allcart')|escape_url }}" method="post" class="inline" data-busy-submit>
                 {{ block.getBlockHtml('formkey')|raw }}
                 <button type="submit" class="btn btn--solid">{{ __('Add All to Cart') }}</button>
             </form>
@@ -60,7 +60,7 @@
                                as ProductCard); a direct cart POST would hit the configure page. #}
                             <a href="{{ product.getProductUrl()|escape_url }}" class="btn btn--outline btn--sm btn--block">{{ __('View Options') }}</a>
                         {% else %}
-                            <form action="{{ block.getUrl('wishlist/index/cart')|escape_url }}" method="post" class="flex items-center gap-2">
+                            <form action="{{ block.getUrl('wishlist/index/cart')|escape_url }}" method="post" class="flex items-center gap-2" data-busy-submit>
                                 {{ block.getBlockHtml('formkey')|raw }}
                                 <input type="hidden" name="item" value="{{ item.getId()|escape_html_attr }}">
                                 <label class="sr-only" for="qty-{{ item.getId() }}">{{ __('Quantity') }}</label>
@@ -76,6 +76,7 @@
                         data-confirm-title="{{ __('Remove from your wish list?')|escape_html_attr }}"
                         data-confirm-body="{{ __('%1 will no longer be saved here. You can always add it again.', product.getName())|escape_html_attr }}"
                         data-confirm-ok="{{ __('Remove')|escape_html_attr }}"
+                        data-busy-submit
                         data-confirm-cancel="{{ __('Keep it')|escape_html_attr }}"
                     >
                         {{ block.getBlockHtml('formkey')|raw }}
@@ -101,3 +102,4 @@
 {% endif %}
 
 {{ script('MageObsidian_Storefront::js/confirm-action') }}
+{{ script('MageObsidian_Storefront::js/form-busy') }}

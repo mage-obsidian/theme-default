@@ -11,7 +11,7 @@
                 <h1 class="mt-2 font-display text-3xl tracking-[0.04em] text-ink">{{ __('Send confirmation link') }}</h1>
                 <p class="mt-3 text-sm text-ink-soft">{{ __('Please enter your email below and we will send you the confirmation link.') }}</p>
 
-                <form action="{{ block.getUrl('customer/account/confirmation')|escape_url }}" method="post" class="mt-8 flex flex-col gap-5">
+                <form action="{{ block.getUrl('customer/account/confirmation')|escape_url }}" method="post" class="mt-8 flex flex-col gap-5" data-busy-submit>
                     {{ block.getBlockHtml('formkey')|raw }}
 
                     {{ form.field({
@@ -45,3 +45,4 @@
         } only %}
     </div>
 </section>
+{{ script('MageObsidian_Storefront::js/form-busy') }}

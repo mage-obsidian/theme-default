@@ -14,7 +14,7 @@
             {% if owner %}{{ owner.getFirstname() }} {{ owner.getLastname() }} — {% endif %}{{ __('Wish List') }}
         </h1>
         {% if shared.isSaleable() %}
-            <form action="{{ shared.getSharedAddAllToCartUrl()|escape_url }}" method="post" class="inline">
+            <form action="{{ shared.getSharedAddAllToCartUrl()|escape_url }}" method="post" class="inline" data-busy-submit>
                 {{ block.getBlockHtml('formkey')|raw }}
                 <button type="submit" class="btn btn--solid">{{ __('Add All to Cart') }}</button>
             </form>
@@ -43,7 +43,7 @@
                     {% elseif product.getTypeInstance().canConfigure(product) %}
                         <a href="{{ shared.getProductUrl(item)|escape_url }}" class="btn btn--solid btn--sm mt-auto">{{ __('View Options') }}</a>
                     {% else %}
-                        <form action="{{ block.getUrl('wishlist/shared/cart')|escape_url }}" method="post" class="mt-auto">
+                        <form action="{{ block.getUrl('wishlist/shared/cart')|escape_url }}" method="post" class="mt-auto" data-busy-submit>
                             {{ block.getBlockHtml('formkey')|raw }}
                             <input type="hidden" name="item" value="{{ item.getId()|escape_html_attr }}">
                             <button type="submit" class="btn btn--solid btn--sm btn--block">{{ __('Add to Cart') }}</button>
@@ -58,3 +58,4 @@
         <a href="{{ shared.getBackUrl()|escape_url }}" class="link link--meta">{{ __('Back') }}</a>
     </div>
 </div>
+{{ script('MageObsidian_Storefront::js/form-busy') }}

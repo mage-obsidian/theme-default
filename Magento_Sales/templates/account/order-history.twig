@@ -38,7 +38,7 @@
 
                     <div class="mt-6 flex flex-wrap items-center gap-5 border-t border-ash-200 pt-4">
                         <a href="{{ history.getViewUrl(order)|escape_url }}" class="link link--meta text-accent">{{ __('View Order') }}</a>
-                        <form action="{{ history.getReorderUrl(order)|escape_url }}" method="post" class="inline">
+                        <form action="{{ history.getReorderUrl(order)|escape_url }}" method="post" class="inline" data-busy-submit>
                             {{ block.getBlockHtml('formkey')|raw }}
                             <button type="submit" class="link link--meta">{{ __('Reorder') }}</button>
                         </form>
@@ -63,3 +63,4 @@
         }) }}
     </div>
 {% endif %}
+{{ script('MageObsidian_Storefront::js/form-busy') }}

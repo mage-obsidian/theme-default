@@ -12,7 +12,7 @@
     lead: __('New arrivals and the odd note worth reading. Nothing else, and you can leave whenever you like.')
 }) }}
 
-<form action="{{ newsletter.getAction()|escape_url }}" method="post" class="mt-8 flex max-w-2xl flex-col gap-6">
+<form action="{{ newsletter.getAction()|escape_url }}" method="post" class="mt-8 flex max-w-2xl flex-col gap-6" data-busy-submit>
     {{ block.getBlockHtml('formkey')|raw }}
 
     <section class="account-panel">
@@ -35,3 +35,4 @@
         <a href="{{ block.getUrl('customer/account')|escape_url }}" class="link link--meta">{{ __('Cancel') }}</a>
     </div>
 </form>
+{{ script('MageObsidian_Storefront::js/form-busy') }}

@@ -25,6 +25,7 @@
     method="post"
     class="mt-8 flex max-w-2xl flex-col gap-6"
     data-address-form
+    data-busy-submit
     data-err-required="{{ __('This is a required field.')|escape_html_attr }}"
 >
     {# Region data for the dependent select. Carried in a JSON script (not an
@@ -191,3 +192,4 @@
 </form>
 
 {{ script('MageObsidian_Customer::js/address-form-enhancer') }}
+{{ script('MageObsidian_Storefront::js/form-busy') }}

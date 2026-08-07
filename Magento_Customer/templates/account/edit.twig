@@ -21,6 +21,7 @@
     method="post"
     class="mt-8 flex max-w-2xl flex-col gap-6"
     data-edit-form
+    data-busy-submit
     data-password-min-length="{{ edit.getMinimumPasswordLength()|escape_html_attr }}"
     data-err-required="{{ __('This is a required field.')|escape_html_attr }}"
     data-err-email="{{ __('Please enter a valid email address.')|escape_html_attr }}"
@@ -115,3 +116,4 @@
 </form>
 
 {{ script('MageObsidian_Customer::js/edit-enhancer') }}
+{{ script('MageObsidian_Storefront::js/form-busy') }}

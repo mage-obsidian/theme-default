@@ -118,7 +118,7 @@
 </div>
 
 <div class="mt-10 flex flex-wrap items-center gap-5 print:hidden">
-    <form action="{{ block.getUrl(route_prefix ~ '/reorder', {'order_id': order.getId()})|escape_url }}" method="post" class="inline">
+    <form action="{{ block.getUrl(route_prefix ~ '/reorder', {'order_id': order.getId()})|escape_url }}" method="post" class="inline" data-busy-submit>
         {{ block.getBlockHtml('formkey')|raw }}
         <button type="submit" class="btn btn--solid">{{ __('Reorder') }}</button>
     </form>
@@ -132,3 +132,4 @@
         <a href="{{ block.getUrl('sales/order/history')|escape_url }}" class="link link--meta">{{ __('Back to My Orders') }}</a>
     {% endif %}
 </div>
+{{ script('MageObsidian_Storefront::js/form-busy') }}

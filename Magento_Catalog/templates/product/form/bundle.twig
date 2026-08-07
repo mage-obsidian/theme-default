@@ -9,7 +9,7 @@
 {% set options = bundle ? bundle.getOptions() : [] %}
 
 <form data-bundle-form class="pdp__form pdp__bundle flex flex-col gap-6"
-      action="{{ view.getAddToCartAction()|escape_url }}" method="post" enctype="multipart/form-data">
+      action="{{ view.getAddToCartAction()|escape_url }}" method="post" enctype="multipart/form-data" data-busy-submit>
     <input type="hidden" name="product" value="{{ view.getProductId() }}">
     <input type="hidden" name="uenc" value="{{ view.getUenc()|escape_html_attr }}">
     {{ block.getBlockHtml('formkey')|raw }}
@@ -44,3 +44,4 @@
     currencyFormat: view.getCurrencyFormat(),
     label: __('Your selection')
 }, true) }}
+{{ script('MageObsidian_Storefront::js/form-busy') }}

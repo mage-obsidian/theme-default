@@ -65,6 +65,7 @@
                             data-confirm-body="{{ __('It will be removed from your address book. Orders already placed keep the address they were shipped to.')|escape_html_attr }}"
                             data-confirm-ok="{{ __('Delete')|escape_html_attr }}"
                             data-confirm-cancel="{{ __('Keep it')|escape_html_attr }}"
+                            data-busy-submit
                         >
                             {{ block.getBlockHtml('formkey')|raw }}
                             <input type="hidden" name="id" value="{{ address.getId()|escape_html_attr }}">
@@ -80,3 +81,4 @@
 </section>
 
 {{ script('MageObsidian_Storefront::js/confirm-action') }}
+{{ script('MageObsidian_Storefront::js/form-busy') }}

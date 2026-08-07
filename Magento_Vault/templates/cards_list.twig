@@ -42,6 +42,7 @@
                         data-confirm-body="{{ __('It will be removed from your account. Orders already placed are unaffected.')|escape_html_attr }}"
                         data-confirm-ok="{{ __('Delete')|escape_html_attr }}"
                         data-confirm-cancel="{{ __('Keep it')|escape_html_attr }}"
+                        data-busy-submit
                     >
                         {{ block.getBlockHtml('formkey')|raw }}
                         <input type="hidden" name="public_hash" value="{{ card.publicHash }}">
@@ -54,3 +55,4 @@
 {% endif %}
 
 {{ script('MageObsidian_Storefront::js/confirm-action') }}
+{{ script('MageObsidian_Storefront::js/form-busy') }}

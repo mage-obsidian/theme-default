@@ -11,7 +11,7 @@
         {{ __('Jot us a note and we’ll get back to you as quickly as possible.') }}
     </p>
 
-    <form class="mt-8 flex flex-col gap-6" action="{{ block.getFormAction()|escape_url }}" method="post" id="contact-form">
+    <form class="mt-8 flex flex-col gap-6" action="{{ block.getFormAction()|escape_url }}" method="post" id="contact-form" data-busy-submit>
         {{ block.getBlockHtml('formkey')|raw }}
 
         {{ form.field({
@@ -59,3 +59,4 @@
         </button>
     </form>
 </div>
+{{ script('MageObsidian_Storefront::js/form-busy') }}
