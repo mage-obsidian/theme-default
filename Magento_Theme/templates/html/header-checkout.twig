@@ -1,0 +1,17 @@
+<div class="sticky top-0 z-30 border-b border-ash-200 bg-alabaster/85 backdrop-blur-md print:hidden">
+    <div class="mx-auto flex h-[68px] max-w-[1320px] items-center justify-between gap-3 px-3 sm:px-4 md:px-8">
+        <a href="{{ block.getUrl('') }}"
+           class="font-display text-base font-semibold tracking-[0.1em] text-ink min-[360px]:text-lg min-[360px]:tracking-[0.12em] sm:text-2xl sm:tracking-[0.16em]"
+           aria-label="{{ __('OBSIDIAN — home')|escape_html_attr }}">OBSIDIAN</a>
+
+        <div class="flex items-center gap-4 font-mono text-[0.66rem] uppercase leading-none tracking-[0.14em] text-ink-soft sm:gap-6 sm:text-[0.7rem]">
+            <span class="hidden items-center gap-2 sm:inline-flex">
+                <span aria-hidden="true" class="inline-block h-1.5 w-1.5 rounded-full bg-accent"></span>
+                {{ __('Secure checkout') }}
+            </span>
+            <a href="{{ block.getUrl('checkout/cart') }}" class="transition-colors hover:text-ink">
+                {{ __('Back to bag') }}
+            </a>
+        </div>
+    </div>
+</div>
