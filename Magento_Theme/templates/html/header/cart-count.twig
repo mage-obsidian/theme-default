@@ -2,6 +2,13 @@
   Live bag count island for the header. Rendered by a MageObsidian Template child
   block so render_vue is available; mounts eager (above the fold). Reactive via
   the engine's customer-data bridge — updates after add-to-cart without a reload.
+
+  The markup below is not a placeholder but the component's own empty state, so
+  Vue adopts it instead of clearing the header icon and painting it again a
+  frame later. It must stay in step with CartCount.vue: the two `island_if`
+  anchors stand for the syncing ring and the badge, neither of which exists
+  before customer-data arrives.
 #}
-{% set placeholder %}<span class="cart-count relative inline-flex items-center [&_svg]:size-5">{{ hero_icon('shopping-bag', 'outline', '24') }}</span>{% endset %}
-{{ render_vue('MageObsidian_Storefront::cart/CartCount', { label: __('in your bag') }, true, placeholder) }}
+{% set label = __('in your bag') %}
+{% set initial %}<span class="cart-count relative inline-flex items-center">{{ hero_icon('shopping-bag', 'outline', '24', 'h-5 w-5') }}{% apply island_if(false) %}{% endapply %}{% apply island_if(false) %}{% endapply %}<span class="sr-only" role="status" aria-live="polite">0 {{ label }}</span></span>{% endset %}
+{{ render_vue('MageObsidian_Storefront::cart/CartCount', { label: label }, true, initial, true) }}
