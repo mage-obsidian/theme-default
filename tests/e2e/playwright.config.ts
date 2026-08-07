@@ -33,7 +33,7 @@ export default defineConfig({
             name: "desktop",
             use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 }, storageState: AUTH_STATE },
             dependencies: ["signin"],
-            testIgnore: [/\.guest\.spec\.ts/, /\.mobile\.spec\.ts/, /\.last\.spec\.ts/],
+            testIgnore: [/\.guest\.spec\.ts/, /\.mobile\.spec\.ts/, /\.last\.spec\.ts/, /\.paint\.spec\.ts/, /\.headed\.spec\.ts/],
         },
         {
             name: "mobile",
@@ -54,6 +54,34 @@ export default defineConfig({
             name: "guest",
             use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } },
             testMatch: /\.guest\.spec\.ts/,
+        },
+        {
+            // Paint tests run signed out and throttled, because the gap between a
+            // page arriving and its islands taking over is invisible on an idle
+            // machine and obvious on a real one. Playwright ships
+            // --disable-back-forward-cache in its defaults, which would make the
+            // back/forward assertions pass by never testing anything.
+            name: "paint",
+            use: {
+                ...devices["Desktop Chrome"],
+                viewport: { width: 1440, height: 900 },
+                launchOptions: { ignoreDefaultArgs: ["--disable-back-forward-cache"] },
+            },
+            testMatch: /\.paint\.spec\.ts/,
+            testIgnore: /\.headed\.spec\.ts/,
+        },
+        {
+            // Headed on purpose: Chromium disables the back/forward cache while
+            // headless whatever the flags say, so a headless run of these would
+            // assert nothing. Skipped where there is no display.
+            name: "bfcache",
+            use: {
+                ...devices["Desktop Chrome"],
+                viewport: { width: 1440, height: 900 },
+                headless: false,
+                launchOptions: { ignoreDefaultArgs: ["--disable-back-forward-cache"] },
+            },
+            testMatch: /\.headed\.spec\.ts/,
         },
     ],
 });
