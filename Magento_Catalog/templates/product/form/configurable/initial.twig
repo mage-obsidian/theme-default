@@ -7,7 +7,7 @@
     {% apply island_list %}
         {% for group in groups %}
             <fieldset class="pdp__swatch-group mb-6 border-0 p-0">
-                <legend class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ group.label }}</legend>
+                <legend class="field__label">{{ group.label }}</legend>
                 <div class="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="{{ __('Choose %1', group.label) }}">
                     {% apply island_list %}
                         {% for option in group.options %}
@@ -40,6 +40,6 @@
                    class="field__control field-qty mt-2">
         </div>
         <button type="submit" aria-disabled="true" aria-busy="false"
-                class="btn btn--solid btn--lg flex-1">{{ labels.selectOptions }}</button>
+                class="btn btn--solid btn--lg flex-1"><span class="btn__label">{{ labels.selectOptions }}</span>{% apply island_if(false) %}{% endapply %}</button>
     </div>
 </form>
