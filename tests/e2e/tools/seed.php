@@ -85,6 +85,9 @@ const CHECKOUT_SKU = '24-WB03';
 /** Salable floor every candidate is topped up to, well above what one run spends. */
 const TARGET_SALABLE = 100.0;
 
+/** How far back the fixture looks for the orders the detail specs need. */
+const ORDER_WINDOW = 12;
+
 // The theme is usually a symlink into a package checkout, so walk up looking for
 // the bootstrap rather than counting directories.
 $root = getenv('MAGENTO_ROOT') ?: null;
@@ -449,34 +452,52 @@ if ($orderCount < TARGET_ORDERS) {
     $out('orders: ' . $orderCount . ' already there');
 }
 
+// Wider than the forced-tone slots on purpose: the checkout specs place a real
+// order on every run, so the interesting ones drift downward and a four-order
+// window eventually holds nothing but the wreckage of previous runs.
 $orders = $objectManager->get(OrderCollectionFactory::class)->create()
     ->addFieldToFilter('customer_id', $customerId)
     ->setOrder('entity_id', 'DESC')
-    ->setPageSize(max(array_keys(FORCED_STATES)) + 1)
+    ->setPageSize(ORDER_WINDOW)
     ->load();
 
 $orderRepository = $objectManager->get(OrderRepositoryInterface::class);
 $byOffset = array_values($orders->getItems());
+
+// Refunding is the one step that cannot be undone, so it is done once and then
+// reused. Picking a fresh order every run was what closed the newest four and
+// left the track specs with nothing in motion.
+$documented = null;
+
+foreach ($byOffset as $order) {
+    if ($order->hasCreditmemos()) {
+        $documented = $order;
+        break;
+    }
+}
+
+$documented ??= $byOffset[DOCUMENTED_OFFSET] ?? null;
+$documentedId = $documented ? (int)$documented->getEntityId() : null;
+
+$forcedCount = 0;
 
 foreach ($byOffset as $offset => $order) {
     $forced = FORCED_STATES[$offset] ?? null;
     if (!$forced || $order->getState() === $forced['state']) {
         continue;
     }
+    // A refunded order recomputes itself back to closed on save, so forcing a
+    // tone onto one is a write that silently does nothing.
+    if ($order->hasCreditmemos() || (int)$order->getEntityId() === $documentedId) {
+        continue;
+    }
     $order->setState($forced['state'])->setStatus($forced['status']);
     $orderRepository->save($order);
+    $forcedCount++;
 }
-$out('orders: chip tones forced on ' . count(FORCED_STATES));
-
-// The refunded order closes, and a closed order has nothing left to track — the
-// track assertions need an order that is still moving.
-$trackableId = isset($byOffset[1]) ? (int)$byOffset[1]->getEntityId() : null;
-
-$documented = $byOffset[DOCUMENTED_OFFSET] ?? null;
-$documentedId = null;
+$out('orders: chip tones forced on ' . $forcedCount);
 
 if ($documented) {
-    $documentedId = (int)$documented->getEntityId();
     $order = $orderRepository->get($documentedId);
 
     try {
@@ -513,6 +534,34 @@ if ($documented) {
         $out('! documents failed on #' . $order->getIncrementId() . ': ' . $error->getMessage());
     }
 }
+
+// Chosen after the documents are written, not before: a closed order has nothing
+// left to track, and the one this run just refunded would otherwise be handed to
+// the track specs on the next run. The track only marks a step done from
+// `processing` onward, so the pick is also nudged there rather than assumed.
+$trackableId = null;
+
+foreach ($byOffset as $order) {
+    $current = $orderRepository->get((int)$order->getEntityId());
+    if ((int)$current->getEntityId() === $documentedId) {
+        continue;
+    }
+    if (in_array($current->getState(), ['closed', 'canceled'], true) || $current->hasCreditmemos()) {
+        continue;
+    }
+    if (!in_array($current->getState(), ['processing', 'complete'], true)) {
+        $current->setState('processing')->setStatus('processing');
+        $orderRepository->save($current);
+    }
+    $trackableId = (int)$current->getEntityId();
+    break;
+}
+
+$out(
+    $trackableId
+        ? 'orders: track fixture is #' . $orderRepository->get($trackableId)->getIncrementId()
+        : '! no order left in motion for the track specs',
+);
 
 // ------------------------------------------------------------------ captcha --
 
