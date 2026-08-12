@@ -7,7 +7,7 @@
 {% set maxlen = 128 %}
 
 <div class="mx-auto w-full max-w-readable px-4 py-12 md:px-8">
-    <h1 class="page-title">{{ __('Advanced Search') }}</h1>
+    <h1 class="page-heading">{{ __('Advanced Search') }}</h1>
 
     <form action="{{ block.getSearchPostUrl()|escape_url }}" method="get" class="mt-8 flex flex-col gap-6">
         {% for attribute in block.getSearchableAttributes() %}

@@ -2,7 +2,7 @@
    the native Checkout\Shipping block (rates grouped by carrier per address). The
    radios POST natively to the shipping controller. #}
 <section class="mx-auto w-full max-w-narrow px-4 py-10 md:px-8">
-    <h1 class="page-title">{{ __('Select Shipping Method') }}</h1>
+    <h1 class="page-heading">{{ __('Select Shipping Method') }}</h1>
 
     <form action="{{ block.getPostActionUrl()|escape_url }}" method="post" class="mt-8 flex flex-col gap-8">
         {{ block.getBlockHtml('formkey')|raw }}

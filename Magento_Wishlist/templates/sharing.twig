@@ -5,7 +5,7 @@
 {% import 'Magento_Theme::macros/form.twig' as form %}
 {% set sharing = block.getChildBlock('sharing') %}
 
-<h1 class="page-title">{{ __('Share Wish List') }}</h1>
+<h1 class="page-heading">{{ __('Share Wish List') }}</h1>
 
 <form action="{{ sharing.getSendUrl()|escape_url }}" method="post" class="mt-8 flex max-w-xl flex-col gap-6" data-busy-submit>
     {{ block.getBlockHtml('formkey')|raw }}

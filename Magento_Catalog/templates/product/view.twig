@@ -86,6 +86,10 @@
                   action="{{ block.getUrl('wishlist/index/add') }}" method="post" class="pdp__wishlist mt-4">
                 <input type="hidden" name="product" value="{{ view.getProductId() }}">
                 {{ block.getBlockHtml('formkey')|raw }}
+                {# Inline, not hero_icon: the saved/compared state fills the glyph
+                   (.is-saved svg { fill }), and hero_icon renders a <use> clone of an
+                   <svg fill="none">, whose own attribute beats the inherited fill —
+                   the heart would stay an outline. #}
                 <button type="submit" aria-pressed="false"
                         class="inline-flex items-center gap-2 eyebrow transition-colors hover:text-ink">
                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">

@@ -15,7 +15,7 @@
 
 {{ account.page_header({
     eyebrow: order.getCreatedAt()|date_format('long'),
-    title: __('Order') ~ ' #' ~ order.getRealOrderId()
+    title: __('Order #%1', order.getRealOrderId())
 }) }}
 
 {% for shipment in shipments %}

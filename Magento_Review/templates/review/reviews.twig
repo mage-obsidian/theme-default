@@ -100,26 +100,9 @@
         </div>
     </div>
 
-    {% if reviews.hasReviews() %}
-        {{ json_ld('Product', {
-            'name': reviews.getProductName(),
-            'url': reviews.getProductUrl(),
-            'aggregateRating': {
-                '@type': 'AggregateRating',
-                'ratingValue': reviews.getAverageStars(),
-                'reviewCount': count,
-                'bestRating': 5,
-                'worstRating': 1
-            },
-            'review': reviews.getItems()|map(r => {
-                '@type': 'Review',
-                'author': { '@type': 'Person', 'name': r.nickname },
-                'name': r.title,
-                'reviewBody': r.detail,
-                'reviewRating': { '@type': 'Rating', 'ratingValue': (r.percent / 20)|round(1), 'bestRating': 5, 'worstRating': 1 }
-            })
-        }) }}
-    {% endif %}
+    {# No Product node here. The engine emits exactly one per page from
+       CurrentPageSchemaProvider, rating and reviews included; a second one makes
+       search engines pick between two partial descriptions of the same product. #}
 
     {{ script('MageObsidian_Review::js/review-form') }}
 </section>

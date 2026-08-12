@@ -6,7 +6,7 @@
 {% import 'Magento_Theme::macros/form.twig' as form %}
 {% set data = block.getCheckoutData() %}
 <section class="mx-auto w-full max-w-readable px-4 py-10 md:px-8">
-    <h1 class="page-title">{{ __('Billing Information') }}</h1>
+    <h1 class="page-heading">{{ __('Billing Information') }}</h1>
 
     <form action="{{ block.getPostActionUrl()|escape_url }}" method="post" class="mt-8 flex flex-col gap-8">
         {{ block.getBlockHtml('formkey')|raw }}

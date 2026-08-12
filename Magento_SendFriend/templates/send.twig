@@ -5,7 +5,7 @@
 {% set maxRecipients = block.getMaxRecipients() ?: 1 %}
 
 <div class="mx-auto w-full max-w-readable px-4 py-12 md:px-8">
-    <h1 class="page-title">{{ __('Email to a Friend') }}</h1>
+    <h1 class="page-heading">{{ __('Email to a Friend') }}</h1>
 
     <form action="{{ block.getSendUrl()|escape_url }}" method="post" class="mt-8 flex flex-col gap-8" data-busy-submit>
         {{ block.getBlockHtml('formkey')|raw }}
