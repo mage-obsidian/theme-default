@@ -7,7 +7,7 @@
     ],
     "require": {
         "mage-obsidian/module-checkout": "^3.6",
-        "mage-obsidian/theme-base": "^3.7.2"
+        "mage-obsidian/theme-base": "^3.7.3"
     },
     "autoload": {
         "files": [
