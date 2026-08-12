@@ -70,8 +70,13 @@
                                     <li>
                                         <a href="{{ opt.link|escape_url }}" class="ln__swatch" rel="nofollow"
                                            title="{{ opt.label|escape_html_attr }}">
-                                            {% if opt.color %}
-                                                <span class="ln__swatch-color" style="background-color: {{ opt.color|escape_css }}"></span>
+                                            {# A hex colour, or nothing. escape_css is for a CSS
+                                               identifier and would turn `#` into `\23 `, which is
+                                               not a colour; `|raw` would take whatever the
+                                               attribute holds. #}
+                                            {% set swatchColor = opt.color matches '/^#[0-9a-fA-F]{3,8}$/' ? opt.color : '' %}
+                                            {% if swatchColor %}
+                                                <span class="ln__swatch-color" style="background-color: {{ swatchColor }}"></span>
                                             {% else %}
                                                 <span class="ln__swatch-text">{{ opt.label }}</span>
                                             {% endif %}
