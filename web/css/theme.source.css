@@ -71,11 +71,26 @@
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   /* — Fluid type scale — */
+  --text-micro: 0.66rem;
   --text-eyebrow: 0.72rem;
+  --text-note: 0.8rem;
   --text-lead: 1.3rem;
   --text-h3: clamp(1.4rem, 1.1rem + 1.4vw, 2rem);
   --text-h2: clamp(2rem, 1.4rem + 3vw, 3.4rem);
   --text-hero: clamp(3rem, 1.2rem + 9vw, 8.5rem);
+
+  /* — Letter-spacing — */
+  --tracking-display: 0.04em;
+  --tracking-fine: 0.06em;
+  --tracking-mono: 0.12em;
+  --tracking-eyebrow: 0.14em;
+  --tracking-label: 0.16em;
+  --tracking-spaced: 0.2em;
+
+  /* — Content wells — */
+  --container-shell: 1320px;
+  --container-narrow: 1100px;
+  --container-readable: 760px;
 
   /* — Radius (conchoidal edge) — */
   --radius-edge: 2px;
@@ -83,9 +98,6 @@
   /* — Motion — */
   --ease-obsidian: cubic-bezier(0.22, 0.61, 0.36, 1);
 
-  /* — The ground every page is painted on. One knob: change this line and the
-       whole storefront changes ground, header frosting and drawers included,
-       because they are all translucent over it. — */
   --color-page: var(--color-alabaster);
 }
 
@@ -111,15 +123,6 @@
   }
 }
 
-/* Page shell. These three selectors are emitted by the page_layout containers
-   (page.wrapper / main.content) and by every island before Vue takes over, so
-   they must be styled by whichever theme is active. They used to arrive from
-   MageObsidian/theme-base's Material scaffold, which also dragged in a header
-   skin this theme never asked for; the shell is reproduced here so the parent
-   CSS source can stay out. The stepped max-widths are Tailwind's `container`
-   at its default breakpoints — a single max-width would widen every viewport
-   between 40rem and 96rem. Unlayered on purpose: `.cms-index-index #maincontent`
-   and its showcase siblings release the well by class specificity. */
 [v-cloak] {
   display: none !important;
 }
