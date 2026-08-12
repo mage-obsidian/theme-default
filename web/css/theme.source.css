@@ -106,6 +106,38 @@
   }
 }
 
+/* Page shell. These three selectors are emitted by the page_layout containers
+   (page.wrapper / main.content) and by every island before Vue takes over, so
+   they must be styled by whichever theme is active. They used to arrive from
+   MageObsidian/theme-base's Material scaffold, which also dragged in a header
+   skin this theme never asked for; the shell is reproduced here so the parent
+   CSS source can stay out. The stepped max-widths are Tailwind's `container`
+   at its default breakpoints — a single max-width would widen every viewport
+   between 40rem and 96rem. Unlayered on purpose: `.cms-index-index #maincontent`
+   and its showcase siblings release the well by class specificity. */
+[v-cloak] {
+  display: none !important;
+}
+
+#page_wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main#maincontent {
+  width: 100%;
+  flex-grow: 1;
+  margin-inline: auto;
+  padding: 1rem;
+}
+
+@media (width >= 40rem) { main#maincontent { max-width: 40rem; } }
+@media (width >= 48rem) { main#maincontent { max-width: 48rem; } }
+@media (width >= 64rem) { main#maincontent { max-width: 64rem; } }
+@media (width >= 80rem) { main#maincontent { max-width: 80rem; } }
+@media (width >= 96rem) { main#maincontent { max-width: 96rem; } }
+
 /* Honor reduced-motion globally: neutralizes transforms/animations the
    per-component rules miss (category image scale, switcher chevron, hover),
    complementing the existing .sheen and drawer reduced-motion rules. */
