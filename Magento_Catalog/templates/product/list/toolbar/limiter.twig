@@ -8,7 +8,7 @@
   label, select and suffix into three lines. Only the control needs it.
 #}
 <label class="limiter flex items-center gap-2">
-    <span class="font-mono text-eyebrow uppercase tracking-label text-ink-soft">{{ __('Show') }}</span>
+    <span class="eyebrow">{{ __('Show') }}</span>
     <select data-nav-select
             class="field__control field__control--compact">
         {% for key, limit in block.getAvailableLimit() %}
@@ -17,5 +17,5 @@
     </select>
     {# Hidden from sight on mobile, where the row does not fit and "Show 12" already
        reads fine — kept for screen readers so the accessible name stays whole. #}
-    <span class="sr-only font-mono text-eyebrow uppercase tracking-label text-ink-soft lg:not-sr-only">{{ __('per page') }}</span>
+    <span class="sr-only eyebrow lg:not-sr-only">{{ __('per page') }}</span>
 </label>

@@ -11,7 +11,6 @@
 {% set itemOptions = block.getItemOptions() %}
 {% set billing = order.getBillingAddress() %}
 {% set shipping = order.getShippingAddress() %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-eyebrow text-ink-soft' %}
 {% set route_prefix = block.getData('route_prefix')|default('sales/order') %}
 {% set is_guest = block.getData('is_guest')|default(false) %}
 {% set presentation = block.getOrderPresentation() %}
@@ -38,34 +37,7 @@
         </div>
         <div class="account-panel__body">
             <div class="overflow-x-auto">
-                <table class="w-full border-collapse text-sm">
-                    <caption class="sr-only">{{ __('Items Invoiced') }}</caption>
-                    <thead>
-                        <tr class="border-b border-ash-300 text-left {{ labelClass }}">
-                            <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Product') }}</th>
-                            <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('SKU') }}</th>
-                            <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Price') }}</th>
-                            <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Qty Invoiced') }}</th>
-                            <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Subtotal') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for item in invoice.getAllItems() %}
-                            {% if not item.getOrderItem().getParentItem() %}
-                                <tr class="border-b border-ash-100 align-top">
-                                    <td class="py-3 pr-4 text-ink">
-                                    {{ item.getName() }}
-                                    {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order } %}
-                                    </td>
-                                    <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
-                                    <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getPrice())|raw }}</td>
-                                    <td class="py-3 pr-4 text-right text-ink">{{ item.getQty()|round }}</td>
-                                    <td class="py-3 text-right text-ink">{{ order.formatPrice(item.getRowTotal())|raw }}</td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
+                {% include 'Magento_Sales::order/items/invoice-table.twig' with { items: invoice.getAllItems(), order: order, itemOptions: itemOptions } %}
             </div>
             <div class="mt-6 flex justify-end">
                 {% include 'Magento_Sales::order/document-totals.twig' with { 'document': invoice, 'order': order, 'grand_label': __('Invoice Total') } %}
@@ -76,11 +48,11 @@
 
 <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
     {% if billing %}
-        {% set billingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(billing)|raw }}</address>{% endset %}
+        {% set billingBody %}<address class="address-lines">{{ info.getFormattedAddress(billing)|raw }}</address>{% endset %}
         {{ account.panel({ title: __('Billing Address'), content: billingBody }) }}
     {% endif %}
     {% if shipping %}
-        {% set shippingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(shipping)|raw }}</address>{% endset %}
+        {% set shippingBody %}<address class="address-lines">{{ info.getFormattedAddress(shipping)|raw }}</address>{% endset %}
         {{ account.panel({ title: __('Shipping Address'), content: shippingBody }) }}
     {% endif %}
 </div>

@@ -4,7 +4,6 @@
    adjustment lines resolve to null for invoices (Magento model magic getters) and
    are skipped by the zero guard. Tax expands into one row per rate when the store
    enables the full tax summary (tax_breakdown ViewModel off the host block). #}
-{% set labelClass = 'font-mono text-xs uppercase tracking-eyebrow text-ink-soft' %}
 {% set taxBreakdown = block.getTaxBreakdown() %}
 {% set taxRates = taxBreakdown and taxBreakdown.isFullSummary() ? taxBreakdown.getRates(document) : [] %}
 {% set adjPositive = document.getAdjustmentPositive() %}
@@ -17,30 +16,30 @@
 <table class="w-full max-w-sm text-sm">
     <caption class="sr-only">{{ grand_label|default(__('Totals')) }}</caption>
     <tr class="text-ink-soft">
-        <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Subtotal') }}</th>
+        <th scope="row" class="py-2 pr-6 text-left font-normal table-label">{{ __('Subtotal') }}</th>
         <td class="py-2 text-right">{{ order.formatPrice(document.getSubtotal())|raw }}</td>
     </tr>
     {% if document.getDiscountAmount() != 0 %}
         <tr class="text-ink-soft">
-            <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Discount') }}</th>
+            <th scope="row" class="py-2 pr-6 text-left font-normal table-label">{{ __('Discount') }}</th>
             <td class="py-2 text-right">{{ order.formatPrice(document.getDiscountAmount())|raw }}</td>
         </tr>
     {% endif %}
     {% if document.getShippingAmount() != 0 %}
         <tr class="text-ink-soft">
-            <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Shipping & Handling') }}</th>
+            <th scope="row" class="py-2 pr-6 text-left font-normal table-label">{{ __('Shipping & Handling') }}</th>
             <td class="py-2 text-right">{{ order.formatPrice(document.getShippingAmount())|raw }}</td>
         </tr>
     {% endif %}
     {% if adjPositive is not null and adjPositive != 0 %}
         <tr class="text-ink-soft">
-            <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Adjustment Refund') }}</th>
+            <th scope="row" class="py-2 pr-6 text-left font-normal table-label">{{ __('Adjustment Refund') }}</th>
             <td class="py-2 text-right">{{ order.formatPrice(adjPositive)|raw }}</td>
         </tr>
     {% endif %}
     {% if adjNegative is not null and adjNegative != 0 %}
         <tr class="text-ink-soft">
-            <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Adjustment Fee') }}</th>
+            <th scope="row" class="py-2 pr-6 text-left font-normal table-label">{{ __('Adjustment Fee') }}</th>
             <td class="py-2 text-right">{{ order.formatPrice(adjNegative)|raw }}</td>
         </tr>
     {% endif %}
@@ -48,20 +47,20 @@
         {% if taxRates is not empty %}
             {% for rate in taxRates %}
                 <tr class="text-ink-soft">
-                    <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ rate.title }} ({{ rate.percent }}%)</th>
+                    <th scope="row" class="py-2 pr-6 text-left font-normal table-label">{{ rate.title }} ({{ rate.percent }}%)</th>
                     <td class="py-2 text-right">{{ order.formatPrice(rate.amount)|raw }}</td>
                 </tr>
             {% endfor %}
         {% else %}
             <tr class="text-ink-soft">
-                <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Tax') }}</th>
+                <th scope="row" class="py-2 pr-6 text-left font-normal table-label">{{ __('Tax') }}</th>
                 <td class="py-2 text-right">{{ order.formatPrice(document.getTaxAmount())|raw }}</td>
             </tr>
         {% endif %}
     {% endif %}
     {% if fptTotal > 0 %}
         <tr class="text-ink-soft">
-            <th scope="row" class="py-2 pr-6 text-left font-normal {{ labelClass }}">{{ __('Fixed Product Tax') }}</th>
+            <th scope="row" class="py-2 pr-6 text-left font-normal table-label">{{ __('Fixed Product Tax') }}</th>
             <td class="py-2 text-right">{{ order.formatPrice(fptTotal)|raw }}</td>
         </tr>
     {% endif %}

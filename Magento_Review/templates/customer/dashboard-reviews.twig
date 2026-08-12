@@ -4,7 +4,6 @@
 {% from 'Magento_Review::review/stars.twig' import stars %}
 {% set recent = block.getChildBlock('recent') %}
 {% set reviews = recent.getReviews() %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-eyebrow text-ink-soft' %}
 
 {% if reviews|length > 0 %}
     <section class="mt-8">

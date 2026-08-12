@@ -5,7 +5,7 @@
    Totals use the engine `price` filter (store currency). #}
 {% set data = block.getCheckoutData() %}
 <section class="mx-auto w-full max-w-narrow px-4 py-10 md:px-8">
-    <h1 class="font-display text-3xl tracking-fine text-ink">{{ __('Review Order') }}</h1>
+    <h1 class="page-title">{{ __('Review Order') }}</h1>
 
     {% for addressId, error in data.getAddressErrors() %}
         <p role="alert" class="form-banner mt-4">{{ error }}</p>

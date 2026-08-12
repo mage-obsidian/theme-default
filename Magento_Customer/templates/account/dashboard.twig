@@ -3,7 +3,6 @@
    ViewModel the rail uses — the metric tiles ARE its counters, so a module that
    contributes a counted entry gets a tile for free. #}
 {% import 'Magento_Theme::macros/account.twig' as account %}
-{% import 'Magento_Theme::macros/button.twig' as button %}
 
 {% set info = block.getChildBlock('info') %}
 {% set address = block.getChildBlock('address') %}
@@ -61,10 +60,10 @@
 
 {% set shortcuts %}
     <div class="flex flex-wrap gap-3">
-        {{ button.link({ href: block.getUrl('customer/address/new'), label: __('Add an Address'), variant: 'outline', size: 'sm' }) }}
-        {{ button.link({ href: block.getUrl('customer/account/edit'), label: __('Account Information'), variant: 'outline', size: 'sm' }) }}
-        {{ button.link({ href: block.getUrl('newsletter/manage'), label: __('Newsletter'), variant: 'outline', size: 'sm' }) }}
-        {{ button.link({ href: block.getUrl('wishlist'), label: __('Wish List'), variant: 'outline', size: 'sm' }) }}
+        <a href="{{ block.getUrl('customer/address/new')|escape_url }}" class="btn btn--outline btn--sm">{{ __('Add an Address') }}</a>
+        <a href="{{ block.getUrl('customer/account/edit')|escape_url }}" class="btn btn--outline btn--sm">{{ __('Account Information') }}</a>
+        <a href="{{ block.getUrl('newsletter/manage')|escape_url }}" class="btn btn--outline btn--sm">{{ __('Newsletter') }}</a>
+        <a href="{{ block.getUrl('wishlist')|escape_url }}" class="btn btn--outline btn--sm">{{ __('Wish List') }}</a>
     </div>
 {% endset %}
 <div class="mt-8">

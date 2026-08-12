@@ -6,16 +6,16 @@
     {%- for link in links -%}
         {%- apply island_list -%}
             {%- if link.children is not defined or link.children is empty -%}
-                <a data-nav-item data-nav-index="{{ loop.index0 }}" href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %} class="whitespace-nowrap font-mono text-eyebrow uppercase tracking-label text-ink-soft transition-colors hover:text-ink">{{ link.label }}</a>
+                <a data-nav-item data-nav-index="{{ loop.index0 }}" href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %} class="whitespace-nowrap eyebrow transition-colors hover:text-ink">{{ link.label }}</a>
             {%- else -%}
                 <div data-nav-item data-nav-index="{{ loop.index0 }}" class="relative">
-                    <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %} aria-haspopup="true" aria-expanded="false" class="inline-flex items-center gap-1 whitespace-nowrap font-mono text-eyebrow uppercase tracking-label text-ink-soft transition-colors hover:text-ink">{{ link.label }} {{ hero_icon('chevron-down', 'outline', '24', 'h-3 w-3 transition-transform') }}</a>
+                    <a href="{{ link.url }}"{% if link.active %} aria-current="page"{% endif %} aria-haspopup="true" aria-expanded="false" class="inline-flex items-center gap-1 whitespace-nowrap eyebrow transition-colors hover:text-ink">{{ link.label }} {{ hero_icon('chevron-down', 'outline', '24', 'h-3 w-3 transition-transform') }}</a>
                     <div class="absolute left-0 top-full z-40 pt-3" style="display:none;">
                         <ul aria-label="{{ link.label }}" class="max-h-[calc(100dvh-9rem)] min-w-[12rem] overflow-y-auto overscroll-contain rounded-edge border border-ash-200 bg-alabaster py-1 shadow-xl">
                         {%- apply island_list -%}
                             {%- for child in link.children -%}
                                 <li>
-                                    <a href="{{ child.url }}"{% if child.active %} aria-current="page"{% endif %} class="block whitespace-nowrap px-4 py-2 font-mono text-eyebrow uppercase tracking-label text-ink-soft transition-colors hover:bg-ash-100 hover:text-ink">{{ child.label }}</a>
+                                    <a href="{{ child.url }}"{% if child.active %} aria-current="page"{% endif %} class="block whitespace-nowrap px-4 py-2 eyebrow transition-colors hover:bg-ash-100 hover:text-ink">{{ child.label }}</a>
                                     {%- apply island_if(child.children is defined and child.children is not empty) -%}
                                         <ul class="pb-1">
                                         {%- apply island_list -%}
@@ -36,7 +36,7 @@
     {%- endfor -%}
 {%- endapply -%}
     <div data-nav-more class="relative">
-        <button type="button" class="inline-flex items-center gap-1 whitespace-nowrap font-mono text-eyebrow uppercase tracking-label text-ink-soft transition-colors hover:text-ink" aria-haspopup="true" aria-controls="" aria-expanded="false" data-allow-mismatch="attribute">{{ moreLabel }} {{ hero_icon('chevron-down', 'outline', '24', 'h-3.5 w-3.5 transition-transform') }}</button>
+        <button type="button" class="inline-flex items-center gap-1 whitespace-nowrap eyebrow transition-colors hover:text-ink" aria-haspopup="true" aria-controls="" aria-expanded="false" data-allow-mismatch="attribute">{{ moreLabel }} {{ hero_icon('chevron-down', 'outline', '24', 'h-3.5 w-3.5 transition-transform') }}</button>
         {%- apply island_if(false) -%}{%- endapply -%}
     </div>
 </nav>

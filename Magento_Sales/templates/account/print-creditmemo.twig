@@ -9,7 +9,6 @@
 {% set creditmemos = single ? [single] : order.getCreditmemosCollection() %}
 {% set billing = order.getBillingAddress() %}
 {% set shipping = order.getShippingAddress() %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-eyebrow text-ink-soft' %}
 
 {{ account.page_header({
     eyebrow: order.getCreatedAt()|date_format('long'),
@@ -20,38 +19,7 @@
     <section class="mt-8">
         <h2 class="font-display text-lg text-ink">{{ __('Refund #%1', creditmemo.getIncrementId()) }}</h2>
         <div class="mt-4 overflow-x-auto">
-            <table class="w-full border-collapse text-sm">
-                <caption class="sr-only">{{ __('Items Refunded') }}</caption>
-                <thead>
-                    <tr class="border-b border-ash-300 text-left {{ labelClass }}">
-                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Product') }}</th>
-                        <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('SKU') }}</th>
-                        <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Price') }}</th>
-                        <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Qty') }}</th>
-                        <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Subtotal') }}</th>
-                        <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Discount') }}</th>
-                        <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Row Total') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in creditmemo.getAllItems() %}
-                        {% if not item.getOrderItem().getParentItem() %}
-                            <tr class="border-b border-ash-100 align-top">
-                                <td class="py-3 pr-4 text-ink">
-                                    {{ item.getName() }}
-                                    {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order } %}
-                                </td>
-                                <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
-                                <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getPrice())|raw }}</td>
-                                <td class="py-3 pr-4 text-right text-ink">{{ item.getQty()|round }}</td>
-                                <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getRowTotal())|raw }}</td>
-                                <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getDiscountAmount())|raw }}</td>
-                                <td class="py-3 text-right text-ink">{{ order.formatPrice(item.getRowTotal() - item.getDiscountAmount() + item.getTaxAmount())|raw }}</td>
-                            </tr>
-                        {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
+            {% include 'Magento_Sales::order/items/creditmemo-table.twig' with { items: creditmemo.getAllItems(), order: order, itemOptions: itemOptions } %}
         </div>
         <div class="mt-4 flex justify-end">
             {% include 'Magento_Sales::order/document-totals.twig' with { 'document': creditmemo, 'order': order, 'grand_label': __('Refund Total') } %}
@@ -61,11 +29,11 @@
 
 <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
     {% if billing %}
-        {% set billingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.formatAddress(billing, 'html')|raw }}</address>{% endset %}
+        {% set billingBody %}<address class="address-lines">{{ printBlock.formatAddress(billing, 'html')|raw }}</address>{% endset %}
         {{ account.panel({ title: __('Billing Address'), content: billingBody }) }}
     {% endif %}
     {% if shipping %}
-        {% set shippingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ printBlock.formatAddress(shipping, 'html')|raw }}</address>{% endset %}
+        {% set shippingBody %}<address class="address-lines">{{ printBlock.formatAddress(shipping, 'html')|raw }}</address>{% endset %}
         {{ account.panel({ title: __('Shipping Address'), content: shippingBody }) }}
     {% endif %}
 </div>

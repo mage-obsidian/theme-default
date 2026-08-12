@@ -23,7 +23,7 @@
 <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
     {% set billingBody %}
         {% if defaultBilling %}
-            <address class="text-sm not-italic leading-relaxed text-ink-soft">{{ book.getAddressHtml(book.getAddressById(defaultBilling))|raw }}</address>
+            <address class="address-lines">{{ book.getAddressHtml(book.getAddressById(defaultBilling))|raw }}</address>
             <a href="{{ book.getAddressEditUrl(defaultBilling)|escape_url }}" class="link link--meta mt-4 inline-block">{{ __('Change Billing Address') }}</a>
         {% else %}
             <p class="text-sm text-ink-soft">{{ __('You have no default billing address in your address book.') }}</p>
@@ -33,7 +33,7 @@
 
     {% set shippingBody %}
         {% if defaultShipping %}
-            <address class="text-sm not-italic leading-relaxed text-ink-soft">{{ book.getAddressHtml(book.getAddressById(defaultShipping))|raw }}</address>
+            <address class="address-lines">{{ book.getAddressHtml(book.getAddressById(defaultShipping))|raw }}</address>
             <a href="{{ book.getAddressEditUrl(defaultShipping)|escape_url }}" class="link link--meta mt-4 inline-block">{{ __('Change Shipping Address') }}</a>
         {% else %}
             <p class="text-sm text-ink-soft">{{ __('You have no default shipping address in your address book.') }}</p>

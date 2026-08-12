@@ -6,7 +6,7 @@
 
 {% if product.getId() %}
     <div class="mx-auto w-full max-w-[900px] px-4 py-12 md:px-8">
-        <h1 class="font-display text-3xl tracking-fine text-ink">{{ __('Review Details') }}</h1>
+        <h1 class="page-title">{{ __('Review Details') }}</h1>
 
         <div class="mt-8 flex flex-col gap-2">
             <a href="{{ product.getProductUrl()|escape_url }}" class="link font-display text-xl text-ink">{{ product.getName() }}</a>

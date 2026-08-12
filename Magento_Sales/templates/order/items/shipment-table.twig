@@ -1,0 +1,27 @@
+{# Shipped items. Shared by the account view and the printable sheet, which read
+   the same rows from different collections — hence `items` as a parameter.
+   Expects: items, order, itemOptions. #}
+<table class="w-full border-collapse text-sm">
+    <caption class="sr-only">{{ __('Items Shipped') }}</caption>
+    <thead>
+        <tr class="border-b border-ash-300 text-left table-label">
+            <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Product') }}</th>
+            <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('SKU') }}</th>
+            <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Qty Shipped') }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+            {% if not item.getOrderItem().getParentItem() %}
+                <tr class="border-b border-ash-100 align-top">
+                    <td class="py-3 pr-4 text-ink">
+                        {{ item.getName() }}
+                        {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order, show_price: false } %}
+                    </td>
+                    <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
+                    <td class="py-3 text-right text-ink">{{ item.getQty()|round }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>

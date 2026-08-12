@@ -52,7 +52,7 @@
                     <div class="flex flex-col gap-4">
                         {% for rating in ratings %}
                             <fieldset class="review-rating border-0 p-0" role="radiogroup" aria-label="{{ rating.getRatingCode() }}">
-                                <legend class="font-mono text-eyebrow uppercase tracking-label text-ink-soft">{{ rating.getRatingCode() }}</legend>
+                                <legend class="eyebrow">{{ rating.getRatingCode() }}</legend>
                                 <div class="review-rating__stars mt-2">
                                     {% for option in rating.getOptions()|reverse %}
                                         {% set inputId = 'rating-' ~ rating.getId() ~ '-' ~ option.getValue() %}

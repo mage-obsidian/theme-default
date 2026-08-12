@@ -1,0 +1,35 @@
+{# Refunded items for one credit memo. Shared by the account view and the
+   printable sheet, which render the same rows inside different chrome.
+   Expects: items, order, itemOptions. #}
+<table class="w-full border-collapse text-sm">
+    <caption class="sr-only">{{ __('Items Refunded') }}</caption>
+    <thead>
+        <tr class="border-b border-ash-300 text-left table-label">
+            <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('Product') }}</th>
+            <th scope="col" class="py-3 pr-4 font-mono font-normal">{{ __('SKU') }}</th>
+            <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Price') }}</th>
+            <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Qty') }}</th>
+            <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Subtotal') }}</th>
+            <th scope="col" class="py-3 pr-4 text-right font-mono font-normal">{{ __('Discount') }}</th>
+            <th scope="col" class="py-3 text-right font-mono font-normal">{{ __('Row Total') }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+            {% if not item.getOrderItem().getParentItem() %}
+                <tr class="border-b border-ash-100 align-top">
+                    <td class="py-3 pr-4 text-ink">
+                        {{ item.getName() }}
+                        {% include 'Magento_Sales::order/items/item-options.twig' with { item: item, item_options: itemOptions, order: order } %}
+                    </td>
+                    <td class="py-3 pr-4 text-ink-soft">{{ item.getSku() }}</td>
+                    <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getPrice())|raw }}</td>
+                    <td class="py-3 pr-4 text-right text-ink">{{ item.getQty()|round }}</td>
+                    <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getRowTotal())|raw }}</td>
+                    <td class="py-3 pr-4 text-right text-ink">{{ order.formatPrice(item.getDiscountAmount())|raw }}</td>
+                    <td class="py-3 text-right text-ink">{{ order.formatPrice(item.getRowTotal() - item.getDiscountAmount() + item.getTaxAmount())|raw }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>

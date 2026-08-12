@@ -4,7 +4,7 @@
    flags as their own name/value so the flow works without JS (the Knockout flag
    toggling is dropped). The per-item address picker is the block's native select. #}
 <section class="mx-auto w-full max-w-narrow px-4 py-10 md:px-8">
-    <h1 class="font-display text-3xl tracking-fine text-ink">{{ __('Ship to Multiple Addresses') }}</h1>
+    <h1 class="page-title">{{ __('Ship to Multiple Addresses') }}</h1>
     <p class="mt-2 text-sm text-ink-soft">{{ __('Please select a shipping address for applicable items.') }}</p>
 
     <form action="{{ block.getPostActionUrl()|escape_url }}" method="post" class="mt-8">

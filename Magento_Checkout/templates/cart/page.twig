@@ -137,7 +137,7 @@
    to the summary column. Previews rates + totals via REST without touching the
    persisted quote — the binding selection happens at checkout. #}
 {% if items is not empty %}
-    <div class="mx-auto w-full max-w-shell px-4 md:px-8">
+    <div class="shell">
         <div class="lg:ml-auto lg:w-[360px]">
             {{ render_vue('MageObsidian_Checkout::components/cart/ShippingEstimator', {
                 config: {
@@ -173,7 +173,7 @@
     {% for item in items %}
         {% set giftItems = giftItems|merge([{ id: item.id, name: item.name, message: giftOptions.getItemMessage(item.id) }]) %}
     {% endfor %}
-    <div class="mx-auto w-full max-w-shell px-4 md:px-8">
+    <div class="shell">
         {{ render_vue('MageObsidian_GiftMessage::components/gift/GiftOptions', {
             orderAllowed: giftOptions.isOrderAllowed(),
             itemsAllowed: giftOptions.isItemsAllowed(),

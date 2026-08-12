@@ -102,11 +102,11 @@
 
 <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
     {% if billing %}
-        {% set billingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(billing)|raw }}</address>{% endset %}
+        {% set billingBody %}<address class="address-lines">{{ info.getFormattedAddress(billing)|raw }}</address>{% endset %}
         {{ account.panel({ title: __('Billing Address'), content: billingBody }) }}
     {% endif %}
     {% if shipping %}
-        {% set shippingBody %}<address class="text-sm not-italic leading-relaxed text-ink-soft">{{ info.getFormattedAddress(shipping)|raw }}</address>{% endset %}
+        {% set shippingBody %}<address class="address-lines">{{ info.getFormattedAddress(shipping)|raw }}</address>{% endset %}
         {{ account.panel({ title: __('Shipping Address'), content: shippingBody }) }}
     {% endif %}
     {% set paymentBody %}<p class="text-sm text-ink-soft">{{ order.getPayment().getMethodInstance().getTitle() }}</p>{% endset %}
