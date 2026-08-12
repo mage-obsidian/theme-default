@@ -31,10 +31,18 @@ use Magento\Customer\Api\Data\AddressInterfaceFactory;
 use Magento\Customer\Api\Data\CustomerInterfaceFactory;
 use Magento\Customer\Api\Data\RegionInterfaceFactory;
 use Magento\Customer\Model\CustomerRegistry;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Bootstrap;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\InventoryApi\Api\Data\SourceItemInterface;
+use Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface;
+use Magento\InventoryApi\Api\SourceItemRepositoryInterface;
+use Magento\InventoryApi\Api\SourceItemsSaveInterface;
+use Magento\InventorySalesApi\Api\Data\SalesChannelInterface;
+use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
+use Magento\InventorySalesApi\Api\StockResolverInterface;
 use Magento\Newsletter\Model\SubscriptionManagerInterface;
 use Magento\Quote\Api\CartManagementInterface;
 use Magento\Quote\Api\CartRepositoryInterface;
@@ -70,6 +78,12 @@ const FORCED_STATES = [
 
 /** The newest order gets real documents instead, so the four order tabs have content. */
 const DOCUMENTED_OFFSET = 0;
+
+/** The product the checkout specs buy — src/checkout.ts reaches it by URL. */
+const CHECKOUT_SKU = '24-WB03';
+
+/** Salable floor every candidate is topped up to, well above what one run spends. */
+const TARGET_SALABLE = 100.0;
 
 // The theme is usually a symlink into a package checkout, so walk up looking for
 // the bootstrap rather than counting directories.
@@ -232,6 +246,79 @@ if ($products->getSize() === 0) {
 
 $skus = array_values(array_map(static fn($product) => (string)$product->getSku(), $products->getItems()));
 $out('products: ' . count($skus) . ' candidates');
+
+// ------------------------------------------------------------------- stock ---
+
+// Every suite run places real orders, and each one leaves a negative reservation
+// behind. Source quantity never moves, so salable drifts down until the checkout
+// specs start failing with "Not enough items for sale" — a silent failure, since
+// the add-to-cart POST still answers 200 and only the `messages` section carries
+// the reason. Topping the source up keeps the seed idempotent in the only sense
+// that matters: the suite is green on the tenth run as well as the first.
+$salableFloor = static function (array $skus) use ($objectManager, $out, $store): void {
+    if (
+        !interface_exists(GetProductSalableQtyInterface::class)
+        || !interface_exists(SourceItemsSaveInterface::class)
+    ) {
+        return;
+    }
+
+    // The stock the storefront actually sells from is resolved through the sales
+    // channel, not assumed: this environment runs multi-source, and the website
+    // is served by a stock that does not include the default source, so topping
+    // that one up would raise a number nobody reads.
+    $stockResolver = $objectManager->get(StockResolverInterface::class);
+    $website = $objectManager->get(StoreManagerInterface::class)->getWebsite($store->getWebsiteId());
+    $stockId = (int)$stockResolver->execute(SalesChannelInterface::TYPE_WEBSITE, $website->getCode())->getStockId();
+
+    $sourceCodes = array_map(
+        static fn($source) => $source->getSourceCode(),
+        $objectManager->get(GetSourcesAssignedToStockOrderedByPriorityInterface::class)->execute($stockId),
+    );
+
+    $salableQty = $objectManager->get(GetProductSalableQtyInterface::class);
+    $sourceItems = $objectManager->get(SourceItemRepositoryInterface::class);
+    $searchCriteria = $objectManager->get(SearchCriteriaBuilder::class);
+    $save = $objectManager->get(SourceItemsSaveInterface::class);
+
+    $raised = [];
+
+    foreach ($skus as $sku) {
+        try {
+            $available = (float)$salableQty->execute($sku, $stockId);
+        } catch (Throwable $error) {
+            continue;
+        }
+
+        if ($available >= TARGET_SALABLE) {
+            continue;
+        }
+
+        $criteria = $searchCriteria
+            ->addFilter(SourceItemInterface::SKU, $sku)
+            ->addFilter(SourceItemInterface::SOURCE_CODE, $sourceCodes, 'in')
+            ->create();
+        $items = array_values($sourceItems->getList($criteria)->getItems());
+
+        if ($items === []) {
+            continue;
+        }
+
+        $item = $items[0];
+        $item->setQuantity((float)$item->getQuantity() + (TARGET_SALABLE - $available));
+        $item->setStatus(SourceItemInterface::STATUS_IN_STOCK);
+        $save->execute([$item]);
+        $raised[] = $sku;
+    }
+
+    $out(
+        $raised === []
+            ? 'stock: every candidate is above the floor on stock ' . $stockId
+            : 'stock: topped up ' . count($raised) . ' sku(s) on stock ' . $stockId,
+    );
+};
+
+$salableFloor(array_values(array_unique(array_merge($skus, [CHECKOUT_SKU]))));
 
 // ---------------------------------------------------------------- wishlist ---
 
