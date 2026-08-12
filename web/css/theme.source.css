@@ -98,7 +98,7 @@
   /* — Motion — */
   --ease-obsidian: cubic-bezier(0.22, 0.61, 0.36, 1);
 
-  --color-page: var(--color-alabaster);
+  --color-page: var(--color-paper);
 }
 
 /* Accessibility base. Tailwind v4 dropped the default `cursor: pointer` on
