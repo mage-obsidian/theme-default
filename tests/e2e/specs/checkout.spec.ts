@@ -7,6 +7,8 @@ import {
     doNotSaveAddress,
     fillAddress,
     openCheckout,
+    paymentBlocker,
+    paymentBlockers,
     paymentSection,
     placeOrder,
     savedAddresses,
@@ -39,6 +41,50 @@ test.describe("checkout", () => {
         await expect(shippingMethods(page)).toHaveCount(0);
         await expect(paymentSection(page)).toBeHidden();
         await expect(page.locator("[data-rates-status]")).toContainText(/complete your address/i);
+    });
+
+    test("an address quotable but incomplete says what is holding the payment back", async ({ page }) => {
+        await addToCart(page);
+        await openCheckout(page);
+        if (await savedAddresses(page).count()) {
+            await useNewAddress(page);
+        }
+        await doNotSaveAddress(page);
+        await fillAddress(page, ADDRESS, ["firstname"]);
+
+        await expect(shippingMethods(page).first()).toBeVisible({ timeout: 20_000 });
+        await expect(paymentSection(page)).toBeHidden();
+        await expect(paymentBlockers(page)).toBeVisible({ timeout: 20_000 });
+        await expect(paymentBlocker(page, "firstname")).toBeVisible();
+
+        await paymentBlocker(page, "firstname").click();
+
+        const firstname = page.locator('[data-address-fields] [id$="-firstname"]').first();
+        await expect(firstname).toBeFocused();
+        await expect(firstname).toHaveAttribute("aria-invalid", "true");
+
+        await firstname.fill(ADDRESS.firstname);
+
+        await expect(paymentBlockers(page)).toBeHidden({ timeout: 20_000 });
+        await expectReadyToPay(page);
+    });
+
+    test("emptying a required field after the payment methods are up takes them back down", async ({ page }) => {
+        await readyCheckout(page);
+        await useNewAddress(page);
+        await doNotSaveAddress(page);
+        await fillAddress(page);
+        await expectReadyToPay(page);
+
+        await page.locator('[data-address-fields] [id$="-firstname"]').first().fill("");
+
+        await expect(paymentSection(page)).toBeHidden({ timeout: 20_000 });
+        await expect(paymentBlocker(page, "firstname")).toBeVisible();
+        await expect(shippingMethods(page).first()).toBeVisible();
+
+        await page.locator('[data-address-fields] [id$="-firstname"]').first().fill(ADDRESS.firstname);
+
+        await expectReadyToPay(page);
     });
 
     test("the order cannot close while the quote is behind the screen", async ({ page }) => {

@@ -24,6 +24,9 @@ export const ADDRESS: CheckoutAddress = {
 
 export const shippingMethods = (page: Page): Locator => page.locator('input[name="shipping-method"]');
 export const paymentSection = (page: Page): Locator => page.locator("#onepage-payment");
+export const paymentBlockers = (page: Page): Locator => page.locator("[data-payment-blockers]");
+export const paymentBlocker = (page: Page, field: string): Locator =>
+    page.locator(`[data-blocker="${field}"]`);
 export const placeOrder = (page: Page): Locator => page.locator("[data-place-order]");
 export const addressFields = (page: Page): Locator => page.locator("[data-address-fields]");
 export const savedAddresses = (page: Page): Locator =>
@@ -57,14 +60,29 @@ export async function openCheckout(page: Page): Promise<void> {
     await expect(page.locator("aside ul li").first()).toBeVisible({ timeout: 20_000 });
 }
 
-export async function fillAddress(page: Page, address: CheckoutAddress = ADDRESS): Promise<void> {
-    await control(page, "firstname").fill(address.firstname);
-    await control(page, "lastname").fill(address.lastname);
-    await addressFields(page).locator('[id$="-street"]').first().fill(address.street);
-    await control(page, "city").fill(address.city);
+export async function fillAddress(
+    page: Page,
+    address: CheckoutAddress = ADDRESS,
+    skip: string[] = [],
+): Promise<void> {
+    const wanted = (field: string): boolean => !skip.includes(field);
+    if (wanted("firstname")) {
+        await control(page, "firstname").fill(address.firstname);
+    }
+    if (wanted("lastname")) {
+        await control(page, "lastname").fill(address.lastname);
+    }
+    if (wanted("street")) {
+        await addressFields(page).locator('[id$="-street"]').first().fill(address.street);
+    }
+    if (wanted("city")) {
+        await control(page, "city").fill(address.city);
+    }
     await addressFields(page).locator('[id$="-region"]').first().selectOption({ label: address.region });
     await control(page, "postcode").fill(address.postcode);
-    await control(page, "telephone").fill(address.telephone);
+    if (wanted("telephone")) {
+        await control(page, "telephone").fill(address.telephone);
+    }
 }
 
 export const addressValue = (page: Page, name: string): Promise<string> =>
