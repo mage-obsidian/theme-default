@@ -100,10 +100,14 @@
         </div>
     </div>
 
+    {# Rendered through `json_ld`, not `|json_encode|raw`. The node carries text a
+       customer wrote, and a plain json_encode leaves `<` intact: a review titled
+       `<!--<script>` flips the HTML tokenizer into script-data-double-escaped, so
+       this block's own `</script>` stops closing it and the rest of the document
+       is swallowed as script content. The renderer behind this helper encodes
+       with JSON_HEX_TAG, which is what makes the payload inert. #}
     {% if reviews.hasReviews() %}
-        {% set ld = {
-            '@context': 'https://schema.org',
-            '@type': 'Product',
+        {{ json_ld('Product', {
             'name': reviews.getProductName(),
             'url': reviews.getProductUrl(),
             'aggregateRating': {
@@ -120,8 +124,7 @@
                 'reviewBody': r.detail,
                 'reviewRating': { '@type': 'Rating', 'ratingValue': (r.percent / 20)|round(1), 'bestRating': 5, 'worstRating': 1 }
             })
-        } %}
-        <script type="application/ld+json">{{ ld|json_encode|raw }}</script>
+        }) }}
     {% endif %}
 
     {{ script('MageObsidian_Review::js/review-form') }}
