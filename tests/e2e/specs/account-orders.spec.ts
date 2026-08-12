@@ -29,8 +29,6 @@ test.describe("order history", () => {
         // of the second-page link reads "Page 2".
         await page.locator(".pages-items").getByRole("link", { name: /^Page\s*2$/ }).click();
         await expect(page.locator(".pager .toolbar-amount")).toContainText("Items 11 to");
-        // The checkout spec places a real order on every run, so the fixture grows
-        // past two pages and the second one fills up rather than holding the tail.
         expect(await cards.count()).toBe(Math.min(10, total - 10));
     });
 

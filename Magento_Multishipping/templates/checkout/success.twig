@@ -2,14 +2,14 @@
    Checkout\Success block; `checkout_data` (DataProviders\Success) formats each
    order's ship-to. #}
 {% set data = block.getCheckoutData() %}
-<section class="mx-auto w-full max-w-[760px] px-4 py-16 md:px-8">
-    <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-ink-soft">{{ __('Order confirmed') }}</p>
+<section class="mx-auto w-full max-w-readable px-4 py-16 md:px-8">
+    <p class="font-mono text-eyebrow uppercase tracking-spaced text-ink-soft">{{ __('Order confirmed') }}</p>
     <h1 class="mt-4 font-display text-4xl text-ink md:text-5xl">{{ __('Thank you for your purchase') }}</h1>
     <p class="mt-6 text-ink-soft">{{ __("You'll receive a confirmation email with order numbers, tracking information and more details.") }}</p>
 
     {% set orderIds = block.getOrderIds() %}
     {% if orderIds %}
-        <h2 class="mt-10 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Successfully ordered') }}</h2>
+        <h2 class="mt-10 font-mono text-xs uppercase tracking-eyebrow text-ink-soft">{{ __('Successfully ordered') }}</h2>
         <ul class="mt-4 flex flex-col gap-4">
             {% for orderId, incrementId in orderIds %}
                 <li class="rounded-edge border border-ash-200 p-4">
@@ -17,7 +17,7 @@
                     {% set shippingAddress = data.getOrderShippingAddress(orderId) %}
                     <p class="mt-1 text-sm text-ink-soft">
                         {% if shippingAddress %}
-                            <span class="font-mono text-xs uppercase tracking-[0.12em] text-ash-500">{{ __('Ship to:') }}</span>
+                            <span class="font-mono text-xs uppercase tracking-mono text-ash-500">{{ __('Ship to:') }}</span>
                             {{ data.formatOrderShippingAddress(shippingAddress) }}
                         {% else %}
                             {{ __('No shipping required.') }}

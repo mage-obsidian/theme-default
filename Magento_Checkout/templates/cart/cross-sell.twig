@@ -4,7 +4,7 @@
 {% set products = block.getItems() %}
 {% if products is not empty %}
     <section class="mt-16 border-t border-ash-200 pt-10" aria-labelledby="cart-crosssell-heading">
-        <h2 id="cart-crosssell-heading" class="mb-6 font-display text-2xl tracking-[0.04em] text-ink">{{ __('You may also like') }}</h2>
+        <h2 id="cart-crosssell-heading" class="mb-6 font-display text-2xl tracking-display text-ink">{{ __('You may also like') }}</h2>
         <ul class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
             {% for product in products %}
                 <li>

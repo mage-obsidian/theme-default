@@ -6,7 +6,7 @@
 {% set heading = block.getPageHeading() %}
 {% if heading|trim %}
 <div class="page-title-wrapper mb-6{{ block.getCssClass() ? ' ' ~ block.getCssClass() }}">
-    <h1 class="page-title font-display text-3xl leading-tight tracking-[0.01em] text-ink md:text-4xl"
+    <h1 class="page-title font-display text-3xl leading-tight tracking-display text-ink md:text-4xl"
         {%- if block.getId() %} id="{{ block.getId()|escape_html_attr }}"{% endif %}
         {%- if block.getAddBaseAttributeAria() %} aria-labelledby="{{ block.getAddBaseAttributeAria()|escape_html_attr }}"{% endif %}>
         <span class="base" data-ui-id="page-title-wrapper" {{ block.getAddBaseAttribute()|raw }}>{{ heading }}</span>

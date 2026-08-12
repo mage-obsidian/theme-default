@@ -1,8 +1,8 @@
 {# Multishipping billing-address picker. `block` is the native Address\Select
    block (the customer's address book). Edit / Select / Add-new are native links;
    the no-JS "Add New Address" link uses the block's add-new URL directly. #}
-<section class="mx-auto w-full max-w-[760px] px-4 py-10 md:px-8">
-    <h1 class="font-display text-3xl tracking-[0.06em] text-ink">{{ __('Change Billing Address') }}</h1>
+<section class="mx-auto w-full max-w-readable px-4 py-10 md:px-8">
+    <h1 class="font-display text-3xl tracking-fine text-ink">{{ __('Change Billing Address') }}</h1>
 
     <ul class="mt-8 flex flex-col gap-4">
         {% for address in block.getAddress() %}
@@ -21,7 +21,7 @@
     </ul>
 
     <div class="mt-8 flex items-center justify-between gap-4">
-        <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Billing Information') }}</a>
+        <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-eyebrow text-ink-soft transition-colors hover:text-ink">{{ __('Back to Billing Information') }}</a>
         <a href="{{ block.getAddNewUrl()|escape_url }}" class="btn btn--outline btn--sm">{{ __('Add New Address') }}</a>
     </div>
 </section>

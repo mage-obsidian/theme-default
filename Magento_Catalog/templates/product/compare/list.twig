@@ -1,7 +1,7 @@
 {% set items = block.getItems() %}
 {% set itemCount = items.getSize ? items.getSize() : items|length %}
 
-<div class="mx-auto w-full max-w-[1320px] px-4 py-12 md:px-8">
+<div class="mx-auto w-full max-w-shell px-4 py-12 md:px-8">
     <h1 class="font-display text-3xl text-ink md:text-4xl">{{ __('Compare Products') }}</h1>
 
     {% if itemCount > 0 %}
@@ -23,7 +23,7 @@
                                     <form action="{{ block.getUrl('catalog/product_compare/remove') }}" method="post" data-busy-submit>
                                         <input type="hidden" name="product" value="{{ item.getId() }}">
                                         {{ block.getBlockHtml('formkey')|raw }}
-                                        <button type="submit" class="font-mono text-[0.64rem] uppercase tracking-[0.14em] text-sale underline">{{ __('Remove') }}</button>
+                                        <button type="submit" class="font-mono text-micro uppercase tracking-eyebrow text-sale underline">{{ __('Remove') }}</button>
                                     </form>
                                 </div>
                             </th>
@@ -33,7 +33,7 @@
                 <tbody>
                     {% for attribute in block.getAttributes() %}
                         <tr>
-                            <th scope="row" class="border-b border-ash-200 p-4 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-ink-soft">{{ attribute.getStoreLabel() }}</th>
+                            <th scope="row" class="border-b border-ash-200 p-4 font-mono text-eyebrow uppercase tracking-eyebrow text-ink-soft">{{ attribute.getStoreLabel() }}</th>
                             {% for item in items %}
                                 <td class="border-b border-ash-200 p-4 text-sm text-ink-soft">{{ block.getProductAttributeValue(item, attribute)|raw }}</td>
                             {% endfor %}

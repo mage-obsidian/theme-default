@@ -18,9 +18,9 @@
         <table class="pdp__group-table w-full border-collapse text-left">
             <thead>
                 <tr class="border-b border-ash-200">
-                    <th scope="col" class="py-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">{{ __('Product') }}</th>
-                    <th scope="col" class="py-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">{{ __('Price') }}</th>
-                    <th scope="col" class="py-2 text-right font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">{{ __('Qty') }}</th>
+                    <th scope="col" class="py-2 font-mono text-micro uppercase tracking-eyebrow text-ink-soft">{{ __('Product') }}</th>
+                    <th scope="col" class="py-2 font-mono text-micro uppercase tracking-eyebrow text-ink-soft">{{ __('Price') }}</th>
+                    <th scope="col" class="py-2 text-right font-mono text-micro uppercase tracking-eyebrow text-ink-soft">{{ __('Qty') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,7 +31,7 @@
                             {% if item.isSaleable() %}
                                 {{ grouped.getProductPrice(item)|raw }}
                             {% else %}
-                                <span class="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ash-500">{{ __('Out of stock') }}</span>
+                                <span class="font-mono text-micro uppercase tracking-eyebrow text-ash-500">{{ __('Out of stock') }}</span>
                             {% endif %}
                         </td>
                         <td class="py-3 text-right">

@@ -14,8 +14,8 @@
     { name: 'Magento', ver: '2.4.6+' }
 ] %}
 <section class="showcase-bleed sheen relative isolate overflow-hidden bg-obsidian-950 text-on-obsidian" aria-labelledby="showcase-stack-heading">
-    <div class="relative z-10 mx-auto max-w-[1320px] px-6 py-20 md:px-8 md:py-28">
-        <p class="font-mono uppercase tracking-[0.3em] text-on-obsidian-soft" style="font-size:var(--text-eyebrow)">{{ __('Stack') }}</p>
+    <div class="relative z-10 mx-auto max-w-shell px-6 py-20 md:px-8 md:py-28">
+        <p class="font-mono uppercase tracking-spaced text-on-obsidian-soft" style="font-size:var(--text-eyebrow)">{{ __('Stack') }}</p>
         <h2 id="showcase-stack-heading" class="mt-5 max-w-[20ch] font-display leading-[1.05]" style="font-size:var(--text-h2)">
             {{ __('Built on what the web actually uses') }}
         </h2>
@@ -24,7 +24,7 @@
                 <li class="flex items-baseline justify-between gap-3 bg-obsidian-900 px-5 py-6">
                     <span class="font-display text-lg leading-none">{{ s.name }}</span>
                     {% if s.ver %}
-                        <span class="font-mono text-[0.7rem] tracking-[0.12em] text-on-obsidian-soft">{{ s.ver }}</span>
+                        <span class="font-mono text-eyebrow tracking-mono text-on-obsidian-soft">{{ s.ver }}</span>
                     {% endif %}
                 </li>
             {% endfor %}

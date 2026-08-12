@@ -5,21 +5,21 @@
    controller. Continue is a real submit so it works without JS. #}
 {% import 'Magento_Theme::macros/form.twig' as form %}
 {% set data = block.getCheckoutData() %}
-<section class="mx-auto w-full max-w-[760px] px-4 py-10 md:px-8">
-    <h1 class="font-display text-3xl tracking-[0.06em] text-ink">{{ __('Billing Information') }}</h1>
+<section class="mx-auto w-full max-w-readable px-4 py-10 md:px-8">
+    <h1 class="font-display text-3xl tracking-fine text-ink">{{ __('Billing Information') }}</h1>
 
     <form action="{{ block.getPostActionUrl()|escape_url }}" method="post" class="mt-8 flex flex-col gap-8">
         {{ block.getBlockHtml('formkey')|raw }}
         <section class="rounded-edge border border-ash-200 p-6">
             <div class="flex items-center justify-between">
-                <h2 class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Billing Address') }}</h2>
+                <h2 class="font-mono text-xs uppercase tracking-eyebrow text-ink-soft">{{ __('Billing Address') }}</h2>
                 <a href="{{ block.getSelectAddressUrl()|escape_url }}" class="link text-xs text-ink-soft underline">{{ __('Change') }}</a>
             </div>
             <address class="mt-3 text-sm not-italic text-ink-soft">{{ data.getAddressHtml(block.getAddress())|raw }}</address>
         </section>
 
         <fieldset class="rounded-edge border border-ash-200 p-6">
-            <legend class="px-2 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft">{{ __('Payment Method') }}</legend>
+            <legend class="px-2 font-mono text-xs uppercase tracking-eyebrow text-ink-soft">{{ __('Payment Method') }}</legend>
             {{ block.getChildHtml('payment_methods_before')|raw }}
             {% set methods = block.getMethods() %}
             <div class="mt-2 flex flex-col gap-3" role="radiogroup" aria-label="{{ __('Payment Method')|escape_html_attr }}">
@@ -45,7 +45,7 @@
         </fieldset>
 
         <div class="flex items-center justify-between gap-4">
-            <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Shipping Information') }}</a>
+            <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-eyebrow text-ink-soft transition-colors hover:text-ink">{{ __('Back to Shipping Information') }}</a>
             <button type="submit" class="btn btn--solid">{{ __('Go to Review Your Order') }}</button>
         </div>
     </form>

@@ -9,7 +9,7 @@
    switchers on the right. Not sticky — it scrolls away while the main header below
    stays pinned. On mobile the switchers live in the drawer, so this is lg-only. #}
 <div class="hidden border-b border-ash-200 bg-ash-100/70 lg:block print:hidden">
-    <div class="mx-auto flex h-9 max-w-[1320px] items-center justify-between gap-4 px-4 font-mono text-[0.66rem] uppercase leading-none tracking-[0.14em] text-ink-soft md:px-8">
+    <div class="mx-auto flex h-9 max-w-shell items-center justify-between gap-4 px-4 font-mono text-micro uppercase leading-none tracking-eyebrow text-ink-soft md:px-8">
         <p class="truncate">{{ __('Powered by MageObsidian — a modern frontend for Magento') }}</p>
         <div class="flex items-center gap-4">
             {{ child_html('switcher_language') }}
@@ -19,21 +19,21 @@
 </div>
 
 <div class="sticky top-0 z-30 border-b border-ash-200 bg-alabaster/85 backdrop-blur-md print:hidden">
-    <div class="mx-auto flex h-[68px] max-w-[1320px] items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 md:gap-6 md:px-8">
+    <div class="mx-auto flex h-[68px] max-w-shell items-center justify-between gap-2 px-3 sm:gap-4 sm:px-4 md:gap-6 md:px-8">
         <div class="flex items-center gap-2">
             {{ child_html('mobile_menu') }}
             <a href="{{ block.getUrl('') }}"
-               class="font-display text-base font-semibold tracking-[0.1em] text-ink min-[360px]:text-lg min-[360px]:tracking-[0.12em] sm:text-2xl sm:tracking-[0.16em]"
+               class="font-display text-base font-semibold tracking-mono text-ink min-[360px]:text-lg sm:text-2xl sm:tracking-label"
                aria-label="{{ __('OBSIDIAN — home')|escape_html_attr }}">OBSIDIAN</a>
         </div>
 
         <div class="hidden min-w-0 flex-1 justify-start lg:flex [&>[data-mage-island]]:min-w-0
                     [container-type:inline-size] [container-name:obsidian-nav]
-                    font-mono text-[0.72rem] tracking-[0.18em]">
+                    font-mono text-eyebrow tracking-label">
             {{ child_html('primary_nav') }}
         </div>
 
-        <div class="flex items-center gap-3 font-mono text-[0.72rem] uppercase leading-none tracking-[0.12em] text-ink-soft sm:gap-4">
+        <div class="flex items-center gap-3 font-mono text-eyebrow uppercase leading-none tracking-mono text-ink-soft sm:gap-4">
             {{ child_html('account_menu') }}
             {{ child_html('search') }}
             {# Below lg the desktop nav is collapsed into the hamburger drawer, and

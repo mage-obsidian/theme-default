@@ -10,7 +10,7 @@
    customer-data is already cached resolves a different branch on the very first
    render, which is a legitimate swap rather than drift, so this node is exempted
    from the mismatch check. #}
-{% set initial %}<span data-allow-mismatch class="mo-prepaint-guest whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.12em] text-ink-soft">{{ __('Sign In') }}</span>{% endset %}
+{% set initial %}<span data-allow-mismatch class="mo-prepaint-guest whitespace-nowrap font-mono text-eyebrow uppercase tracking-mono text-ink-soft">{{ __('Sign In') }}</span>{% endset %}
 {{ render_vue('MageObsidian_Customer::account/AccountMenu', {
     accountUrl: acc.getAccountUrl(),
     loginUrl: acc.getLoginUrl(),

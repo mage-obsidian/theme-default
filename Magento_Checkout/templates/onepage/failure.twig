@@ -1,7 +1,7 @@
 {# `block` is the native Onepage\Failure block, read for the real order id, the
    gateway error message, and the continue-shopping URL. #}
-<div class="mx-auto w-full max-w-[760px] px-4 py-20 text-center md:px-8">
-    <p class="font-mono text-[0.72rem] uppercase tracking-[0.2em] text-danger">{{ __('Payment failed') }}</p>
+<div class="mx-auto w-full max-w-readable px-4 py-20 text-center md:px-8">
+    <p class="font-mono text-eyebrow uppercase tracking-spaced text-danger">{{ __('Payment failed') }}</p>
     <h1 class="mt-4 font-display text-4xl text-ink md:text-5xl">{{ __('The order was not successful') }}</h1>
 
     {% if block.getRealOrderId() %}

@@ -139,7 +139,7 @@
                     {% set amount = option.getPrice(true) %}
                     {% set extensions = option.getFileExtension() %}
                     {% if uploaded %}
-                        <p class="mb-2 font-mono text-[0.7rem] text-ink">
+                        <p class="mb-2 font-mono text-eyebrow text-ink">
                             {{ __('Current file') }}: <span class="text-ink-soft">{{ uploaded.title }}</span>
                         </p>
                     {% endif %}
@@ -148,16 +148,16 @@
                            {% if extensions %}accept=".{{ extensions|replace({' ': ''})|replace({',': ',.'}) }}"{% endif %}
                            {# An already-uploaded file satisfies the requirement, so the browser must not block the no-JS submit. #}
                            {% if required and not uploaded %}required aria-required="true"{% endif %}
-                           class="block w-full font-mono text-sm text-ink-soft file:mr-4 file:rounded-edge file:border file:border-ink file:bg-transparent file:px-4 file:py-2 file:font-mono file:text-[0.68rem] file:uppercase file:tracking-[0.14em] file:text-ink">
+                           class="block w-full font-mono text-sm text-ink-soft file:mr-4 file:rounded-edge file:border file:border-ink file:bg-transparent file:px-4 file:py-2 file:font-mono file:text-eyebrow file:uppercase file:tracking-eyebrow file:text-ink">
                     {# save_old keeps the file already on the line; product-options.ts flips it to save_new on replacement. #}
                     <input type="hidden" name="options_{{ id }}_file_action" value="{{ uploaded ? 'save_old' : 'save_new' }}">
                     {% if uploaded %}
-                        <p class="mt-1 font-mono text-[0.66rem] text-ash-500">{{ __('Choose a file to replace it.') }}</p>
+                        <p class="mt-1 font-mono text-micro text-ash-500">{{ __('Choose a file to replace it.') }}</p>
                     {% endif %}
                     {% if extensions %}
                         <p class="field__hint mt-1">{{ __('Allowed file types') }}: {{ extensions }}</p>
                     {% endif %}
-                    {% if amount > 0 %}<p class="mt-1 font-mono text-[0.66rem] text-ink-soft">+{{ view.formatPrice(amount) }}</p>{% endif %}
+                    {% if amount > 0 %}<p class="mt-1 font-mono text-micro text-ink-soft">+{{ view.formatPrice(amount) }}</p>{% endif %}
                 {% endif %}
             </div>
             <p class="pdp__option-error field__error mt-2" data-option-error role="alert"></p>

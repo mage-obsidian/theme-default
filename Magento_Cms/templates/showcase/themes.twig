@@ -19,8 +19,8 @@
     }
 ] %}
 <section class="showcase-bleed bg-alabaster" aria-labelledby="showcase-themes-heading">
-    <div class="mx-auto max-w-[1320px] px-6 py-20 md:px-8 md:py-28">
-        <p class="font-mono uppercase tracking-[0.3em] text-ink-soft" style="font-size:var(--text-eyebrow)">{{ __('Themes') }}</p>
+    <div class="mx-auto max-w-shell px-6 py-20 md:px-8 md:py-28">
+        <p class="font-mono uppercase tracking-spaced text-ink-soft" style="font-size:var(--text-eyebrow)">{{ __('Themes') }}</p>
         <h2 id="showcase-themes-heading" class="mt-5 max-w-[20ch] font-display leading-[1.05] text-ink" style="font-size:var(--text-h2)">
             {{ __('Two layers, clean inheritance') }}
         </h2>
@@ -31,10 +31,10 @@
                     <span class="inline-flex h-11 w-11 items-center justify-center rounded-edge border border-ash-300 text-accent [&>svg]:h-6 [&>svg]:w-6">
                         {{ hero_icon(l.icon, 'outline', '24')|raw }}
                     </span>
-                    <span class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-ink-soft">{{ l.eyebrow }}</span>
+                    <span class="font-mono text-eyebrow uppercase tracking-label text-ink-soft">{{ l.eyebrow }}</span>
                     <span class="font-display text-2xl leading-tight text-ink">{{ __(l.title) }}</span>
                     <span class="font-body text-sm leading-relaxed text-ink-soft">{{ __(l.desc) }}</span>
-                    <span class="mt-1 inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-accent">
+                    <span class="mt-1 inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-label text-accent">
                         {{ __('View on GitHub') }} <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
                     </span>
                 </a>

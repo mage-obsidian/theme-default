@@ -16,10 +16,10 @@
         {% for tab in tabs %}
             <li>
                 {% if tab.key == current %}
-                    <span aria-current="page" class="inline-block border-b-2 border-ink pb-3 font-mono text-xs uppercase tracking-[0.14em] text-ink">{{ tab.label }}</span>
+                    <span aria-current="page" class="inline-block border-b-2 border-ink pb-3 font-mono text-xs uppercase tracking-eyebrow text-ink">{{ tab.label }}</span>
                 {% else %}
                     <a href="{{ block.getUrl(tab.path, { 'order_id': order_id })|escape_url }}"
-                       class="inline-block border-b-2 border-transparent pb-3 font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:border-ash-300 hover:text-ink">{{ tab.label }}</a>
+                       class="inline-block border-b-2 border-transparent pb-3 font-mono text-xs uppercase tracking-eyebrow text-ink-soft transition-colors hover:border-ash-300 hover:text-ink">{{ tab.label }}</a>
                 {% endif %}
             </li>
         {% endfor %}

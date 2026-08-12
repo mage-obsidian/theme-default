@@ -26,7 +26,7 @@ $msrpPrice = $block->renderAmount(
         <span class="msrp__advertised old-price text-ink-soft line-through"><?= /* @noEscape */ $msrpPrice ?></span>
         <?php if ($priceType->isShowPriceOnGesture()): ?>
             <details class="msrp__reveal">
-                <summary class="cursor-pointer font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 hover:underline">
+                <summary class="cursor-pointer font-mono text-xs uppercase tracking-mono text-accent underline-offset-4 hover:underline">
                     <?= $block->escapeHtml(__('Click for price')) ?>
                 </summary>
                 <span class="msrp__real mt-1 block text-ink"><?= /* @noEscape */ $block->getRealPriceHtml() ?></span>

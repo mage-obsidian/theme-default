@@ -6,8 +6,8 @@
   avoid a duplicate node. OBSIDIAN keeps it quiet: mono, ash separators.
 #}
 {% if crumbs and crumbs is iterable %}
-<nav class="breadcrumbs mx-auto max-w-[1320px] px-4 py-4 md:px-8 print:hidden" aria-label="{{ __('Breadcrumb') }}">
-    <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-ink-soft">
+<nav class="breadcrumbs mx-auto max-w-shell px-4 py-4 md:px-8 print:hidden" aria-label="{{ __('Breadcrumb') }}">
+    <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-eyebrow uppercase tracking-eyebrow text-ink-soft">
         {% for crumbName, crumbInfo in crumbs %}
             <li class="item flex items-center gap-2 {{ crumbName|escape_html_attr }}">
                 {% if crumbInfo.link %}

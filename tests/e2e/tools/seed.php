@@ -252,12 +252,6 @@ $out('products: ' . count($skus) . ' candidates');
 
 // ------------------------------------------------------------------- stock ---
 
-// Every suite run places real orders, and each one leaves a negative reservation
-// behind. Source quantity never moves, so salable drifts down until the checkout
-// specs start failing with "Not enough items for sale" — a silent failure, since
-// the add-to-cart POST still answers 200 and only the `messages` section carries
-// the reason. Topping the source up keeps the seed idempotent in the only sense
-// that matters: the suite is green on the tenth run as well as the first.
 $salableFloor = static function (array $skus) use ($objectManager, $out, $store): void {
     if (
         !interface_exists(GetProductSalableQtyInterface::class)
@@ -266,10 +260,6 @@ $salableFloor = static function (array $skus) use ($objectManager, $out, $store)
         return;
     }
 
-    // The stock the storefront actually sells from is resolved through the sales
-    // channel, not assumed: this environment runs multi-source, and the website
-    // is served by a stock that does not include the default source, so topping
-    // that one up would raise a number nobody reads.
     $stockResolver = $objectManager->get(StockResolverInterface::class);
     $website = $objectManager->get(StoreManagerInterface::class)->getWebsite($store->getWebsiteId());
     $stockId = (int)$stockResolver->execute(SalesChannelInterface::TYPE_WEBSITE, $website->getCode())->getStockId();
@@ -407,11 +397,6 @@ if ($reviewCount < TARGET_REVIEWS) {
     $out('reviews: ' . $reviewCount . ' already there');
 }
 
-// A review whose title opens an HTML comment and a script tag. Serialized with a
-// plain json_encode it stays literal inside the JSON-LD block, which flips the
-// tokenizer into script-data-double-escaped: the block never closes, the rest of
-// the document is swallowed and no island ever hydrates. Kept in the fixture so
-// specs/json-ld.guest.spec.ts can prove the storefront survives it.
 $hostileProduct = $objectManager->get(ProductRepositoryInterface::class)
     ->get($skus[0], false, (int)$store->getId());
 $hostileTitle = '<!--<script>';
@@ -486,9 +471,6 @@ if ($orderCount < TARGET_ORDERS) {
     $out('orders: ' . $orderCount . ' already there');
 }
 
-// Wider than the forced-tone slots on purpose: the checkout specs place a real
-// order on every run, so the interesting ones drift downward and a four-order
-// window eventually holds nothing but the wreckage of previous runs.
 $orders = $objectManager->get(OrderCollectionFactory::class)->create()
     ->addFieldToFilter('customer_id', $customerId)
     ->setOrder('entity_id', 'DESC')
@@ -498,9 +480,6 @@ $orders = $objectManager->get(OrderCollectionFactory::class)->create()
 $orderRepository = $objectManager->get(OrderRepositoryInterface::class);
 $byOffset = array_values($orders->getItems());
 
-// Refunding is the one step that cannot be undone, so it is done once and then
-// reused. Picking a fresh order every run was what closed the newest four and
-// left the track specs with nothing in motion.
 $documented = null;
 
 foreach ($byOffset as $order) {
@@ -520,8 +499,6 @@ foreach ($byOffset as $offset => $order) {
     if (!$forced || $order->getState() === $forced['state']) {
         continue;
     }
-    // A refunded order recomputes itself back to closed on save, so forcing a
-    // tone onto one is a write that silently does nothing.
     if ($order->hasCreditmemos() || (int)$order->getEntityId() === $documentedId) {
         continue;
     }
@@ -569,10 +546,6 @@ if ($documented) {
     }
 }
 
-// Chosen after the documents are written, not before: a closed order has nothing
-// left to track, and the one this run just refunded would otherwise be handed to
-// the track specs on the next run. The track only marks a step done from
-// `processing` onward, so the pick is also nudged there rather than assumed.
 $trackableId = null;
 
 foreach ($byOffset as $order) {

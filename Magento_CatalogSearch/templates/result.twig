@@ -14,9 +14,9 @@
   before the grid and is what settles the toolbar's sort state, so a fragment
   built from the grid alone would not match the page. Inert without that module.
 #}
-<div class="search-results mx-auto max-w-[1320px] px-4 py-10 md:px-8" data-obsidian-section="results">
+<div class="search-results mx-auto max-w-shell px-4 py-10 md:px-8" data-obsidian-section="results">
     <header class="search-results__head mb-8">
-        <p class="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-ink-soft">{{ __('Search') }}</p>
+        <p class="font-mono text-eyebrow uppercase tracking-label text-ink-soft">{{ __('Search') }}</p>
         <h1 class="mt-2 font-display text-h3 leading-tight text-ink">{{ block.getSearchQueryText()|raw }}</h1>
         {% if block.getResultCount() %}
             <p class="mt-2 font-mono text-sm text-ink-soft">
@@ -38,7 +38,7 @@
         {{ block.getProductListHtml()|raw }}
     {% else %}
         <div class="search-results__empty py-16 text-center">
-            <p class="font-mono text-sm uppercase tracking-[0.16em] text-ink-soft">
+            <p class="font-mono text-sm uppercase tracking-label text-ink-soft">
                 {{ block.getNoResultText() ?: __('Your search returned no results.') }}
             </p>
             <a href="{{ block.getUrl('') }}"

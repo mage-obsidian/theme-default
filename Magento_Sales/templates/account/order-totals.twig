@@ -5,7 +5,7 @@
    into one row per rate when the store enables the full tax summary
    (tax_breakdown ViewModel), otherwise a single Tax line. #}
 {% set order = block.getOrder() %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-eyebrow text-ink-soft' %}
 {% set taxBreakdown = block.getTaxBreakdown() %}
 {% set taxRates = taxBreakdown and taxBreakdown.isFullSummary() ? taxBreakdown.getRates(order) : [] %}
 {# Fixed Product Tax (WEEE): the order carries no FPT column, so sum the line

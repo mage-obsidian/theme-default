@@ -6,7 +6,7 @@
 #}
 {% set featured = block.getFeatured().getItems() %}
 {% if featured|length %}
-    <section class="mx-auto max-w-[1320px] px-6 py-16 md:px-8 md:py-24" aria-labelledby="featured-categories-heading">
+    <section class="mx-auto max-w-shell px-6 py-16 md:px-8 md:py-24" aria-labelledby="featured-categories-heading">
         <h2 id="featured-categories-heading" class="sr-only">{{ __('Shop by category') }}</h2>
         <div class="grid grid-cols-1 gap-px overflow-hidden rounded-edge border border-ash-200 bg-ash-200 sm:grid-cols-2 lg:grid-cols-4">
             {% for item in featured %}
@@ -18,7 +18,7 @@
                         <span class="absolute inset-0 bg-gradient-to-t from-obsidian-950/85 via-obsidian-950/20 to-transparent"></span>
                     {% endif %}
                     <span class="relative font-display text-2xl leading-tight">{{ item.label }}</span>
-                    <span class="relative mt-1 font-mono text-[0.68rem] uppercase tracking-[0.18em] text-on-obsidian-soft">
+                    <span class="relative mt-1 font-mono text-eyebrow uppercase tracking-label text-on-obsidian-soft">
                         {{ __('Shop now') }} <span aria-hidden="true">→</span>
                     </span>
                 </a>

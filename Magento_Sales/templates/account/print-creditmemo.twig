@@ -9,7 +9,7 @@
 {% set creditmemos = single ? [single] : order.getCreditmemosCollection() %}
 {% set billing = order.getBillingAddress() %}
 {% set shipping = order.getShippingAddress() %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-eyebrow text-ink-soft' %}
 
 {{ account.page_header({
     eyebrow: order.getCreatedAt()|date_format('long'),

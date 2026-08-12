@@ -13,7 +13,7 @@
 {% set products = block.getLoadedProductCollection() %}
 <div data-obsidian-section="listing">
     {% if not products.count() %}
-        <div class="message info empty py-16 text-center font-mono text-sm uppercase tracking-[0.16em] text-ink-soft">
+        <div class="message info empty py-16 text-center font-mono text-sm uppercase tracking-label text-ink-soft">
             {{ __('We can’t find products matching the selection.') }}
         </div>
     {% else %}

@@ -7,7 +7,7 @@
         {% if total.getValue() is not null %}
             {% set isGrand = code == 'grand_total' %}
             <div class="flex items-center justify-between gap-4 {{ isGrand ? 'border-t border-ash-200 pt-3 text-base font-semibold text-ink' : 'text-ink-soft' }}">
-                <dt class="uppercase tracking-[0.1em]">{{ total.getTitle() }}</dt>
+                <dt class="uppercase tracking-mono">{{ total.getTitle() }}</dt>
                 <dd class="{{ isGrand ? 'text-ink' : '' }}">{{ total.getValue()|price }}</dd>
             </div>
         {% endif %}

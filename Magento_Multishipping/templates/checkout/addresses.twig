@@ -3,15 +3,15 @@
    the native controller; the submit buttons carry the `continue` / `new_address`
    flags as their own name/value so the flow works without JS (the Knockout flag
    toggling is dropped). The per-item address picker is the block's native select. #}
-<section class="mx-auto w-full max-w-[1100px] px-4 py-10 md:px-8">
-    <h1 class="font-display text-3xl tracking-[0.06em] text-ink">{{ __('Ship to Multiple Addresses') }}</h1>
+<section class="mx-auto w-full max-w-narrow px-4 py-10 md:px-8">
+    <h1 class="font-display text-3xl tracking-fine text-ink">{{ __('Ship to Multiple Addresses') }}</h1>
     <p class="mt-2 text-sm text-ink-soft">{{ __('Please select a shipping address for applicable items.') }}</p>
 
     <form action="{{ block.getPostActionUrl()|escape_url }}" method="post" class="mt-8">
         {{ block.getBlockHtml('formkey')|raw }}
         <div class="overflow-x-auto rounded-edge border border-ash-200">
             <table class="w-full text-left text-sm">
-                <thead class="border-b border-ash-200 font-mono text-xs uppercase tracking-[0.12em] text-ink-soft">
+                <thead class="border-b border-ash-200 font-mono text-xs uppercase tracking-mono text-ink-soft">
                     <tr>
                         <th class="px-4 py-3" scope="col">{{ __('Product') }}</th>
                         <th class="px-4 py-3" scope="col">{{ __('Qty') }}</th>
@@ -56,7 +56,7 @@
             <div class="flex flex-wrap items-center gap-4">
                 <button type="submit" name="new_address" value="1" class="btn btn--outline btn--sm">{{ __('Enter a New Address') }}</button>
                 <button type="submit" name="continue" value="0" class="btn btn--outline btn--sm">{{ __('Update Qty & Addresses') }}</button>
-                <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">{{ __('Back to Shopping Cart') }}</a>
+                <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-eyebrow text-ink-soft transition-colors hover:text-ink">{{ __('Back to Shopping Cart') }}</a>
             </div>
             <button type="submit" name="continue" value="1" {{ block.isContinueDisabled() ? 'disabled' : '' }}
                     class="btn btn--solid">

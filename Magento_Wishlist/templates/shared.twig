@@ -6,11 +6,11 @@
 {% set thumbnail = block.getThumbnail() %}
 {% set items = shared.getWishlistItems() %}
 {% set owner = shared.getWishlistCustomer() %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-eyebrow text-ink-soft' %}
 
-<div class="mx-auto w-full max-w-[1320px] px-4 py-10 md:px-8">
+<div class="mx-auto w-full max-w-shell px-4 py-10 md:px-8">
     <div class="flex flex-wrap items-center justify-between gap-4">
-        <h1 class="font-display text-3xl tracking-[0.08em] text-ink">
+        <h1 class="font-display text-3xl tracking-fine text-ink">
             {% if owner %}{{ owner.getFirstname() }} {{ owner.getLastname() }} — {% endif %}{{ __('Wish List') }}
         </h1>
         {% if shared.isSaleable() %}

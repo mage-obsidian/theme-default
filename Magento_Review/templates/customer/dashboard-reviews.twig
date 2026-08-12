@@ -4,13 +4,13 @@
 {% from 'Magento_Review::review/stars.twig' import stars %}
 {% set recent = block.getChildBlock('recent') %}
 {% set reviews = recent.getReviews() %}
-{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-eyebrow text-ink-soft' %}
 
 {% if reviews|length > 0 %}
     <section class="mt-8">
         <div class="flex items-center justify-between gap-4">
             <h2 class="font-display text-lg text-ink">{{ __('Recent Reviews') }}</h2>
-            <a href="{{ recent.getAllReviewsUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-[0.12em] text-accent underline-offset-4 transition-colors hover:underline">{{ __('View All') }}</a>
+            <a href="{{ recent.getAllReviewsUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-mono text-accent underline-offset-4 transition-colors hover:underline">{{ __('View All') }}</a>
         </div>
 
         <ul class="mt-4 divide-y divide-ash-200 border-y border-ash-200">

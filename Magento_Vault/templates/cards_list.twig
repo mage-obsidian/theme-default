@@ -29,7 +29,7 @@
                 <div class="address-card__body flex items-start gap-4">
                     {{ hero_icon('credit-card', 'outline', '24', 'h-6 w-6 shrink-0 text-ash-500') }}
                     <div class="min-w-0">
-                        <span class="address-card__name font-mono tracking-[0.12em]">•••• {{ card.last4 }}</span>
+                        <span class="address-card__name font-mono tracking-mono">•••• {{ card.last4 }}</span>
                         <span class="block">{{ card.typeLabel }}</span>
                         <span class="account-stat__label mt-2 block">{{ __('Expires %1', card.expiration) }}</span>
                     </div>

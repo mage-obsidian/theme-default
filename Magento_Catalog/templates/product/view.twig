@@ -9,7 +9,7 @@
 {% set configurable = view.isConfigurable() %}
 
 {% if product %}
-<article class="pdp mx-auto max-w-[1320px] px-4 pb-24 pt-2 md:px-8"
+<article class="pdp mx-auto max-w-shell px-4 pb-24 pt-2 md:px-8"
          data-pdp data-product-id="{{ view.getProductId() }}">
     <div class="pdp__grid grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-2">
 
@@ -19,7 +19,7 @@
         {# ---- Buy box ---- #}
         <div class="pdp__info lg:sticky lg:top-24 lg:self-start">
             <h1 class="pdp__name font-display text-3xl leading-tight text-ink md:text-4xl">{{ view.getName() }}</h1>
-            <p class="pdp__sku mt-2 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-ink-soft">
+            <p class="pdp__sku mt-2 font-mono text-eyebrow uppercase tracking-label text-ink-soft">
                 {{ __('SKU') }}: {{ view.getSku() }}
             </p>
 
@@ -57,7 +57,7 @@
                         {% include 'Magento_Catalog::product/form/simple.twig' %}
                     {% endif %}
                 {% else %}
-                    <p class="pdp__unavailable inline-flex items-center rounded-edge border border-ash-200 px-5 py-3 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ash-500">
+                    <p class="pdp__unavailable inline-flex items-center rounded-edge border border-ash-200 px-5 py-3 font-mono text-eyebrow uppercase tracking-label text-ash-500">
                         {{ __('Out of stock') }}
                     </p>
                 {% endif %}
@@ -87,7 +87,7 @@
                 <input type="hidden" name="product" value="{{ view.getProductId() }}">
                 {{ block.getBlockHtml('formkey')|raw }}
                 <button type="submit" aria-pressed="false"
-                        class="inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink-soft transition-colors hover:text-ink">
+                        class="inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-label text-ink-soft transition-colors hover:text-ink">
                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                     </svg>
@@ -100,7 +100,7 @@
                 <input type="hidden" name="product" value="{{ view.getProductId() }}">
                 {{ block.getBlockHtml('formkey')|raw }}
                 <button type="submit" aria-pressed="false"
-                        class="inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink-soft transition-colors hover:text-ink">
+                        class="inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-label text-ink-soft transition-colors hover:text-ink">
                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
                     </svg>
@@ -112,13 +112,13 @@
                self-gates each on the enable flag and product applicability). #}
             {% set productAlert = block.getProductAlert() %}
             {% if productAlert and productAlert.isPriceAllowed() %}
-                <a href="{{ productAlert.getPriceUrl()|escape_url }}" class="pdp__alert mt-3 inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">
+                <a href="{{ productAlert.getPriceUrl()|escape_url }}" class="pdp__alert mt-3 inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-label text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">
                     <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('bell', 'outline', '24')|raw }}</span>
                     {{ __('Notify me when the price drops') }}
                 </a>
             {% endif %}
             {% if productAlert and productAlert.isStockAllowed() %}
-                <a href="{{ productAlert.getStockUrl()|escape_url }}" class="pdp__alert mt-3 inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">
+                <a href="{{ productAlert.getStockUrl()|escape_url }}" class="pdp__alert mt-3 inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-label text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">
                     <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('bell-alert', 'outline', '24')|raw }}</span>
                     {{ __('Notify me when this product is in stock') }}
                 </a>
@@ -127,7 +127,7 @@
             {# Email to a Friend (Magento_SendFriend; VM self-gates on the enable flag). #}
             {% set sendfriend = block.getSendfriend() %}
             {% if sendfriend and sendfriend.isAllowed() and sendfriend.getSendUrl() %}
-                <a href="{{ sendfriend.getSendUrl()|escape_url }}" class="pdp__sendfriend mt-3 inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">
+                <a href="{{ sendfriend.getSendUrl()|escape_url }}" class="pdp__sendfriend mt-3 inline-flex items-center gap-2 font-mono text-eyebrow uppercase tracking-label text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">
                     <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('envelope', 'outline', '24')|raw }}</span>
                     {{ __('Email to a Friend') }}
                 </a>
@@ -136,10 +136,10 @@
             {% set attributes = block.getChildBlock('product_attributes') ? block.getChildBlock('product_attributes').getAdditionalData() : [] %}
             {% if attributes is not empty %}
                 <section class="pdp__specs mt-12 border-t border-ash-200 pt-8" aria-labelledby="pdp-specs-title">
-                    <h2 id="pdp-specs-title" class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-ink-soft">{{ __('Details') }}</h2>
+                    <h2 id="pdp-specs-title" class="font-mono text-eyebrow uppercase tracking-label text-ink-soft">{{ __('Details') }}</h2>
                     <dl class="mt-4 grid grid-cols-1 gap-y-3 sm:grid-cols-[auto_1fr] sm:gap-x-8">
                         {% for attribute in attributes %}
-                            <dt class="font-mono text-[0.72rem] uppercase tracking-[0.12em] text-ink-soft">{{ attribute.label }}</dt>
+                            <dt class="font-mono text-eyebrow uppercase tracking-mono text-ink-soft">{{ attribute.label }}</dt>
                             <dd class="text-sm text-ink">{{ attribute.value|raw }}</dd>
                         {% endfor %}
                     </dl>

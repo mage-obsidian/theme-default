@@ -13,13 +13,13 @@
 {% set count = reviews.getCount() %}
 
 <section id="reviews" class="pdp__reviews mt-16 border-t border-ash-200 pt-12" aria-labelledby="reviews-title">
-    <div class="mx-auto max-w-[1320px]">
+    <div class="mx-auto max-w-shell">
         <header class="flex flex-wrap items-baseline justify-between gap-4">
             <h2 id="reviews-title" class="font-display text-xl text-ink">{{ __('Reviews') }}</h2>
             {% if count > 0 %}
                 <div class="flex items-center gap-2">
                     {{ stars(reviews.getAveragePercent(), __('%1 out of 5 stars', reviews.getAverageStars())) }}
-                    <span class="font-mono text-[0.72rem] text-ink-soft">{{ __('%1 of 5 · %2 review(s)', reviews.getAverageStars(), count) }}</span>
+                    <span class="font-mono text-eyebrow text-ink-soft">{{ __('%1 of 5 · %2 review(s)', reviews.getAverageStars(), count) }}</span>
                 </div>
             {% endif %}
         </header>
@@ -31,7 +31,7 @@
                         {{ stars(review.percent, __('%1 out of 5 stars', (review.percent / 20)|round(1))) }}
                         <h3 class="mt-3 font-display text-base text-ink">{{ review.title }}</h3>
                         <p class="mt-2 text-sm leading-relaxed text-ink-soft">{{ review.detail }}</p>
-                        <footer class="mt-4 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-ink-soft">
+                        <footer class="mt-4 font-mono text-micro uppercase tracking-eyebrow text-ink-soft">
                             {{ review.nickname }} · {{ review.created_at|slice(0, 10) }}
                         </footer>
                     </li>
@@ -52,7 +52,7 @@
                     <div class="flex flex-col gap-4">
                         {% for rating in ratings %}
                             <fieldset class="review-rating border-0 p-0" role="radiogroup" aria-label="{{ rating.getRatingCode() }}">
-                                <legend class="font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink-soft">{{ rating.getRatingCode() }}</legend>
+                                <legend class="font-mono text-eyebrow uppercase tracking-label text-ink-soft">{{ rating.getRatingCode() }}</legend>
                                 <div class="review-rating__stars mt-2">
                                     {% for option in rating.getOptions()|reverse %}
                                         {% set inputId = 'rating-' ~ rating.getId() ~ '-' ~ option.getValue() %}
@@ -100,12 +100,6 @@
         </div>
     </div>
 
-    {# Rendered through `json_ld`, not `|json_encode|raw`. The node carries text a
-       customer wrote, and a plain json_encode leaves `<` intact: a review titled
-       `<!--<script>` flips the HTML tokenizer into script-data-double-escaped, so
-       this block's own `</script>` stops closing it and the rest of the document
-       is swallowed as script content. The renderer behind this helper encodes
-       with JSON_HEX_TAG, which is what makes the payload inert. #}
     {% if reviews.hasReviews() %}
         {{ json_ld('Product', {
             'name': reviews.getProductName(),

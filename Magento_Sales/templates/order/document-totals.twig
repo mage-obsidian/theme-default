@@ -4,7 +4,7 @@
    adjustment lines resolve to null for invoices (Magento model magic getters) and
    are skipped by the zero guard. Tax expands into one row per rate when the store
    enables the full tax summary (tax_breakdown ViewModel off the host block). #}
-{% set labelClass = 'font-mono text-xs uppercase tracking-[0.14em] text-ink-soft' %}
+{% set labelClass = 'font-mono text-xs uppercase tracking-eyebrow text-ink-soft' %}
 {% set taxBreakdown = block.getTaxBreakdown() %}
 {% set taxRates = taxBreakdown and taxBreakdown.isFullSummary() ? taxBreakdown.getRates(document) : [] %}
 {% set adjPositive = document.getAdjustmentPositive() %}

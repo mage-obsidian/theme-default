@@ -9,10 +9,10 @@
     {% if count > 0 %}
         <a href="#reviews" class="inline-flex items-center gap-2 text-ink-soft transition-colors hover:text-ink">
             {{ stars(reviews.getAveragePercent(), __('%1 out of 5 stars', reviews.getAverageStars())) }}
-            <span class="font-mono text-[0.7rem]">{{ __('%1 review(s)', count) }}</span>
+            <span class="font-mono text-eyebrow">{{ __('%1 review(s)', count) }}</span>
         </a>
     {% else %}
-        <a href="#reviews" class="inline-block font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink">
+        <a href="#reviews" class="inline-block font-mono text-eyebrow uppercase tracking-eyebrow text-ink-soft transition-colors hover:text-ink">
             {{ __('Be the first to review this product') }}
         </a>
     {% endif %}

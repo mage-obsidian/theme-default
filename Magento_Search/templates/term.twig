@@ -9,7 +9,7 @@
 #}
 {% set terms = block.getTerms() %}
 
-<div class="search-terms mx-auto max-w-[1320px] px-4 pb-16 md:px-8">
+<div class="search-terms mx-auto max-w-shell px-4 pb-16 md:px-8">
     {% if terms is not empty %}
         <ul class="search-terms__list">
             {% for term in terms %}
@@ -22,7 +22,7 @@
         </ul>
     {% else %}
         <div class="search-terms__empty py-16 text-center">
-            <p class="font-mono text-sm uppercase tracking-[0.16em] text-ink-soft">
+            <p class="font-mono text-sm uppercase tracking-label text-ink-soft">
                 {{ __('There are no search terms available.') }}
             </p>
             <a href="{{ block.getUrl('') }}" class="btn btn--solid btn--lg mt-8">

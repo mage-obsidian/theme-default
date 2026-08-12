@@ -5,9 +5,9 @@
   footer_links block in the More column.
 #}
 <div class="border-t border-obsidian-800 bg-obsidian-950 text-on-obsidian-soft print:hidden">
-    <div class="mx-auto grid max-w-[1320px] gap-10 px-4 py-16 md:grid-cols-[1.6fr_1fr_1fr] md:px-8">
+    <div class="mx-auto grid max-w-shell gap-10 px-4 py-16 md:grid-cols-[1.6fr_1fr_1fr] md:px-8">
         <div>
-            <div class="mb-4 font-display text-xl tracking-[0.16em] text-on-obsidian">OBSIDIAN</div>
+            <div class="mb-4 font-display text-xl tracking-label text-on-obsidian">OBSIDIAN</div>
             <p class="max-w-[32ch] text-sm leading-relaxed">
                 Outerwear and tailoring cut along one clean line. A volcanic-glass palette,
                 knife-clean seams, and nothing that doesn't earn its place.
@@ -17,14 +17,14 @@
         {{ child_html('footer_nav') }}
 
         <div>
-            <div class="mb-4 font-mono text-[0.68rem] uppercase tracking-[0.2em] text-on-obsidian">{{ __('More') }}</div>
+            <div class="mb-4 font-mono text-eyebrow uppercase tracking-spaced text-on-obsidian">{{ __('More') }}</div>
             {# Excluded: the Shop column, already placed above by the grid. #}
             {{ block.getChildHtmlWithExclusions('', true, ['obsidian.footer_nav'])|raw }}
         </div>
     </div>
 
     <div class="border-t border-obsidian-800">
-        <div class="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-3 px-4 py-6 font-mono text-[0.7rem] uppercase tracking-[0.14em] md:px-8">
+        <div class="mx-auto flex max-w-shell flex-wrap items-center justify-between gap-3 px-4 py-6 font-mono text-eyebrow uppercase tracking-eyebrow md:px-8">
             <span>© AW25 OBSIDIAN — a MageObsidian demo line</span>
             <span>Cut in Porto · Shipped worldwide</span>
         </div>

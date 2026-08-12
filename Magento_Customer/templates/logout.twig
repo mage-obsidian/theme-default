@@ -2,7 +2,7 @@
    page auto-redirects via JS; we keep it accessible and no-JS with an explicit
    link instead (a <meta refresh> would fail WCAG 2.2.1). #}
 <section class="mx-auto w-full max-w-md px-4 py-20 text-center">
-    <h1 class="font-display text-3xl tracking-[0.08em] text-ink">{{ __('You are signed out') }}</h1>
+    <h1 class="font-display text-3xl tracking-fine text-ink">{{ __('You are signed out') }}</h1>
     <p class="mt-4 text-sm text-ink-soft">{{ __('You have signed out of your account.') }}</p>
     <a href="{{ block.getUrl('')|escape_url }}" class="btn btn--solid btn--lg mt-8">{{ __('Continue to homepage') }}</a>
 </section>
