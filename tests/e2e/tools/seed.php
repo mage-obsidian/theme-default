@@ -407,6 +407,40 @@ if ($reviewCount < TARGET_REVIEWS) {
     $out('reviews: ' . $reviewCount . ' already there');
 }
 
+// A review whose title opens an HTML comment and a script tag. Serialized with a
+// plain json_encode it stays literal inside the JSON-LD block, which flips the
+// tokenizer into script-data-double-escaped: the block never closes, the rest of
+// the document is swallowed and no island ever hydrates. Kept in the fixture so
+// specs/json-ld.guest.spec.ts can prove the storefront survives it.
+$hostileProduct = $objectManager->get(ProductRepositoryInterface::class)
+    ->get($skus[0], false, (int)$store->getId());
+$hostileTitle = '<!--<script>';
+
+$hasHostile = (int)$connection->fetchOne(
+    $connection->select()
+        ->from(['d' => $connection->getTableName('review_detail')], 'COUNT(*)')
+        ->join(['r' => $connection->getTableName('review')], 'r.review_id = d.review_id', [])
+        ->where('d.title = ?', $hostileTitle)
+        ->where('r.entity_pk_value = ?', (int)$hostileProduct->getId())
+);
+
+if (!$hasHostile) {
+    $hostile = $reviewFactory->create()->setData([
+        'nickname' => 'Tokenizer probe',
+        'title' => $hostileTitle,
+        'detail' => 'Fixture review: its title must never reach the page unescaped.',
+        'entity_pk_value' => (int)$hostileProduct->getId(),
+        'status_id' => 1,
+        'store_id' => (int)$store->getId(),
+        'stores' => [0, (int)$store->getId()],
+    ]);
+    $hostile->setEntityId($hostile->getEntityIdByCode('product'))->save();
+    $hostile->aggregate();
+}
+
+$hostileUrl = parse_url((string)$hostileProduct->getProductUrl(), PHP_URL_PATH);
+$out('reviews: tokenizer probe on ' . $hostileUrl);
+
 // ------------------------------------------------------------------ orders ---
 
 $orderCollection = $objectManager->get(OrderCollectionFactory::class)->create()
@@ -603,6 +637,7 @@ file_put_contents(
         'reviews' => TARGET_REVIEWS,
         'documentedOrderId' => $documentedId,
         'trackableOrderId' => $trackableId,
+        'hostileReviewUrl' => $hostileUrl,
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
 );
 $out('handover: tests/e2e/.artifacts/fixture.json');

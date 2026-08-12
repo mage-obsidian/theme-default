@@ -18,6 +18,7 @@ export interface Fixture {
     reviews: number;
     documentedOrderId: number | null;
     trackableOrderId: number | null;
+    hostileReviewUrl: string | null;
 }
 
 /**
