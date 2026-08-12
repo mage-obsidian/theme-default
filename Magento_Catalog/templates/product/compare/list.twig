@@ -1,3 +1,4 @@
+{% import 'Magento_Theme::macros/state.twig' as state %}
 {% set items = block.getItems() %}
 {% set itemCount = items.getSize ? items.getSize() : items|length %}
 
@@ -43,7 +44,15 @@
             </table>
         </div>
     {% else %}
-        <p class="mt-6 font-mono text-sm text-ink-soft">{{ __('You have no items to compare.') }}</p>
+        <div class="mt-6">
+            {# No icon: the core ListCompare block cannot render one. #}
+            {{ state.empty(block, {
+                title: __('Nothing to compare yet'),
+                body: __('Add a few products side by side and their differences show up here.'),
+                cta: __('Continue Shopping'),
+                cta_url: block.getUrl('')
+            }) }}
+        </div>
     {% endif %}
 </div>
 {{ script('MageObsidian_Storefront::js/form-busy') }}

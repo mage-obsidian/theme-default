@@ -103,3 +103,17 @@
 {% macro required_note(label) %}
     <p class="field-note"><span class="field-note__marker">*</span> {{ label }}</p>
 {% endmacro %}
+
+{# Buy-box quantity. The four PDP forms (simple, downloadable, bundle,
+   configurable) render the same control; the configurable one is driven by its
+   island and carries no name. #}
+{% macro qty(config) %}
+    {% set id = config.id ?? 'pdp-qty' %}
+    <div class="pdp__qty">
+        <label for="{{ id }}" class="field__label block">{{ config.label ?? __('Qty') }}</label>
+        <input id="{{ id }}"
+               {% if config.name is defined %}name="{{ config.name }}"{% endif %}
+               type="number" inputmode="numeric" min="1" step="1" value="{{ config.value ?? 1 }}"
+               class="field__control field-qty mt-2">
+    </div>
+{% endmacro %}

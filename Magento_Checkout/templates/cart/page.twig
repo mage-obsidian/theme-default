@@ -7,6 +7,7 @@
   "Estimate Shipping and Tax" panel is a Vue island rendered outside the morphed
   region so a qty refresh never destroys it (same as gift options).
 #}
+{% import 'Magento_Theme::macros/state.twig' as state %}
 {% set cartItems = block.getCartItems() %}
 {% set items = cartItems.getItems() %}
 {% set wishlist = block.getWishlist() %}
@@ -23,13 +24,13 @@
     <div class="mb-8">{{ child_html('cart_title') }}</div>
 
     {% if items is empty %}
-        <div class="flex flex-col items-center gap-4 rounded-edge border border-dashed border-ash-300 px-6 py-20 text-center">
-            <p class="font-display text-2xl text-ink">{{ __('Your bag is empty') }}</p>
-            <p class="max-w-[40ch] text-ink-soft">{{ __('Browse the collection to add something you love.') }}</p>
-            <a href="{{ block.getUrl('')|escape_url }}" class="btn btn--solid mt-2">
-                {{ __('Continue shopping') }}
-            </a>
-        </div>
+        {{ state.empty(block, {
+            icon: 'shopping-bag',
+            title: __('Your bag is empty'),
+            body: __('Browse the collection to add something you love.'),
+            cta: __('Continue shopping'),
+            cta_url: block.getUrl('')
+        }) }}
     {% else %}
         <div class="grid gap-10 lg:grid-cols-[1fr_360px]">
             <form action="{{ block.getUrl('checkout/cart/updatePost')|escape_url }}" method="post" data-cart-form>

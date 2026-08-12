@@ -1,0 +1,28 @@
+{# Empty states. Not account-only: the cart, the compare list, a shared wish list
+   and the saved-search list use the same block.
+   Imported with `{% import 'Magento_Theme::macros/state.twig' as state %}`.
+
+   `block` is not decoration. A Twig macro does not inherit the template context,
+   so the helpers that resolve against the rendering block — hero_icon among them —
+   only work if it is passed in and bound to that name. Drop it and the template
+   renders empty, because Magento swallows the block's render exception.
+
+   Pass `icon` only from a MageObsidian\ModernFrontend\Block\Template: hero_icon
+   needs getHeroIcon(), and a core block throws instead. It cannot be guarded from
+   Twig — Magento blocks implement __call, so `is defined` answers true for every
+   method name. #}
+
+{% macro empty(block, config) %}
+    <div class="empty-state">
+        {% if config.icon ?? false %}
+            {{ hero_icon(config.icon, 'outline', '24', 'empty-state__icon') }}
+        {% endif %}
+        <p class="empty-state__title">{{ config.title }}</p>
+        {% if config.body ?? false %}
+            <p class="empty-state__body">{{ config.body }}</p>
+        {% endif %}
+        {% if config.cta ?? false %}
+            <a href="{{ config.cta_url|escape_url }}" class="btn btn--solid mt-6">{{ config.cta }}</a>
+        {% endif %}
+    </div>
+{% endmacro %}

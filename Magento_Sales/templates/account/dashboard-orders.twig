@@ -7,6 +7,7 @@
    the rest fall back to compact rows: a customer opening the dashboard is nearly
    always asking about the last one. Reorder is a native POST form. #}
 {% import 'Magento_Theme::macros/account.twig' as account %}
+{% import 'Magento_Theme::macros/state.twig' as state %}
 
 {% set recent = block.getChildBlock('recent') %}
 {% set cancellation = block.getCancellation() %}
@@ -94,7 +95,7 @@
     {% endif %}
 {% else %}
     <div class="mt-8">
-        {{ account.empty_state(block, {
+        {{ state.empty(block, {
             icon: 'archive-box',
             title: __('No orders yet'),
             body: __('When you place an order it will show up here, with its status and everything you bought.'),

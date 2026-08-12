@@ -10,6 +10,7 @@
   - Composite types with no custom options (bundle/grouped) still fall back to a
     native POST until their own option UIs land.
 #}
+{% import 'Magento_Theme::macros/form.twig' as form %}
 {% set view = block.getView() %}
 {% set optionsBlock = block.getChildBlock('product_options') %}
 {% set hasOptions = optionsBlock and optionsBlock.getOptions() is not empty %}
@@ -40,11 +41,7 @@
     {% endif %}
 
     <div class="flex flex-wrap items-end gap-4">
-        <div class="pdp__qty">
-            <label for="pdp-qty" class="field__label block">{{ __('Qty') }}</label>
-            <input id="pdp-qty" name="qty" type="number" inputmode="numeric" min="1" step="1" value="1"
-                   class="field__control field-qty mt-2">
-        </div>
+        {{ form.qty({ name: 'qty' }) }}
 
         <button type="submit"
                 class="btn btn--solid btn--lg flex-1">

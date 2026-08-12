@@ -4,6 +4,7 @@
    page-sizes the collection, hence the child html at the foot. One row per
    purchased link; the download action shows only while the link is available. No JS. #}
 {% import 'Magento_Theme::macros/account.twig' as account %}
+{% import 'Magento_Theme::macros/state.twig' as state %}
 
 {% set list = block.getChildBlock('list') %}
 {% set items = list.getItems() %}
@@ -20,7 +21,7 @@
 
 {% if items is empty %}
     <div class="mt-8">
-        {{ account.empty_state(block, {
+        {{ state.empty(block, {
             icon: 'arrow-down-tray',
             title: __('Nothing to download yet'),
             body: __('Digital purchases land here the moment their order is paid.')

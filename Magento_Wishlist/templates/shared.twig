@@ -2,6 +2,7 @@
    core Share\Wishlist block (shared item collection, owner, shared cart URLs).
    Item add-to-cart is a native POST to wishlist/shared/cart; products that need
    options link to the PDP instead (a direct POST would bounce to configure). No JS. #}
+{% import 'Magento_Theme::macros/state.twig' as state %}
 {% set shared = block.getChildBlock('shared') %}
 {% set thumbnail = block.getThumbnail() %}
 {% set items = shared.getWishlistItems() %}
@@ -21,7 +22,12 @@
     </div>
 
     {% if items is empty %}
-        <p class="mt-8 text-sm text-ink-soft">{{ __('Wish List is empty now.') }}</p>
+        <div class="mt-8">
+            {{ state.empty(block, {
+                icon: 'heart',
+                title: __('Wish List is empty now.')
+            }) }}
+        </div>
     {% else %}
         <ul class="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
             {% for item in items %}

@@ -2,6 +2,7 @@
    which drops the ten-review cap core applies through a pager it never renders.
    No pager here on purpose — see the block. No JS. #}
 {% import 'Magento_Theme::macros/account.twig' as account %}
+{% import 'Magento_Theme::macros/state.twig' as state %}
 {% from 'Magento_Review::review/stars.twig' import stars %}
 
 {% set reviews = block.getReviews() %}
@@ -32,7 +33,7 @@
     <div class="mt-8">
         {# No icon: this page renders on core's review block, and hero_icon() needs a
            block extending MageObsidian's Template to resolve. #}
-        {{ account.empty_state(block, {
+        {{ state.empty(block, {
             title: __('No reviews yet'),
             body: __('Once you have lived with something for a while, tell the next person what it is really like.')
         }) }}

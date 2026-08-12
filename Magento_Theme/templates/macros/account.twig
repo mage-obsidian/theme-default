@@ -68,20 +68,6 @@
 {# Empty state: an icon, a line worth reading, and a way out. Pass `icon` only when
    the page renders on a block extending MageObsidian's Template — hero_icon() has
    nothing to resolve against on a core block, and throws. #}
-{% macro empty_state(block, config) %}
-    <div class="account-empty">
-        {% if config.icon ?? false %}
-            {{ hero_icon(config.icon, 'outline', '24', 'account-empty__icon') }}
-        {% endif %}
-        <p class="account-empty__title">{{ config.title }}</p>
-        {% if config.body ?? false %}
-            <p class="account-empty__body">{{ config.body }}</p>
-        {% endif %}
-        {% if config.cta ?? false %}
-            <a href="{{ config.cta_url|escape_url }}" class="btn btn--solid mt-6">{{ config.cta }}</a>
-        {% endif %}
-    </div>
-{% endmacro %}
 
 {# Overlapping stack of product images for an order row. `thumbs` is a list of
    {url, width, height, label}; `total` is the real item count, so the overflow

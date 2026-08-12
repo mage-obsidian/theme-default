@@ -5,6 +5,7 @@
    The pager matters here beyond navigation: it is what page-sizes the collection,
    so without rendering it the list is silently truncated at ten. #}
 {% import 'Magento_Theme::macros/account.twig' as account %}
+{% import 'Magento_Theme::macros/state.twig' as state %}
 
 {% set history = block.getChildBlock('history') %}
 {% set cancellation = block.getCancellation() %}
@@ -54,7 +55,7 @@
     {% endif %}
 {% else %}
     <div class="mt-8">
-        {{ account.empty_state(block, {
+        {{ state.empty(block, {
             icon: 'archive-box',
             title: __('You have placed no orders'),
             body: __('Once you order something it will live here — status, contents and a one-click reorder.'),

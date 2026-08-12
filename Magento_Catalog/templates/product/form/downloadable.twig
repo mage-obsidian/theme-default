@@ -4,6 +4,7 @@
   selection, so the form works with no JS. Samples are plain download links.
   (AJAX / live-total is deferred — composite POST stays native for now.)
 #}
+{% import 'Magento_Theme::macros/form.twig' as form %}
 {% set view = block.getView() %}
 {% set links = block.getChildBlock('downloadable_links') %}
 {% set samples = block.getChildBlock('downloadable_samples') %}
@@ -42,11 +43,7 @@
     {% endif %}
 
     <div class="flex flex-wrap items-end gap-4">
-        <div class="pdp__qty">
-            <label for="pdp-qty" class="field__label block">{{ __('Qty') }}</label>
-            <input id="pdp-qty" name="qty" type="number" inputmode="numeric" min="1" step="1" value="1"
-                   class="field__control field-qty mt-2">
-        </div>
+        {{ form.qty({ name: 'qty' }) }}
 
         <button type="submit"
                 class="btn btn--solid btn--lg flex-1">

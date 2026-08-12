@@ -4,6 +4,7 @@
    redirects back to this list, so removal works without JS — confirm-action only
    asks first. #}
 {% import 'Magento_Theme::macros/account.twig' as account %}
+{% import 'Magento_Theme::macros/state.twig' as state %}
 
 {% set stored = block.getStoredCards() %}
 {% set cards = stored.getCards() %}
@@ -16,7 +17,7 @@
 
 {% if cards is empty %}
     <div class="mt-8">
-        {{ account.empty_state(block, {
+        {{ state.empty(block, {
             icon: 'credit-card',
             title: __('No cards stored'),
             body: __('At checkout you can choose to save a card here for next time.')

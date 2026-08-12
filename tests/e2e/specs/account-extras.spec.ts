@@ -14,7 +14,7 @@ test.describe("downloadable products", () => {
         await expectAccountShell(page, "My Downloadable Products", "My Downloadable Products");
 
         const purchases = page.locator(".account-panel__title", { hasText: "Purchases" });
-        const empty = page.locator(".account-empty");
+        const empty = page.locator(".empty-state");
         expect((await purchases.count()) + (await empty.count())).toBeGreaterThan(0);
     });
 });
@@ -26,7 +26,7 @@ test.describe("stored payment methods", () => {
         await expectAccountShell(page, "Stored Payment Methods", "Stored Payment Methods");
 
         const cards = page.locator(".account-panel");
-        const empty = page.locator(".account-empty");
+        const empty = page.locator(".empty-state");
         expect((await cards.count()) + (await empty.count())).toBeGreaterThan(0);
     });
 });

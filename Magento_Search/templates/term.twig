@@ -7,6 +7,7 @@
   scale stays in the stylesheet — the core phtml hard-codes `ratio*70+75%` in the
   markup. No <h1> here: page.main.title already emits it from the page title.
 #}
+{% import 'Magento_Theme::macros/state.twig' as state %}
 {% set terms = block.getTerms() %}
 
 <div class="search-terms mx-auto max-w-shell px-4 pb-16 md:px-8">
@@ -21,13 +22,11 @@
             {% endfor %}
         </ul>
     {% else %}
-        <div class="search-terms__empty py-16 text-center">
-            <p class="font-mono text-sm uppercase tracking-label text-ink-soft">
-                {{ __('There are no search terms available.') }}
-            </p>
-            <a href="{{ block.getUrl('') }}" class="btn btn--solid btn--lg mt-8">
-                {{ __('Continue Shopping') }}
-            </a>
-        </div>
+        {# No icon: the core Search\Block\Term cannot render one. #}
+        {{ state.empty(block, {
+            title: __('There are no search terms available.'),
+            cta: __('Continue Shopping'),
+            cta_url: block.getUrl('')
+        }) }}
     {% endif %}
 </div>

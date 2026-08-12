@@ -1,3 +1,4 @@
+{%- import 'Magento_Theme::macros/form.twig' as form -%}
 <form class="pdp__configurable" novalidate>
     <div class="pdp__price mb-6 flex items-baseline gap-3" aria-live="polite">
         <span class="pdp__price-final font-mono text-2xl{{ oldPrice ? ' text-sale' : ' text-ink' }}">{{ price }}</span>
@@ -34,11 +35,7 @@
     {% endapply %}
 
     <div class="pdp__buy-row flex flex-wrap items-end gap-4">
-        <div class="pdp__qty">
-            <label for="pdp-cfg-qty" class="field__label block">{{ labels.qty }}</label>
-            <input id="pdp-cfg-qty" value="{{ qty }}" type="number" inputmode="numeric" min="1" step="1"
-                   class="field__control field-qty mt-2">
-        </div>
+        {{ form.qty({ id: 'pdp-cfg-qty', label: labels.qty, value: qty }) }}
         <button type="submit" aria-disabled="true" aria-busy="false"
                 class="btn btn--solid btn--lg flex-1"><span class="btn__label">{{ labels.selectOptions }}</span>{% apply island_if(false) %}{% endapply %}</button>
     </div>

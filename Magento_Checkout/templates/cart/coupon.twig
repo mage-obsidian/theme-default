@@ -12,7 +12,7 @@
         <button type="submit" class="link link--meta tracking-label text-ash-500">{{ __('Remove discount') }}</button>
     {% else %}
         <input type="hidden" name="remove" value="0">
-        <label for="coupon_code" class="mb-2 block font-mono text-xs uppercase tracking-mono text-ink-soft">{{ __('Discount code') }}</label>
+        <label for="coupon_code" class="field__label mb-2 block">{{ __('Discount code') }}</label>
         <div class="flex items-stretch gap-2">
             <input type="text" id="coupon_code" name="coupon_code" value="" autocomplete="off" class="field__control min-w-0 flex-1">
             <button type="submit" class="btn btn--outline btn--sm shrink-0">{{ __('Apply') }}</button>

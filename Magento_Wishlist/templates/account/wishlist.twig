@@ -6,6 +6,7 @@
    The cards borrow MageObsidian_Catalog's `.product-card` classes so a saved product
    reads the same here as it does in a listing. #}
 {% import 'Magento_Theme::macros/account.twig' as account %}
+{% import 'Magento_Theme::macros/state.twig' as state %}
 
 {% set wishlist = block.getChildBlock('wishlist') %}
 {% set thumbnail = block.getThumbnail() %}
@@ -91,7 +92,7 @@
     <div class="mt-10">{{ pager|raw }}</div>
 {% else %}
     <div class="mt-8">
-        {{ account.empty_state(block, {
+        {{ state.empty(block, {
             icon: 'heart',
             title: __('Nothing saved yet'),
             body: __('Tap the heart on anything you want to come back to. It will be waiting here.'),
