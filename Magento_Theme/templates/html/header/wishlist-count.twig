@@ -2,5 +2,5 @@
    with WishlistCount.vue. The anchor stands for the badge, which does not exist
    until customer-data reports a non-zero count. #}
 {% set label = __('in your wish list') %}
-{% set initial %}<span class="wishlist-count relative inline-flex items-center">{{ hero_icon('heart', 'outline', '24', 'h-5 w-5') }}{% apply island_if(false) %}{% endapply %}<span class="sr-only" role="status" aria-live="polite">0 {{ label }}</span></span>{% endset %}
+{% set initial %}<span class="wishlist-count relative inline-flex items-center" data-allow-mismatch="children">{{ hero_icon('heart', 'outline', '24', 'h-5 w-5') }}{% apply island_if(false) %}{% endapply %}<span class="sr-only" role="status" aria-live="polite">0 {{ label }}</span></span>{% endset %}
 {{ render_vue('MageObsidian_Storefront::wishlist/WishlistCount', { label: label }, true, initial, true) }}

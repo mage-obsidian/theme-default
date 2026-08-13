@@ -10,5 +10,5 @@
   before customer-data arrives.
 #}
 {% set label = __('in your bag') %}
-{% set initial %}<span class="cart-count relative inline-flex items-center">{{ hero_icon('shopping-bag', 'outline', '24', 'h-5 w-5') }}{% apply island_if(false) %}{% endapply %}{% apply island_if(false) %}{% endapply %}<span class="sr-only" role="status" aria-live="polite">0 {{ label }}</span></span>{% endset %}
+{% set initial %}<span class="cart-count relative inline-flex items-center" data-allow-mismatch="children">{{ hero_icon('shopping-bag', 'outline', '24', 'h-5 w-5') }}{% apply island_if(false) %}{% endapply %}{% apply island_if(false) %}{% endapply %}<span class="sr-only" role="status" aria-live="polite">0 {{ label }}</span></span>{% endset %}
 {{ render_vue('MageObsidian_Storefront::cart/CartCount', { label: label }, true, initial, true) }}
