@@ -31,7 +31,6 @@
              search island (obsidian.search), so this one is markup, a mount and a
              palette nobody asks for. -->
         <referenceBlock name="search.panel.content" remove="true"/>
-        <referenceBlock name="search.link" remove="true"/>
 
         <referenceBlock name="header-content" template="Magento_Theme::html/header.twig">
             <arguments>
