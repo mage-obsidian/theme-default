@@ -127,6 +127,17 @@
   display: none !important;
 }
 
+/* iOS Safari zooms the viewport when a focused control renders below 16px, and
+   the only way back out is a manual pinch. Deliberately unlayered: it has to beat
+   the `text-sm` utilities that legacy markup still carries. */
+@media (pointer: coarse) {
+  input:not([type="checkbox"], [type="radio"], [type="range"]),
+  select,
+  textarea {
+    font-size: 1rem;
+  }
+}
+
 #page_wrapper {
   display: flex;
   flex-direction: column;
