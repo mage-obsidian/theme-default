@@ -1,9 +1,24 @@
+import { execFileSync } from "node:child_process";
 import { expect, test } from "@playwright/test";
 import { readFixture } from "../src/env";
 import { authRoutes } from "../src/routes";
 import { field } from "../src/account";
 
 const fixture = readFixture();
+
+const RESET_TOKEN_TOOL = "app/design/frontend/MageObsidian/default/tests/e2e/tools/reset-token.php";
+
+function mintResetToken(customerId: number): string | null {
+    try {
+        return execFileSync(
+            "zento",
+            ["compose", "exec", "-T", "php-noxdebug", "php", RESET_TOKEN_TOOL, String(customerId)],
+            { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
+        ).trim();
+    } catch {
+        return null;
+    }
+}
 
 test.describe("split-screen authentication", () => {
     for (const [name, route] of Object.entries(authRoutes)) {
@@ -93,11 +108,12 @@ test.describe("split-screen authentication", () => {
     });
 
     test("the reset screen opens on a live token", async ({ page }) => {
-        test.skip(!fixture?.resetToken, "no reset token in the fixture");
+        test.skip(!fixture?.customerId, "no seeded customer in the fixture");
 
-        await page.goto(
-            `/customer/account/createPassword/?token=${fixture!.resetToken}&id=${fixture!.customerId}`,
-        );
+        const token = mintResetToken(fixture!.customerId);
+        test.skip(!token, "could not mint a reset token; is the stack up? run `pnpm seed` first");
+
+        await page.goto(`/customer/account/createPassword/?token=${token}&id=${fixture!.customerId}`);
 
         await expect(page.locator("h1")).toHaveText("Set a New Password");
         await expect(page.locator(".auth-split")).toBeVisible();
