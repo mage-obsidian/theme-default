@@ -7,12 +7,17 @@
 {% set main = images|first %}
 <div class="pdp__gallery" role="group" aria-label="{{ __('Product gallery') }}">
     <figure class="pdp__gallery-main relative m-0 block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised">
-        <img data-gallery-main
-             class="pdp__gallery-img h-full w-full object-cover"
-             src="{{ main.large|escape_url }}"
-             alt="{{ main.label }}"
-             width="800" height="1000"
-             fetchpriority="high" decoding="async">
+        {{ image(main.large, {
+            attributes: { 'data-gallery-main': true },
+            class: 'pdp__gallery-img h-full w-full object-cover',
+            alt: main.label,
+            width: 800,
+            height: 1000,
+            srcset: main.largeSrcset|default(''),
+            sizes: '(min-width: 105rem) 608px, (min-width: 64rem) 44vw, 85vw',
+            fetchpriority: 'high',
+            loading: 'eager'
+        }) }}
     </figure>
 
     {% if images|length > 1 %}
@@ -24,6 +29,7 @@
                             class="pdp__thumb block w-full overflow-hidden rounded-edge border border-transparent bg-alabaster-raised transition-colors aria-pressed:border-ink"
                             data-gallery-thumb
                             data-large="{{ image.large|escape_url }}"
+                            data-large-srcset="{{ image.largeSrcset|default('') }}"
                             data-label="{{ image.label }}"
                             aria-pressed="{{ loop.first ? 'true' : 'false' }}"
                             aria-label="{{ __('Show image %1', loop.index) }}">

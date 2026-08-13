@@ -24,7 +24,7 @@
             aria-label="{{ __('Products')|escape_html_attr }}">
             {% for product in products %}
                 <li class="product-item" style="view-transition-name: product-{{ product.getId() }}; view-transition-class: obsidian-card">
-                    {% include 'Magento_Catalog::product/card.twig' with { product: product, index: loop.index0 } %}
+                    {% include 'Magento_Catalog::product/card.twig' with { product: product, index: loop.index0, eager_count: 2, priority_count: 1 } %}
                 </li>
             {% endfor %}
         </ol>

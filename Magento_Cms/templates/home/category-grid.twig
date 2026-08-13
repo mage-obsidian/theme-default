@@ -13,7 +13,7 @@
                 <a href="{{ item.url|escape_url }}"
                    class="group relative flex aspect-[4/5] flex-col justify-end overflow-hidden bg-obsidian-900 p-6 text-on-obsidian">
                     {% if item.image %}
-                        <img src="{{ item.image|escape_url }}" alt="" loading="lazy"
+                        <img src="{{ item.image|escape_url }}" alt="" loading="lazy" decoding="async"
                              class="absolute inset-0 h-full w-full object-cover opacity-70 transition-transform duration-500 ease-out group-hover:scale-105">
                         <span class="absolute inset-0 bg-gradient-to-t from-obsidian-950/85 via-obsidian-950/20 to-transparent"></span>
                     {% endif %}

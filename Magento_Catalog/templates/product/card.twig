@@ -12,15 +12,26 @@
 {% set url = product.getProductUrl() %}
 {#
   The list is rendered by the core ListProduct block, which is NOT a MageObsidian
-  Template — so the `image()` helper (and render_vue) are unavailable
-  here. We use Magento's native image block instead: it already emits an <img>
-  with width/height (anti-CLS) and loading=lazy. Styling (object-cover, hover
-  scale) is applied via CSS on `.product-card__media img`.
+  Template — so the `image()` helper (and render_vue) are unavailable here.
+  Styling is applied via CSS on `.product-card__media img`.
 #}
+{% set position = index|default(null) %}
+{% set is_eager = position is not null and position < eager_count|default(0) %}
+{% set is_priority = position is not null and position < priority_count|default(0) %}
+{% set media = block.getCard().getImage(product, 'category_page_grid') %}
 <article class="product-card group flex flex-col">
     <div class="product-card__media-wrap relative">
         <a href="{{ url|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised" tabindex="-1">
-            {{ block.getImage(product, 'category_page_grid').toHtml()|raw }}
+            {{ image(media.src, {
+                class: 'product-image-photo',
+                alt: media.label,
+                width: media.width,
+                height: media.height,
+                srcset: media.srcset,
+                sizes: '(min-width: 105rem) 288px, (min-width: 64rem) 16vw, (min-width: 48rem) 28vw, 44vw',
+                loading: is_eager ? 'eager' : 'lazy',
+                fetchpriority: is_priority ? 'high' : null
+            }) }}
         </a>
         <form data-add-to-wishlist data-product-id="{{ product.getId() }}"
               action="{{ block.getUrl('wishlist/index/add') }}" method="post"
