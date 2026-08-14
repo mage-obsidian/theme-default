@@ -32,7 +32,7 @@
             cta_url: block.getUrl('')
         }) }}
     {% else %}
-        <div class="grid gap-10 lg:grid-cols-[1fr_360px]">
+        <div class="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
             <form action="{{ block.getUrl('checkout/cart/updatePost')|escape_url }}" method="post" data-cart-form>
                 {{ block.getBlockHtml('formkey')|raw }}
                 <ul class="divide-y divide-ash-200 border-y border-ash-200">

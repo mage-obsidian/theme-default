@@ -385,6 +385,14 @@ main#maincontent {
   padding: 0;
 }
 
+.checkout-index-index #maincontent {
+  padding: 0;
+}
+
+[data-cookie-notice] {
+  bottom: var(--obsidian-bottom-inset, 0px);
+}
+
 .category-what-is-new .columns:has(.sidebar-main),
 .category-sale .columns:has(.sidebar-main) {
   display: block;
