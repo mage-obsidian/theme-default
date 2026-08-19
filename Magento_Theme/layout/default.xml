@@ -104,7 +104,6 @@
         <referenceBlock name="skip_to_content.target" template="Magento_Theme::html/skiptarget.twig"/>
         <referenceBlock name="breadcrumbs" template="Magento_Theme::html/breadcrumbs.twig"/>
         <referenceBlock name="page.main.title" template="Magento_Theme::html/title.twig"/>
-        <referenceBlock name="ajax.message.placeholder" template="Magento_Theme::html/messages.twig"/>
         <referenceBlock name="global_notices" template="Magento_Theme::html/notices.twig"/>
 
         <!-- Global toast host (accessible aria-live). Reused by add-to-cart and,
