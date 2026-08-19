@@ -30,8 +30,8 @@
                         {% if tile.image %}
                             <img class="subcategory-card__img h-full w-full object-cover"
                                  src="{{ tile.image|escape_url }}" alt="" loading="lazy" decoding="async">
+                            <span class="subcategory-card__veil absolute inset-0" aria-hidden="true"></span>
                         {% endif %}
-                        <span class="subcategory-card__veil absolute inset-0" aria-hidden="true"></span>
                     </span>
                     <span class="subcategory-card__body mt-4 flex items-baseline justify-between gap-3">
                         <span class="subcategory-card__label font-display text-xl leading-tight text-ink transition-colors group-hover:text-accent">{{ tile.label }}</span>
