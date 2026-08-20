@@ -12,8 +12,10 @@
 </div>
 
 {# Reserve vertical space so the eager island's client mount does not push the
-   footer down (cuts layout shift / CLS); content fills this once hydrated. #}
-<div style="min-height:60vh">
+   footer down (cuts layout shift / CLS); content fills this once hydrated. The
+   height lives in `.checkout-island-reserve` (module.extend.css), not in a style
+   attribute an enforced CSP would drop. #}
+<div class="checkout-island-reserve">
 {{ render_vue('MageObsidian_Checkout::checkout/Checkout', {
     config: block.getCheckoutConfig().getInlineConfig(),
     directory: block.getDirectoryData().getData(),
