@@ -6,7 +6,7 @@
         "MIT"
     ],
     "require": {
-        "mage-obsidian/module-checkout": "^3.6",
+        "mage-obsidian/module-checkout": "^3.8",
         "mage-obsidian/theme-base": "^3.9"
     },
     "autoload": {
