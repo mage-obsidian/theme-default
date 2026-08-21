@@ -17,13 +17,6 @@
   src: url("../fonts/bodoni-moda-latin-wght-normal.woff2") format("woff2");
 }
 @font-face {
-  font-family: "Hanken Grotesk";
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url("../fonts/hanken-grotesk-latin-wght-normal.woff2") format("woff2");
-}
-@font-face {
   font-family: "JetBrains Mono";
   font-style: normal;
   font-weight: 400 700;
@@ -67,7 +60,7 @@
 
   /* — Typography — */
   --font-display: "Bodoni Moda", Georgia, serif;
-  --font-body: "Hanken Grotesk", system-ui, sans-serif;
+  --font-body: var(--font-sans);
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   /* — Fluid type scale — */

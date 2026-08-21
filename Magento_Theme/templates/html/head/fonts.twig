@@ -4,16 +4,19 @@
   Google Fonts round-trip, no preconnects. font-display:swap keeps text visible
   meanwhile.
 
-  All three are preloaded: they carry the hero LCP and the bulk of the page's
-  text, and their swap is what reflows the layout — waiting for the stylesheet to
-  request them puts that reflow half a second in. Mono is no exception in
-  practice: it dresses the demo bar, the header actions and the hero eyebrow, all
-  above the fold, so discovering it from the stylesheet repainted half the
-  viewport a second late.
+  Only the two faces that actually paint are here. Body copy rides the system
+  stack: it reads the same and costs nothing, which keeps the display face —
+  the one the hero LCP waits on — from queueing behind a second download.
+
+  The display face carries fetchpriority=high because the hero LCP is text set
+  in it: without the hint it queues alongside ~70 other downloads and lands over
+  a second late, which is exactly what the LCP waits on.
+
+  Mono earns its preload: it dresses the demo bar, the header actions and the
+  hero eyebrow, all above the fold, so discovering it from the stylesheet
+  repainted half the viewport a second late.
 #}
-<link rel="preload" as="font" type="font/woff2" crossorigin
+<link rel="preload" as="font" type="font/woff2" crossorigin fetchpriority="high"
       href="{{ block.getViteFileUrl('bodoni-moda-latin-wght-normal.woff2') }}">
-<link rel="preload" as="font" type="font/woff2" crossorigin
-      href="{{ block.getViteFileUrl('hanken-grotesk-latin-wght-normal.woff2') }}">
 <link rel="preload" as="font" type="font/woff2" crossorigin
       href="{{ block.getViteFileUrl('jetbrains-mono-latin-wght-normal.woff2') }}">
