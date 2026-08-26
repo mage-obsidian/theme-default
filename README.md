@@ -9,6 +9,19 @@
 
 **OBSIDIAN** — the default [MageObsidian](https://mage-obsidian.jeanmarcos.dev/) storefront theme for Magento 2, built with Vite, Tailwind CSS 4, Vue islands and Twig components. See it live at the [demo store](https://mage-obsidian-demo.jeanmarcos.dev/) (Lighthouse 100/100/100/100).
 
+## Where the verification lives
+
+This theme's end-to-end suite and the registers that went with it now live in
+**`mage-obsidian/storefront-verification`**. They were never only about this
+theme: almost every finding they carry is about the platform's layout handles and
+the nineteen storefront modules, and the escaping register classifies
+`theme-base` templates too — keeping them here made one component own the record
+of the whole product.
+
+Every register that repository generates pins the revision of this one and of
+`theme-base`, so a change here shows up over there instead of quietly
+invalidating it.
+
 ## Installation
 
 ```bash
