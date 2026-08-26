@@ -1,0 +1,492 @@
+{
+  "schemaVersion": 1,
+  "pages": {
+    "home": {
+      "path": "/",
+      "protocol": "warm-guest-desktop",
+      "metrics": {
+        "ttfb": {
+          "ceiling": 55,
+          "measured": 2,
+          "measuredAt": "2026-08-26"
+        },
+        "fcp": {
+          "ceiling": 270,
+          "measured": 168,
+          "measuredAt": "2026-08-26"
+        },
+        "lcp": {
+          "ceiling": 480,
+          "measured": 324,
+          "measuredAt": "2026-08-26"
+        },
+        "cls": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsWhileLoading": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsAfterLoad": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "transferTotal": {
+          "ceiling": 249856,
+          "measured": 198244,
+          "measuredAt": "2026-08-26"
+        }
+      },
+      "queries": {
+        "ceiling": 55,
+        "measured": 32,
+        "measuredAt": "2026-08-26",
+        "serverCache": "cold"
+      }
+    },
+    "plp": {
+      "path": "/gear/bags.html",
+      "protocol": "warm-guest-desktop",
+      "metrics": {
+        "ttfb": {
+          "ceiling": 55,
+          "measured": 2,
+          "measuredAt": "2026-08-26"
+        },
+        "fcp": {
+          "ceiling": 300,
+          "measured": 192,
+          "measuredAt": "2026-08-26"
+        },
+        "lcp": {
+          "ceiling": 530,
+          "measured": 380,
+          "measuredAt": "2026-08-26"
+        },
+        "cls": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsWhileLoading": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsAfterLoad": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "transferTotal": {
+          "ceiling": 339968,
+          "measured": 282596,
+          "measuredAt": "2026-08-26"
+        }
+      },
+      "queries": {
+        "ceiling": 230,
+        "measured": 183,
+        "measuredAt": "2026-08-26",
+        "serverCache": "cold"
+      }
+    },
+    "pdp": {
+      "path": "/joust-duffle-bag.html",
+      "protocol": "warm-guest-desktop",
+      "metrics": {
+        "ttfb": {
+          "ceiling": 55,
+          "measured": 2,
+          "measuredAt": "2026-08-26"
+        },
+        "fcp": {
+          "ceiling": 280,
+          "measured": 176,
+          "measuredAt": "2026-08-26"
+        },
+        "lcp": {
+          "ceiling": 500,
+          "measured": 344,
+          "measuredAt": "2026-08-26"
+        },
+        "cls": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsWhileLoading": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsAfterLoad": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "transferTotal": {
+          "ceiling": 364544,
+          "measured": 303333,
+          "measuredAt": "2026-08-26"
+        }
+      },
+      "queries": {
+        "ceiling": 205,
+        "measured": 162,
+        "measuredAt": "2026-08-26",
+        "serverCache": "cold"
+      }
+    },
+    "search": {
+      "path": "/catalogsearch/result/?q=bag",
+      "protocol": "warm-guest-desktop",
+      "metrics": {
+        "ttfb": {
+          "ceiling": 55,
+          "measured": 2,
+          "measuredAt": "2026-08-26"
+        },
+        "fcp": {
+          "ceiling": 280,
+          "measured": 172,
+          "measuredAt": "2026-08-26"
+        },
+        "lcp": {
+          "ceiling": 550,
+          "measured": 392,
+          "measuredAt": "2026-08-26"
+        },
+        "cls": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsWhileLoading": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsAfterLoad": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "transferTotal": {
+          "ceiling": 306176,
+          "measured": 254773,
+          "measuredAt": "2026-08-26"
+        }
+      },
+      "queries": {
+        "ceiling": 230,
+        "measured": 181,
+        "measuredAt": "2026-08-26",
+        "serverCache": "cold"
+      }
+    },
+    "cart": {
+      "path": "/checkout/cart/",
+      "protocol": "warm-guest-desktop",
+      "metrics": {
+        "ttfb": {
+          "ceiling": 170,
+          "measured": 119,
+          "measuredAt": "2026-08-26"
+        },
+        "fcp": {
+          "ceiling": 490,
+          "measured": 376,
+          "measuredAt": "2026-08-26"
+        },
+        "lcp": {
+          "ceiling": 680,
+          "measured": 520,
+          "measuredAt": "2026-08-26"
+        },
+        "cls": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsWhileLoading": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsAfterLoad": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "transferTotal": {
+          "ceiling": 281600,
+          "measured": 230245,
+          "measuredAt": "2026-08-26"
+        }
+      },
+      "queries": {
+        "ceiling": 45,
+        "measured": 21,
+        "measuredAt": "2026-08-26",
+        "serverCache": "cold"
+      }
+    },
+    "checkout": {
+      "path": "/checkout/",
+      "protocol": "warm-guest-desktop",
+      "metrics": {
+        "ttfb": {
+          "ceiling": 55,
+          "measured": 2,
+          "measuredAt": "2026-08-26"
+        },
+        "fcp": {
+          "ceiling": 310,
+          "measured": 208,
+          "measuredAt": "2026-08-26"
+        },
+        "lcp": {
+          "ceiling": 390,
+          "measured": 240,
+          "measuredAt": "2026-08-26"
+        },
+        "cls": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsWhileLoading": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsAfterLoad": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "transferTotal": {
+          "ceiling": 254976,
+          "measured": 203672,
+          "measuredAt": "2026-08-26"
+        }
+      },
+      "queries": {
+        "ceiling": 30,
+        "measured": 7,
+        "measuredAt": "2026-08-26",
+        "serverCache": "cold"
+      }
+    },
+    "home-cold": {
+      "path": "/",
+      "protocol": "cold-guest-desktop",
+      "metrics": {
+        "ttfb": {
+          "ceiling": 135,
+          "measured": 83.5,
+          "measuredAt": "2026-08-26"
+        },
+        "fcp": {
+          "ceiling": 330,
+          "measured": 230,
+          "measuredAt": "2026-08-26"
+        },
+        "lcp": {
+          "ceiling": 530,
+          "measured": 380,
+          "measuredAt": "2026-08-26"
+        },
+        "cls": {
+          "ceiling": 0.025,
+          "measured": 0.0001,
+          "measuredAt": "2026-08-26"
+        },
+        "clsWhileLoading": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsAfterLoad": {
+          "ceiling": 0.025,
+          "measured": 0.0001,
+          "measuredAt": "2026-08-26"
+        },
+        "transferTotal": {
+          "ceiling": 259072,
+          "measured": 207272,
+          "measuredAt": "2026-08-26"
+        }
+      }
+    },
+    "plp-cold": {
+      "path": "/gear/bags.html",
+      "protocol": "cold-guest-desktop",
+      "metrics": {
+        "ttfb": {
+          "ceiling": 290,
+          "measured": 206,
+          "measuredAt": "2026-08-26"
+        },
+        "fcp": {
+          "ceiling": 620,
+          "measured": 470,
+          "measuredAt": "2026-08-26"
+        },
+        "lcp": {
+          "ceiling": 770,
+          "measured": 586,
+          "measuredAt": "2026-08-26"
+        },
+        "cls": {
+          "ceiling": 0.025,
+          "measured": 0.0001,
+          "measuredAt": "2026-08-26"
+        },
+        "clsWhileLoading": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsAfterLoad": {
+          "ceiling": 0.025,
+          "measured": 0.0001,
+          "measuredAt": "2026-08-26"
+        },
+        "transferTotal": {
+          "ceiling": 350208,
+          "measured": 291769.5,
+          "measuredAt": "2026-08-26"
+        }
+      }
+    },
+    "pdp-cold": {
+      "path": "/joust-duffle-bag.html",
+      "protocol": "cold-guest-desktop",
+      "metrics": {
+        "ttfb": {
+          "ceiling": 210,
+          "measured": 148,
+          "measuredAt": "2026-08-26"
+        },
+        "fcp": {
+          "ceiling": 540,
+          "measured": 412,
+          "measuredAt": "2026-08-26"
+        },
+        "lcp": {
+          "ceiling": 630,
+          "measured": 480,
+          "measuredAt": "2026-08-26"
+        },
+        "cls": {
+          "ceiling": 0.025,
+          "measured": 0.0001,
+          "measuredAt": "2026-08-26"
+        },
+        "clsWhileLoading": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsAfterLoad": {
+          "ceiling": 0.025,
+          "measured": 0.0001,
+          "measuredAt": "2026-08-26"
+        },
+        "transferTotal": {
+          "ceiling": 375808,
+          "measured": 312426.5,
+          "measuredAt": "2026-08-26"
+        }
+      }
+    },
+    "search-cold": {
+      "path": "/catalogsearch/result/?q=bag",
+      "protocol": "cold-guest-desktop",
+      "metrics": {
+        "ttfb": {
+          "ceiling": 215,
+          "measured": 153,
+          "measuredAt": "2026-08-26"
+        },
+        "fcp": {
+          "ceiling": 450,
+          "measured": 340,
+          "measuredAt": "2026-08-26"
+        },
+        "lcp": {
+          "ceiling": 630,
+          "measured": 478,
+          "measuredAt": "2026-08-26"
+        },
+        "cls": {
+          "ceiling": 0.025,
+          "measured": 0.0001,
+          "measuredAt": "2026-08-26"
+        },
+        "clsWhileLoading": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsAfterLoad": {
+          "ceiling": 0.025,
+          "measured": 0.0001,
+          "measuredAt": "2026-08-26"
+        },
+        "transferTotal": {
+          "ceiling": 317440,
+          "measured": 263864,
+          "measuredAt": "2026-08-26"
+        }
+      }
+    },
+    "checkout-cold": {
+      "path": "/checkout/",
+      "protocol": "cold-guest-desktop",
+      "metrics": {
+        "ttfb": {
+          "ceiling": 160,
+          "measured": 107,
+          "measuredAt": "2026-08-26"
+        },
+        "fcp": {
+          "ceiling": 390,
+          "measured": 286,
+          "measuredAt": "2026-08-26"
+        },
+        "lcp": {
+          "ceiling": 500,
+          "measured": 346,
+          "measuredAt": "2026-08-26"
+        },
+        "cls": {
+          "ceiling": 0.025,
+          "measured": 0.0009,
+          "measuredAt": "2026-08-26"
+        },
+        "clsWhileLoading": {
+          "ceiling": 0.02,
+          "measured": 0,
+          "measuredAt": "2026-08-26"
+        },
+        "clsAfterLoad": {
+          "ceiling": 0.025,
+          "measured": 0.0009,
+          "measuredAt": "2026-08-26"
+        },
+        "transferTotal": {
+          "ceiling": 264192,
+          "measured": 212989,
+          "measuredAt": "2026-08-26"
+        }
+      }
+    }
+  }
+}
