@@ -7,7 +7,7 @@ test.describe("wish list", () => {
         await page.goto(accountRoutes.wishlist.path);
     });
 
-    test("shows the saved products as cards with their actions", async ({ page }) => {
+    test("shows the saved products as cards with their actions", { tag: "@cap:wishlist_index_index" }, async ({ page }) => {
         await expectAccountShell(page, "My Wish List", "My Wish List");
 
         const cards = page.locator("li.product-card");
@@ -23,7 +23,7 @@ test.describe("wish list", () => {
         await expect(page.getByRole("button", { name: "Add All to Cart" })).toBeVisible();
     });
 
-    test("pages past ten instead of hiding the rest", async ({ page }) => {
+    test("pages past ten instead of hiding the rest", { tag: "@cap:wishlist_index_index" }, async ({ page }) => {
         // The pager core builds in _prepareLayout is what page-sizes the collection;
         // leaving it unrendered hid everything after the tenth saved product.
         await expect(page.locator("li.product-card")).toHaveCount(10);
@@ -35,7 +35,7 @@ test.describe("wish list", () => {
         await expect(page.locator(".pager .toolbar-amount")).toContainText("Items 11 to");
     });
 
-    test("the rail counter matches the real total, not the page", async ({ page }) => {
+    test("the rail counter matches the real total, not the page", { tag: "@behaviour:private-sections" }, async ({ page }) => {
         // It once read the already page-sized collection and said ten next to eleven.
         const counter = await railCount(page, "My Wish List");
         expect(counter).not.toBeNull();
@@ -47,7 +47,7 @@ test.describe("wish list", () => {
         expect(total).toBeGreaterThan(10);
     });
 
-    test("removing asks first and cancelling keeps the product", async ({ page }) => {
+    test("removing asks first and cancelling keeps the product", { tag: "@cap:wishlist_index_index" }, async ({ page }) => {
         const before = await page.locator("li.product-card").count();
         const card = page.locator("li.product-card").first();
         const name = await card.locator(".product-card__name").innerText();
@@ -63,7 +63,7 @@ test.describe("wish list", () => {
         await expect(page.locator("li.product-card")).toHaveCount(before);
     });
 
-    test("item actions are native POSTs, so they work without JS", async ({ page }) => {
+    test("item actions are native POSTs, so they work without JS", { tag: "@behaviour:form-key" }, async ({ page }) => {
         const remove = page.locator("form[data-confirm-title]").first();
         await expect(remove).toHaveAttribute("method", "post");
         await expect(remove).toHaveAttribute("action", /wishlist\/index\/remove/);

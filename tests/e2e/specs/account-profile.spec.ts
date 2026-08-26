@@ -8,7 +8,7 @@ test.describe("account information", () => {
         await page.goto(accountRoutes.edit.path);
     });
 
-    test("separates who you are from how you get in", async ({ page }) => {
+    test("separates who you are from how you get in", { tag: "@cap:customer_account_edit" }, async ({ page }) => {
         await expectAccountShell(page, "Account Information", "Account Information");
 
         await expect(page.locator(".account-panel__title", { hasText: "Personal Details" })).toBeVisible();
@@ -18,7 +18,7 @@ test.describe("account information", () => {
         await expect(field(page, "Last Name")).toHaveValue(customer.lastName);
     });
 
-    test("the email and password fieldsets stay shut until asked for", async ({ page }) => {
+    test("the email and password fieldsets stay shut until asked for", { tag: "@cap:customer_account_edit" }, async ({ page }) => {
         await expect(page.locator("[data-email-fields]")).toBeHidden();
 
         await page.getByLabel("Change Email").check();
@@ -29,7 +29,7 @@ test.describe("account information", () => {
         await expect(page.locator("[data-email-fields]")).toBeHidden();
     });
 
-    test("saves a name change and puts it back", async ({ page }) => {
+    test("saves a name change and puts it back", { tag: "@cap:customer_account_edit" }, async ({ page }) => {
         await field(page, "First Name").fill("Adalyn");
         await page.getByRole("button", { name: "Save" }).click();
         await page.waitForURL(/\/customer\/account/, { waitUntil: "domcontentloaded" });
@@ -49,7 +49,7 @@ test.describe("newsletter", () => {
         await page.goto(accountRoutes.newsletter.path);
     });
 
-    test("states the subscription with a toned chip", async ({ page }) => {
+    test("states the subscription with a toned chip", { tag: "@cap:newsletter_manage_index" }, async ({ page }) => {
         await expectAccountShell(page, "Newsletter Subscriptions", "Newsletter Subscriptions");
 
         const chip = page.locator(".account-panel__head .chip");
@@ -57,7 +57,7 @@ test.describe("newsletter", () => {
         await expect(chip).toHaveText(/Subscribed|Not subscribed/);
     });
 
-    test("unsubscribing and resubscribing both stick", async ({ page }) => {
+    test("unsubscribing and resubscribing both stick", { tag: "@cap:newsletter_manage_index" }, async ({ page }) => {
         const box = page.getByLabel("General Subscription");
         const wasSubscribed = await box.isChecked();
 
@@ -76,7 +76,7 @@ test.describe("newsletter", () => {
         await expect(page.getByLabel("General Subscription")).toBeChecked({ checked: wasSubscribed });
     });
 
-    test("saving works without JS: a native POST with a form key", async ({ page }) => {
+    test("saving works without JS: a native POST with a form key", { tag: "@behaviour:form-key" }, async ({ page }) => {
         const form = page.locator("form", { has: page.getByRole("button", { name: "Save" }) });
 
         await expect(form).toHaveAttribute("method", "post");

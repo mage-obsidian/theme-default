@@ -28,7 +28,7 @@ test.describe("back and forward", () => {
         );
     });
 
-    test("returns the cacheable pages from the back/forward cache", async ({ page }) => {
+    test("returns the cacheable pages from the back/forward cache", { tag: "@behaviour:bfcache" }, async ({ page }) => {
         await page.addInitScript(`addEventListener('pageshow', (e) => { window.__persisted = e.persisted; });`);
 
         for (const step of cacheablePath) {

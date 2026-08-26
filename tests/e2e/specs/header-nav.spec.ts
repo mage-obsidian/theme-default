@@ -27,7 +27,7 @@ test.describe("header navigation", () => {
         await expect(page.locator("[data-nav-more]")).toBeVisible();
     });
 
-    test("the overflow menu does not grow the page when it is long", async ({ page }) => {
+    test("the overflow menu does not grow the page when it is long", { tag: "@cap:default" }, async ({ page }) => {
         // Absolutely positioned children still count towards the document's
         // scrollable area, so an uncapped panel pushed the footer down the page.
         const before = await documentScrollHeight(page);
@@ -41,7 +41,7 @@ test.describe("header navigation", () => {
         expect(box!.height).toBeLessThanOrEqual(viewport.height);
     });
 
-    test("a long overflow menu scrolls inside itself", async ({ page }) => {
+    test("a long overflow menu scrolls inside itself", { tag: "@cap:default" }, async ({ page }) => {
         const panel = await openMore(page);
 
         const overflow = await panel.evaluate((element) => ({
@@ -53,7 +53,7 @@ test.describe("header navigation", () => {
         expect(overflow.behaviour).toContain("contain");
     });
 
-    test("the overflow panel is opaque, so dark content never reads through it", async ({ page }) => {
+    test("the overflow panel is opaque, so dark content never reads through it", { tag: "@cap:default" }, async ({ page }) => {
         const panel = await openMore(page);
         const { alpha, blur } = await opacityOf(panel);
 
@@ -61,7 +61,7 @@ test.describe("header navigation", () => {
         expect(blur).toBe("none");
     });
 
-    test("every header dropdown is opaque; only the sticky bar stays frosted", async ({ page }) => {
+    test("every header dropdown is opaque; only the sticky bar stays frosted", { tag: "@cap:default" }, async ({ page }) => {
         await page.goto(accountRoutes.dashboard.path);
 
         const translucent = await page.evaluate(() =>
@@ -79,7 +79,7 @@ test.describe("header navigation", () => {
         expect(translucent.filter((name) => !name.includes("sticky"))).toEqual([]);
     });
 
-    test("the account dropdown opens opaque over the page", async ({ page }) => {
+    test("the account dropdown opens opaque over the page", { tag: "@cap:default" }, async ({ page }) => {
         await page.goto(accountRoutes.dashboard.path);
 
         // The trigger is labelled "<menu> — <customer name>", so the name is what
@@ -97,7 +97,7 @@ test.describe("header navigation", () => {
         expect(blur).toBe("none");
     });
 
-    test("the pre-hydration markup is capped too", async ({ page }) => {
+    test("the pre-hydration markup is capped too", { tag: "@behaviour:client-startup" }, async ({ page }) => {
         // The server renders the nav before the island mounts; without the same cap
         // a slow load shows the defect again for as long as hydration takes.
         await page.route("**/generated/**/PrimaryNav*.js", (route) => route.abort());

@@ -8,7 +8,7 @@ import { hydrationPath, settle } from "../src/paint";
  */
 test.describe("hydration", () => {
     for (const step of hydrationPath) {
-        test(`${step.name} hydrates onto the markup the server sent`, async ({ page }) => {
+        test(`${step.name} hydrates onto the markup the server sent`, { tag: "@behaviour:client-startup" }, async ({ page }) => {
             const complaints: string[] = [];
             page.on("console", (message) => {
                 if (message.text().includes("Hydration")) {

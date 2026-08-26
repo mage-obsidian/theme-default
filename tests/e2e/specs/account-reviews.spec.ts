@@ -7,7 +7,7 @@ test.describe("my reviews", () => {
         await page.goto(accountRoutes.reviews.path);
     });
 
-    test("lists every review, not the first ten", async ({ page }) => {
+    test("lists every review, not the first ten", { tag: "@cap:review_customer_index" }, async ({ page }) => {
         await expectAccountShell(page, "My Product Reviews", "My Product Reviews");
 
         const reviews = page.locator("ol > li .account-panel");
@@ -19,7 +19,7 @@ test.describe("my reviews", () => {
         await expect(page.locator(".pager")).toHaveCount(0);
     });
 
-    test("each entry carries the product, the stars and the date", async ({ page }) => {
+    test("each entry carries the product, the stars and the date", { tag: "@cap:review_customer_index" }, async ({ page }) => {
         const first = page.locator("ol > li .account-panel").first();
 
         await expect(first.getByRole("link").first()).toBeVisible();
@@ -28,7 +28,7 @@ test.describe("my reviews", () => {
         await expect(first.getByRole("link", { name: "See Details" })).toBeVisible();
     });
 
-    test("opening one shows what was written and the rating", async ({ page }) => {
+    test("opening one shows what was written and the rating", { tag: "@cap:review_customer_view" }, async ({ page }) => {
         await page.locator("ol > li .account-panel").first().getByRole("link", { name: "See Details" }).click();
         await page.waitForURL(/review\/customer\/view/, { waitUntil: "domcontentloaded" });
 

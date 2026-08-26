@@ -27,13 +27,13 @@ async function readyCheckout(page: Page): Promise<void> {
 }
 
 test.describe("checkout", () => {
-    test("a saved address brings its rates and opens the payment step", async ({ page }) => {
+    test("a saved address brings its rates and opens the payment step", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await readyCheckout(page);
 
         await expect(page.locator('input[name="shipping-method"]:checked')).toHaveCount(1);
     });
 
-    test("emptying the address takes the rates and the payment step with it", async ({ page }) => {
+    test("emptying the address takes the rates and the payment step with it", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await readyCheckout(page);
 
         await useNewAddress(page);
@@ -43,7 +43,7 @@ test.describe("checkout", () => {
         await expect(page.locator("[data-rates-status]")).toContainText(/complete your address/i);
     });
 
-    test("an address quotable but incomplete says what is holding the payment back", async ({ page }) => {
+    test("an address quotable but incomplete says what is holding the payment back", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await addToCart(page);
         await openCheckout(page);
         if (await savedAddresses(page).count()) {
@@ -69,7 +69,7 @@ test.describe("checkout", () => {
         await expectReadyToPay(page);
     });
 
-    test("emptying a required field after the payment methods are up takes them back down", async ({ page }) => {
+    test("emptying a required field after the payment methods are up takes them back down", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await readyCheckout(page);
         await useNewAddress(page);
         await doNotSaveAddress(page);
@@ -87,7 +87,7 @@ test.describe("checkout", () => {
         await expectReadyToPay(page);
     });
 
-    test("the order cannot close while the quote is behind the screen", async ({ page }) => {
+    test("the order cannot close while the quote is behind the screen", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await readyCheckout(page);
         await useNewAddress(page);
         await doNotSaveAddress(page);
@@ -102,7 +102,7 @@ test.describe("checkout", () => {
         await expect(page.locator("[data-shipping-pending]")).toBeHidden();
     });
 
-    test("a reload restores the shipping choice the quote holds", async ({ page }) => {
+    test("a reload restores the shipping choice the quote holds", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await readyCheckout(page);
         await useNewAddress(page);
         await doNotSaveAddress(page);
@@ -122,7 +122,7 @@ test.describe("checkout", () => {
         await expect(page.locator(`input[name="shipping-method"][value="${method}"]`)).toBeChecked();
     });
 
-    test("places the order and lands on the confirmation", async ({ page }) => {
+    test("places the order and lands on the confirmation", { tag: "@cap:checkout_onepage_success" }, async ({ page }) => {
         await readyCheckout(page);
 
         await placeOrder(page).click();

@@ -23,7 +23,7 @@ const fileOf = async (page: Page): Promise<string> =>
     ((await main(page).getAttribute("src")) ?? "").split("/").pop() ?? "";
 
 test.describe("product gallery", () => {
-    test("the hero is server-rendered and eager, so it can be the LCP", async ({ page }) => {
+    test("the hero is server-rendered and eager, so it can be the LCP", { tag: "@cap:catalog_product_view" }, async ({ page }) => {
         await page.goto(SIMPLE);
 
         await expect(main(page)).toHaveAttribute("fetchpriority", "high");
@@ -31,7 +31,7 @@ test.describe("product gallery", () => {
         expect(await fileOf(page)).not.toBe("");
     });
 
-    test("a thumb swaps the hero and takes the pressed state with it", async ({ page }) => {
+    test("a thumb swaps the hero and takes the pressed state with it", { tag: "@cap:catalog_product_view" }, async ({ page }) => {
         await page.goto(SIMPLE);
         const before = await fileOf(page);
 
@@ -44,7 +44,7 @@ test.describe("product gallery", () => {
         await expect(thumbs(page).nth(0)).toHaveAttribute("aria-pressed", "false");
     });
 
-    test("arrow keys move along the strip", async ({ page }) => {
+    test("arrow keys move along the strip", { tag: "@cap:catalog_product_view" }, async ({ page }) => {
         await page.goto(SIMPLE);
         await thumbs(page).first().focus();
 
@@ -54,7 +54,7 @@ test.describe("product gallery", () => {
         await expect(thumbs(page).nth(1)).toHaveAttribute("aria-pressed", "true");
     });
 
-    test("resolving a variant swaps the hero and rebuilds the strip", async ({ page }) => {
+    test("resolving a variant swaps the hero and rebuilds the strip", { tag: "@cap:catalog_product_view" }, async ({ page }) => {
         await page.goto(CONFIGURABLE);
         const before = await fileOf(page);
         await chooseEveryOption(page);
@@ -65,7 +65,7 @@ test.describe("product gallery", () => {
         await expect(thumbs(page).first()).toHaveAttribute("aria-pressed", "true");
     });
 
-    test("a rebuilt thumb keeps the classes the template gave it", async ({ page }) => {
+    test("a rebuilt thumb keeps the classes the template gave it", { tag: "@cap:catalog_product_view" }, async ({ page }) => {
         await page.goto(CONFIGURABLE);
         const served = (await thumbs(page).first().getAttribute("class")) ?? "";
         expect(served).toContain("pdp__thumb");

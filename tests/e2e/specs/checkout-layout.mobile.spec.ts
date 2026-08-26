@@ -48,14 +48,14 @@ test.describe("checkout en móvil", () => {
     });
 
     for (const layout of LAYOUTS) {
-        test(`el layout ${layout.name} no desborda el ancho de la pantalla`, async ({ page }) => {
+        test(`el layout ${layout.name} no desborda el ancho de la pantalla`, { tag: "@cap:checkout_index_index" }, async ({ page }) => {
             await openCheckout(page, layout.path);
 
             const { scrollWidth, clientWidth } = await metrics(page);
             expect(scrollWidth, `${layout.name} scrollea de lado`).toBeLessThanOrEqual(clientWidth + 1);
         });
 
-        test(`el layout ${layout.name} deja el mismo margen a ambos lados`, async ({ page }) => {
+        test(`el layout ${layout.name} deja el mismo margen a ambos lados`, { tag: "@cap:checkout_index_index" }, async ({ page }) => {
             await openCheckout(page, layout.path);
 
             const gutters = await page.evaluate(() => {
@@ -68,7 +68,7 @@ test.describe("checkout en móvil", () => {
         });
     }
 
-    test("nada tapa el importe del pedido", async ({ page }) => {
+    test("nada tapa el importe del pedido", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await openCheckout(page, LAYOUTS[0].path);
 
         const covered = await page.evaluate(() => {
@@ -81,7 +81,7 @@ test.describe("checkout en móvil", () => {
         expect(covered, "otro elemento se pinta encima del importe").toBe(false);
     });
 
-    test("el panel de features no se solapa con la barra del pedido", async ({ page }) => {
+    test("el panel de features no se solapa con la barra del pedido", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await openCheckout(page, LAYOUTS[0].path);
 
         const handle = page.locator(".showcase__handle");
@@ -94,7 +94,7 @@ test.describe("checkout en móvil", () => {
         expect(overlaps, "el botón de features pisa la barra del pedido").toBe(false);
     });
 
-    test("el resumen se abre y se cierra desde la barra", async ({ page }) => {
+    test("el resumen se abre y se cierra desde la barra", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await openCheckout(page, LAYOUTS[0].path);
 
         await expect(summaryItems(page).first()).toBeHidden();
@@ -110,7 +110,7 @@ test.describe("checkout en móvil", () => {
         await expect(summaryItems(page).first()).toBeHidden();
     });
 
-    test("los pasos del rail llegan al mínimo táctil", async ({ page }) => {
+    test("los pasos del rail llegan al mínimo táctil", { tag: "@behaviour:touch-targets" }, async ({ page }) => {
         await openCheckout(page, LAYOUTS[0].path);
 
         const buttons = page.locator(".step-rail__button");
@@ -123,7 +123,7 @@ test.describe("checkout en móvil", () => {
         }
     });
 
-    test("el rail entra entero, sin cortar el paso siguiente", async ({ page }) => {
+    test("el rail entra entero, sin cortar el paso siguiente", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await openCheckout(page, LAYOUTS[0].path);
 
         const fits = await page.evaluate(() => {
@@ -134,7 +134,7 @@ test.describe("checkout en móvil", () => {
         expect(fits, "el rail de pasos necesita scroll horizontal").toBe(true);
     });
 
-    test("el botón de avance ocupa el ancho de su tarjeta", async ({ page }) => {
+    test("el botón de avance ocupa el ancho de su tarjeta", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await openCheckout(page, LAYOUTS[0].path);
 
         await readyToPay(page);
@@ -148,7 +148,7 @@ test.describe("checkout en móvil", () => {
         expect(box!.width / card!.width, "el CTA no llena la tarjeta").toBeGreaterThan(0.8);
     });
 
-    test("el pedido se puede confirmar sin que nada tape el botón", async ({ page }) => {
+    test("el pedido se puede confirmar sin que nada tape el botón", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await openCheckout(page, LAYOUTS[1].path);
 
         await readyToPay(page);

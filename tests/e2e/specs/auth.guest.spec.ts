@@ -22,7 +22,7 @@ function mintResetToken(customerId: number): string | null {
 
 test.describe("split-screen authentication", () => {
     for (const [name, route] of Object.entries(authRoutes)) {
-        test(`${name} is a split screen with one heading`, async ({ page }) => {
+        test(`${name} is a split screen with one heading`, { tag: `@cap:${route.capability}` }, async ({ page }) => {
             await page.goto(route.path);
 
             await expect(page.locator("h1")).toHaveCount(1);
@@ -33,7 +33,7 @@ test.describe("split-screen authentication", () => {
         });
     }
 
-    test("the obsidian panel is decorative and says nothing that is only said there", async ({ page }) => {
+    test("the obsidian panel is decorative and says nothing that is only said there", { tag: "@cap:customer_account_login" }, async ({ page }) => {
         await page.goto(authRoutes.login.path);
 
         const aside = page.locator(".auth-split__aside");
@@ -42,7 +42,7 @@ test.describe("split-screen authentication", () => {
         expect(await aside.locator(".auth-split__item").count()).toBeGreaterThan(0);
     });
 
-    test("the panel steps aside on a phone", async ({ page }) => {
+    test("the panel steps aside on a phone", { tag: "@cap:customer_account_login" }, async ({ page }) => {
         await page.setViewportSize({ width: 390, height: 780 });
         await page.goto(authRoutes.login.path);
 
@@ -51,7 +51,7 @@ test.describe("split-screen authentication", () => {
         await expect(field(page, "Email")).toBeVisible();
     });
 
-    test("sign-in works without JS: a native POST with a form key", async ({ page }) => {
+    test("sign-in works without JS: a native POST with a form key", { tag: "@behaviour:form-key" }, async ({ page }) => {
         await page.goto(authRoutes.login.path);
         const form = page.locator("[data-login-form]");
 
@@ -64,7 +64,7 @@ test.describe("split-screen authentication", () => {
     // An unknown account rather than a wrong password: a development environment
     // may carry a module that lets any password through, and then the assertion
     // would say nothing about this page.
-    test("a rejected sign-in is reported in place, not as a broken page", async ({ page }) => {
+    test("a rejected sign-in is reported in place, not as a broken page", { tag: "@behaviour:session-messages" }, async ({ page }) => {
         await page.goto(authRoutes.login.path);
 
         await field(page, "Email").fill("nobody.here@obsidian.test");
@@ -77,7 +77,7 @@ test.describe("split-screen authentication", () => {
         await expect(page).toHaveURL(/customer\/account\/login/);
     });
 
-    test("the email field is validated before anything is sent", async ({ page }) => {
+    test("the email field is validated before anything is sent", { tag: "@cap:customer_account_login" }, async ({ page }) => {
         await page.goto(authRoutes.login.path);
 
         await field(page, "Email").fill("not-an-email");
@@ -88,7 +88,7 @@ test.describe("split-screen authentication", () => {
         await expect(page).toHaveURL(/customer\/account\/login/);
     });
 
-    test("registration asks for what it needs and links back to sign-in", async ({ page }) => {
+    test("registration asks for what it needs and links back to sign-in", { tag: "@cap:customer_account_create" }, async ({ page }) => {
         await page.goto(authRoutes.register.path);
 
         await expect(field(page, "First Name")).toBeVisible();
@@ -98,7 +98,7 @@ test.describe("split-screen authentication", () => {
         await expect(page.getByRole("link", { name: /Sign in/i })).toBeVisible();
     });
 
-    test("the forgotten-password form posts natively", async ({ page }) => {
+    test("the forgotten-password form posts natively", { tag: "@cap:customer_account_forgotpassword" }, async ({ page }) => {
         await page.goto(authRoutes.forgot.path);
 
         const form = page.locator("form").filter({ has: page.getByRole("button") }).first();
@@ -107,7 +107,7 @@ test.describe("split-screen authentication", () => {
         await expect(field(page, "Email")).toBeVisible();
     });
 
-    test("the reset screen opens on a live token", async ({ page }) => {
+    test("the reset screen opens on a live token", { tag: "@cap:customer_account_createpassword" }, async ({ page }) => {
         test.skip(!fixture?.customerId, "no seeded customer in the fixture");
 
         const token = mintResetToken(fixture!.customerId);
@@ -124,7 +124,11 @@ test.describe("split-screen authentication", () => {
     // nowhere to put one, so from that point a real customer cannot get in and the
     // page does not say why. The seed switches the challenge off to keep the suite
     // moving; this is the gap it is standing in for.
-    test.fixme("renders the CAPTCHA challenge when Magento asks for one", async ({ page }) => {
+    test("renders the CAPTCHA challenge when Magento asks for one", { tag: "@cap:captcha" }, async ({ page }) => {
+        test.fixme(
+            true,
+            "the migrated login template has no slot for the challenge, and the seed switches it off so the rest of the suite can sign in — see registry entry parity/magento-captcha/captcha-challenge",
+        );
         await page.goto(authRoutes.login.path);
         await expect(page.locator('input[name*="captcha"]')).toBeVisible();
     });

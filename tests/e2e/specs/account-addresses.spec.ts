@@ -32,7 +32,7 @@ async function ensureAddress(page: Page): Promise<void> {
 }
 
 test.describe("address book", () => {
-    test("splits defaults from the rest and gives every entry its actions", async ({ page }) => {
+    test("splits defaults from the rest and gives every entry its actions", { tag: "@cap:customer_address_index" }, async ({ page }) => {
         await page.goto(accountRoutes.addresses.path);
         await expectAccountShell(page, "Address Book", "Address Book");
 
@@ -46,7 +46,7 @@ test.describe("address book", () => {
         await expect(card.getByRole("button", { name: "Delete" })).toBeVisible();
     });
 
-    test("the form is sectioned and saves a new entry", async ({ page }) => {
+    test("the form is sectioned and saves a new entry", { tag: "@cap:customer_address_form" }, async ({ page }) => {
         await page.goto("/customer/address/new");
 
         await expect(page.locator("h1")).toHaveCount(1);
@@ -58,7 +58,7 @@ test.describe("address book", () => {
         await expect(cardFor(page, STREET)).toBeVisible();
     });
 
-    test("picking a country with regions swaps the free text for a select", async ({ page }) => {
+    test("picking a country with regions swaps the free text for a select", { tag: "@cap:customer_address_form" }, async ({ page }) => {
         await page.goto("/customer/address/new");
 
         await page.locator("#country").selectOption("US");
@@ -71,7 +71,7 @@ test.describe("address book", () => {
         await expect(page.locator("#region_id")).toBeHidden();
     });
 
-    test("deleting asks first, and both ways out leave the address alone", async ({ page }) => {
+    test("deleting asks first, and both ways out leave the address alone", { tag: "@cap:customer_address_index" }, async ({ page }) => {
         await ensureAddress(page);
         const card = cardFor(page, STREET);
 
@@ -91,7 +91,7 @@ test.describe("address book", () => {
         await expect(card).toBeVisible();
     });
 
-    test("the dialog is modal and opens with the cautious option focused", async ({ page }) => {
+    test("the dialog is modal and opens with the cautious option focused", { tag: "@cap:customer_address_index" }, async ({ page }) => {
         await ensureAddress(page);
         await cardFor(page, STREET).getByRole("button", { name: "Delete" }).click();
 
@@ -110,7 +110,7 @@ test.describe("address book", () => {
         await page.keyboard.press("Escape");
     });
 
-    test("delete survives without JS: it is a real POST carrying the form key", async ({ page }) => {
+    test("delete survives without JS: it is a real POST carrying the form key", { tag: "@behaviour:form-key" }, async ({ page }) => {
         await ensureAddress(page);
         const form = page.locator("form[data-confirm-title]").first();
 
@@ -121,7 +121,7 @@ test.describe("address book", () => {
         await expect(form.getByRole("button", { name: "Delete" })).toHaveAttribute("type", "submit");
     });
 
-    test("confirming goes through and the address is gone", async ({ page }) => {
+    test("confirming goes through and the address is gone", { tag: "@cap:customer_address_index" }, async ({ page }) => {
         await ensureAddress(page);
         await cardFor(page, STREET).getByRole("button", { name: "Delete" }).click();
         await page.locator("dialog.confirm-dialog").getByRole("button", { name: "Delete" }).click();

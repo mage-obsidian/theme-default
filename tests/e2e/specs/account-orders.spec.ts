@@ -10,7 +10,7 @@ test.describe("order history", () => {
         await page.goto(accountRoutes.orders.path);
     });
 
-    test("pages the list instead of silently cutting it at ten", async ({ page }) => {
+    test("pages the list instead of silently cutting it at ten", { tag: "@cap:sales_order_history" }, async ({ page }) => {
         // The core block builds its pager in PHP and never rendered it, which also
         // page-sized the collection: everything past the tenth order was invisible
         // with no way to reach it.
@@ -32,7 +32,7 @@ test.describe("order history", () => {
         expect(await cards.count()).toBe(Math.min(10, total - 10));
     });
 
-    test("each card carries thumbnails, a toned chip and its actions", async ({ page }) => {
+    test("each card carries thumbnails, a toned chip and its actions", { tag: "@cap:sales_order_history" }, async ({ page }) => {
         const card = page.locator("ul > li.account-panel").first();
 
         await expect(card.locator(".order-thumbs__item").first()).toBeVisible();
@@ -48,7 +48,7 @@ test.describe("order history", () => {
         expect(new Set(tones.filter(Boolean)).size).toBeGreaterThan(1);
     });
 
-    test("reordering goes through a native POST with a form key", async ({ page }) => {
+    test("reordering goes through a native POST with a form key", { tag: "@cap:sales_order_reorder" }, async ({ page }) => {
         const form = page.locator("form", { has: page.getByRole("button", { name: "Reorder" }) }).first();
 
         await expect(form).toHaveAttribute("method", "post");
@@ -63,7 +63,7 @@ test.describe("order detail", () => {
     const path = (segment: string): string =>
         `/sales/order/${segment}/order_id/${fixture?.documentedOrderId}/`;
 
-    test("shows the fulfilment track, the panels and one heading", async ({ page }) => {
+    test("shows the fulfilment track, the panels and one heading", { tag: "@cap:sales_order_view" }, async ({ page }) => {
         await page.goto(`/sales/order/view/order_id/${fixture?.trackableOrderId}/`);
 
         await expectAccountShell(page, /^Order #\d+$/, "My Orders");
@@ -76,7 +76,7 @@ test.describe("order detail", () => {
         }
     });
 
-    test("the track is decorative — the chip is what carries the status", async ({ page }) => {
+    test("the track is decorative — the chip is what carries the status", { tag: "@cap:sales_order_view" }, async ({ page }) => {
         await page.goto(`/sales/order/view/order_id/${fixture?.trackableOrderId}/`);
 
         await expect(page.locator(".order-track")).toHaveAttribute("aria-hidden", "true");
@@ -88,7 +88,7 @@ test.describe("order detail", () => {
         ["shipment", "Order Shipments", "Shipment #"],
         ["creditmemo", "Refunds", "Refund #"],
     ] as const) {
-        test(`the ${label.toLowerCase()} tab renders its documents`, async ({ page }) => {
+        test(`the ${label.toLowerCase()} tab renders its documents`, { tag: `@cap:sales_order_${segment}` }, async ({ page }) => {
             await page.goto(path(segment));
 
             await expect(page.locator(".order-links [aria-current='page']")).toHaveText(label);
@@ -97,7 +97,7 @@ test.describe("order detail", () => {
         });
     }
 
-    test("the print view drops the shell and keeps the order", async ({ page }) => {
+    test("the print view drops the shell and keeps the order", { tag: "@cap:sales_order_print" }, async ({ page }) => {
         await page.goto(`/sales/order/print/order_id/${fixture?.documentedOrderId}/`);
 
         await expect(page.locator("h1")).toHaveText(/^Order #\d+$/);

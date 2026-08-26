@@ -12,7 +12,7 @@ import {
 const EMAIL = "checkout.guest@obsidian.test";
 
 test.describe("guest checkout", () => {
-    test("a reload keeps the email and the address the quote already holds", async ({ page }) => {
+    test("a reload keeps the email and the address the quote already holds", { tag: "@cap:checkout_index_index" }, async ({ page }) => {
         await addToCart(page);
         await openCheckout(page);
 

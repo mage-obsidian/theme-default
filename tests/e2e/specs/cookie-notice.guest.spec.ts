@@ -10,7 +10,7 @@ import { expect, test } from "@playwright/test";
 const GENERIC = [/^learn more$/i, /^read more$/i, /^click here$/i, /^more$/i, /^here$/i, /^this$/i];
 
 test.describe("cookie consent banner", () => {
-    test("the policy link says where it goes", async ({ page }) => {
+    test("the policy link says where it goes", { tag: "@cap:default" }, async ({ page }) => {
         await page.goto("/");
 
         const banner = page.locator("#notice-cookie-block");
@@ -26,7 +26,7 @@ test.describe("cookie consent banner", () => {
         }
     });
 
-    test("accepting closes it and it stays closed", async ({ page }) => {
+    test("accepting closes it and it stays closed", { tag: "@cap:default" }, async ({ page }) => {
         await page.goto("/");
 
         const banner = page.locator("#notice-cookie-block");

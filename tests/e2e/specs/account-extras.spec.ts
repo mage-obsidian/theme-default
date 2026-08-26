@@ -8,7 +8,7 @@ import { expectAccountShell, isRouteLive } from "../src/account";
  * asserts anything — an unwired module skips instead of reporting a false defect.
  */
 test.describe("downloadable products", () => {
-    test("renders inside the shell, with a table or an empty state", async ({ page }) => {
+    test("renders inside the shell, with a table or an empty state", { tag: "@cap:downloadable_customer_products" }, async ({ page }) => {
         test.skip(!(await isRouteLive(page, accountRoutes.downloadables.path)), "module not wired here");
 
         await expectAccountShell(page, "My Downloadable Products", "My Downloadable Products");
@@ -20,7 +20,7 @@ test.describe("downloadable products", () => {
 });
 
 test.describe("stored payment methods", () => {
-    test("renders inside the shell, with cards or an empty state", async ({ page }) => {
+    test("renders inside the shell, with cards or an empty state", { tag: "@cap:vault_cards_listaction" }, async ({ page }) => {
         test.skip(!(await isRouteLive(page, accountRoutes.vault.path)), "module not wired here");
 
         await expectAccountShell(page, "Stored Payment Methods", "Stored Payment Methods");

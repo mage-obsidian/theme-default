@@ -3,7 +3,7 @@ import { accountRoutes } from "../src/routes";
 import { expectAccountShell, rail, railLink } from "../src/account";
 
 test.describe("account on a phone", () => {
-    test("the rail lies down into a scrolling strip", async ({ page }) => {
+    test("the rail lies down into a scrolling strip", { tag: "@cap:customer_account" }, async ({ page }) => {
         await page.goto(accountRoutes.dashboard.path);
         await expectAccountShell(page, /^Hello, /, "Account Dashboard");
 
@@ -17,14 +17,14 @@ test.describe("account on a phone", () => {
         expect(layout.snap).toContain("x");
     });
 
-    test("there is still one nav and one heading, not a second set for mobile", async ({ page }) => {
+    test("there is still one nav and one heading, not a second set for mobile", { tag: "@cap:customer_account" }, async ({ page }) => {
         await page.goto(accountRoutes.orders.path);
 
         await expect(page.locator("h1")).toHaveCount(1);
         await expect(page.getByRole("navigation", { name: "Account" })).toHaveCount(1);
     });
 
-    test("the current entry is brought into view", async ({ page }) => {
+    test("the current entry is brought into view", { tag: "@cap:customer_account" }, async ({ page }) => {
         // Newsletter sits far enough down the list to be off-screen on a phone.
         await page.goto(accountRoutes.newsletter.path);
 
@@ -33,7 +33,7 @@ test.describe("account on a phone", () => {
         await expect(current).toBeInViewport();
     });
 
-    test("nothing overflows the viewport sideways", async ({ page }) => {
+    test("nothing overflows the viewport sideways", { tag: "@cap:customer_account" }, async ({ page }) => {
         for (const route of [accountRoutes.dashboard, accountRoutes.orders, accountRoutes.wishlist]) {
             await page.goto(route.path);
             const overflow = await page.evaluate(

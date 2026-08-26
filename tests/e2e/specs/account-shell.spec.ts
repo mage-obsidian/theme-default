@@ -10,7 +10,7 @@ import { expectAccountShell, isRouteLive, rail, railLink } from "../src/account"
  */
 test.describe("account shell", () => {
     for (const [name, route] of Object.entries(accountRoutes)) {
-        test(`${name} renders the rail, one heading and its own entry marked`, async ({ page }) => {
+        test(`${name} renders the rail, one heading and its own entry marked`, { tag: `@cap:${route.capability}` }, async ({ page }) => {
             if (route.optional && !(await isRouteLive(page, route.path))) {
                 test.skip(true, `${route.path} is not wired in this environment`);
             }
@@ -20,7 +20,7 @@ test.describe("account shell", () => {
         });
     }
 
-    test("the rail identifies the signed-in customer", async ({ page }) => {
+    test("the rail identifies the signed-in customer", { tag: "@behaviour:private-sections" }, async ({ page }) => {
         await page.goto(accountRoutes.dashboard.path);
 
         await expect(rail(page).locator(".account-rail__name")).toHaveText(
@@ -30,7 +30,7 @@ test.describe("account shell", () => {
         await expect(rail(page).locator(".account-rail__monogram")).toHaveText("AO");
     });
 
-    test("every rail entry carries an icon and the way out sits last", async ({ page }) => {
+    test("every rail entry carries an icon and the way out sits last", { tag: "@cap:customer_account" }, async ({ page }) => {
         await page.goto(accountRoutes.dashboard.path);
 
         const links = rail(page).locator(".account-rail__link");
@@ -45,7 +45,7 @@ test.describe("account shell", () => {
         await expect(rail(page).locator(".account-rail__out")).toHaveCount(1);
     });
 
-    test("counters report what the pages actually hold", async ({ page }) => {
+    test("counters report what the pages actually hold", { tag: "@behaviour:private-sections" }, async ({ page }) => {
         await page.goto(accountRoutes.dashboard.path);
 
         const orders = rail(page).locator('a:has-text("My Orders") .account-rail__count');
@@ -62,7 +62,7 @@ test.describe("account shell", () => {
         expect(total).toContain(String(wished));
     });
 
-    test("tabbing reaches the rail and the ring is visible on obsidian", async ({ page }) => {
+    test("tabbing reaches the rail and the ring is visible on obsidian", { tag: "@cap:customer_account" }, async ({ page }) => {
         await page.goto(accountRoutes.dashboard.path);
         await page.locator("body").click({ position: { x: 2, y: 2 } });
 

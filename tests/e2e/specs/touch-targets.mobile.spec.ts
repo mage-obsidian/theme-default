@@ -7,7 +7,7 @@ const FORM_PAGES = ["/customer/account/login", "/chaz-kangeroo-hoodie.html", "/g
 
 test.describe("touch ergonomics", () => {
     for (const path of FORM_PAGES) {
-        test(`no form control on ${path} is small enough to zoom iOS Safari`, async ({ page }) => {
+        test(`no form control on ${path} is small enough to zoom iOS Safari`, { tag: "@behaviour:touch-targets" }, async ({ page }) => {
             await page.goto(path);
             await page.waitForLoadState("load");
 
@@ -29,7 +29,7 @@ test.describe("touch ergonomics", () => {
         });
     }
 
-    test("every header control is at least the WCAG 2.5.8 minimum", async ({ page }) => {
+    test("every header control is at least the WCAG 2.5.8 minimum", { tag: "@cap:default" }, async ({ page }) => {
         await page.goto("/chaz-kangeroo-hoodie.html");
         await page.waitForLoadState("load");
         await expect(page.locator("header button").first()).toBeVisible();
@@ -56,7 +56,7 @@ test.describe("touch ergonomics", () => {
         expect(offenders, `objetivos bajo ${WCAG_MIN_TARGET}px`).toEqual([]);
     });
 
-    test("the product page's secondary actions clear the minimum too", async ({ page }) => {
+    test("the product page's secondary actions clear the minimum too", { tag: "@cap:catalog_product_view" }, async ({ page }) => {
         await page.goto("/chaz-kangeroo-hoodie.html");
         await page.waitForLoadState("load");
 
