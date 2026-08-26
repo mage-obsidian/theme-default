@@ -10,7 +10,11 @@ export default defineConfig({
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 1 : 0,
     workers: 1,
-    reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : [["list"], ["html", { open: "never" }]],
+    reporter: [
+        ...(process.env.CI ? [["github"] as const] : [["list"] as const]),
+        ["html", { open: "never" }],
+        ["./tools/report/threeState.ts"],
+    ],
     timeout: 45_000,
     expect: { timeout: 10_000 },
 
@@ -33,7 +37,7 @@ export default defineConfig({
             name: "desktop",
             use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 }, storageState: AUTH_STATE },
             dependencies: ["signin"],
-            testIgnore: [/\.guest\.spec\.ts/, /\.mobile\.spec\.ts/, /\.last\.spec\.ts/, /\.paint\.spec\.ts/, /\.headed\.spec\.ts/],
+            testIgnore: [/\.guest\.spec\.ts/, /\.mobile\.spec\.ts/, /\.last\.spec\.ts/, /\.paint\.spec\.ts/, /\.headed\.spec\.ts/, /\.perf\.spec\.ts/, /\.perf-account\.spec\.ts/],
         },
         {
             name: "mobile",
@@ -70,6 +74,27 @@ export default defineConfig({
             testMatch: /\.paint\.spec\.ts/,
             testIgnore: /\.headed\.spec\.ts/,
         },
+        // Budgets are measured signed out and throttled, under the protocol
+        // src/perf/protocol.ts declares. Opt-in through PERF=1: measuring is slow
+        // and the numbers only mean anything against a production build.
+        ...(process.env.PERF
+            ? [
+                  {
+                      name: "perf",
+                      use: {
+                          ...devices["Desktop Chrome"],
+                          viewport: { width: 1440, height: 900 },
+                      },
+                      testMatch: /\.perf\.spec\.ts/,
+                  },
+                  {
+                      name: "perf-account",
+                      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 }, storageState: AUTH_STATE },
+                      dependencies: ["signin"],
+                      testMatch: /\.perf-account\.spec\.ts/,
+                  },
+              ]
+            : []),
         {
             // Headed on purpose: Chromium disables the back/forward cache while
             // headless whatever the flags say, so a headless run of these would
