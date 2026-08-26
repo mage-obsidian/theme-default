@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "policy": "the enforcing policy the suite applies lives in src/csp.ts; it is deliberately strict — 'self' and nothing else — so that every inline fragment the storefront emits shows up",
+  "state": "the storefront does not run clean under it today: every entry below is a fragment that an enforcing policy blocks, recorded so a new one stands out. See registry entry security/csp/inline-without-nonce.",
+  "accepted": [
+    {
+      "page": "*",
+      "directive": "script-src-elem",
+      "blocked": "inline",
+      "sampleContains": "\"imports\":{\"vue\"",
+      "emittedBy": "MageObsidian_ModernFrontend's import map, written into the head so bare vue specifiers resolve without a bundler",
+      "reason": "an import map cannot be moved to an external file: the specification only honours an inline one, so it needs a nonce rather than a relocation"
+    },
+    {
+      "page": "*",
+      "directive": "script-src-elem",
+      "blocked": "inline",
+      "sampleContains": "\"prefetch\":[{\"source\":\"document\"",
+      "emittedBy": "the speculation rules the theme emits to prefetch same-origin documents",
+      "reason": "speculation rules are inline JSON by design; the fragment is data the browser reads, not code it runs, but the policy still counts it under script-src"
+    },
+    {
+      "page": "*",
+      "directive": "script-src-elem",
+      "blocked": "inline",
+      "sampleContains": "window.__MAGE_OBSIDIAN_PREPAINT__",
+      "emittedBy": "the prepaint runtime seed: the section storage keys and counters the header reads before any module loads",
+      "reason": "it has to run before the first paint, which is why it is inline; a nonce is what it needs"
+    },
+    {
+      "page": "*",
+      "directive": "script-src-elem",
+      "blocked": "inline",
+      "sampleContains": "window.__MAGE_OBSIDIAN_I18N__",
+      "emittedBy": "the i18n seed: the locale and the dictionary URL",
+      "reason": "a per-store value that cannot live in a cacheable static file"
+    },
+    {
+      "page": "*",
+      "directive": "script-src-elem",
+      "blocked": "inline",
+      "sampleContains": "window.__MAGE_OBSIDIAN_SECTIONS__",
+      "emittedBy": "the section store seed: lifetime and which sections expire",
+      "reason": "a per-store value that cannot live in a cacheable static file"
+    },
+    {
+      "page": "*",
+      "directive": "script-src-elem",
+      "blocked": "inline",
+      "sampleContains": "window.__MAGE_OBSIDIAN_SECTION_PREFETCH_",
+      "emittedBy": "SectionPrefetchRuntime, which starts the private-data request before the island graph has loaded",
+      "reason": "its whole purpose is to fire earlier than any module could, so it is inline on purpose"
+    },
+    {
+      "page": "*",
+      "directive": "script-src-elem",
+      "blocked": "inline",
+      "sampleContains": "window.__MAGE_OBSIDIAN_UX__",
+      "emittedBy": "the UX config seed: optimistic updates and whether counters show quantities",
+      "reason": "a per-store value that cannot live in a cacheable static file"
+    },
+    {
+      "page": "*",
+      "directive": "script-src-elem",
+      "blocked": "inline",
+      "sampleContains": "window.__MAGE_OBSIDIAN_ICONS__",
+      "emittedBy": "the icon config seed: the base URL of the versioned icon directory",
+      "reason": "carries the static-content version, which changes on every deploy"
+    },
+    {
+      "page": "*",
+      "directive": "style-src-elem",
+      "blocked": "inline",
+      "sampleContains": "[v-cloak]",
+      "emittedBy": "the island runtime's cloak rule, which hides an island until it mounts",
+      "reason": "it must apply before any stylesheet has arrived, which is exactly what it is for"
+    },
+    {
+      "page": "*",
+      "directive": "style-src-elem",
+      "blocked": "inline",
+      "sampleContains": "::view-transition-group(obsidian-header)",
+      "emittedBy": "the theme's view-transition rules for the header",
+      "reason": "part of the critical CSS the theme inlines on purpose"
+    },
+    {
+      "page": "*",
+      "directive": "style-src-elem",
+      "blocked": "inline",
+      "sampleContains": "@container obsid",
+      "emittedBy": "MageObsidian\\Storefront\\ViewModel\\NavOverflow::getStyle, the generated stylesheet that decides how many nav items fit",
+      "reason": "it is computed from this store's own category labels, so it cannot be a static file"
+    },
+    {
+      "page": "*",
+      "directive": "style-src-elem",
+      "blocked": "inline",
+      "sampleContains": ".product-image-container-",
+      "emittedBy": "Magento's own image block, which sizes each container with a generated rule",
+      "reason": "core behaviour the migrated template inherited, not something the theme introduced"
+    },
+    {
+      "page": "*",
+      "directive": "style-src-attr",
+      "blocked": "inline",
+      "sampleContains": "display:none",
+      "emittedBy": "elements the server renders hidden until the client takes over",
+      "reason": "a per-element decision the server makes; it needs a class instead of an attribute to satisfy the policy"
+    },
+    {
+      "page": "*",
+      "directive": "style-src-attr",
+      "blocked": "inline",
+      "sampleContains": "font-size:var(--text-",
+      "emittedBy": "the fluid type scale, applied per element from the design tokens",
+      "reason": "a per-element decision; it needs a class instead of an attribute to satisfy the policy"
+    },
+    {
+      "page": "*",
+      "directive": "style-src-attr",
+      "blocked": "inline",
+      "sampleContains": "background-color:",
+      "emittedBy": "the colour swatches, whose value is the attribute option's own hex colour",
+      "reason": "the value is data, and there is no fixed set of classes that could carry it"
+    },
+    {
+      "page": "*",
+      "directive": "style-src-attr",
+      "blocked": "inline",
+      "sampleContains": "view-transition-name:",
+      "emittedBy": "the view transitions, which need a unique name per card, cart line and summary",
+      "reason": "the name has to be unique per element, so it cannot come from a stylesheet"
+    },
+    {
+      "page": "*",
+      "directive": "style-src-attr",
+      "blocked": "inline",
+      "sampleContains": "width:",
+      "emittedBy": "progress and fill bars whose width is a computed percentage",
+      "reason": "the value is data, and there is no fixed set of classes that could carry it"
+    }
+  ]
+}
