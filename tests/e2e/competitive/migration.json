@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-08-26",
+  "direction": "a store running the reference stack moving to MageObsidian",
+  "assumptions": [
+    "the store runs Magento Open Source 2.4.7 or later, not Adobe Commerce",
+    "it runs the reference's own theme rather than a fork that replaced its base",
+    "its custom work lives in its own modules and in a child theme, not in edits to the reference's files",
+    "the reference's commercial products it has licensed are named up front, because nothing about them can be derived"
+  ],
+  "howToRead": "equivalent means it carries across as configuration or unchanged; rewrite means the same capability has to be built again here; no-equivalent means nothing here receives it and the gap register says so; loss means the store gives up something it had.",
+  "items": [
+    {
+      "id": "migration/layout-xml",
+      "subject": "Layout XML and block wiring",
+      "verdict": "equivalent",
+      "assumption": "the store runs Magento Open Source 2.4.7 or later, not Adobe Commerce",
+      "detail": "both stacks suppress the platform's own frontend layout and re-declare what they need: the reference through Hyva_BaseLayoutReset, this project through its module manager reading the generated contract. Handle names, block names and container names are the platform's, so they carry across unchanged. This is the half of a migration that costs almost nothing."
+    },
+    {
+      "id": "migration/templates",
+      "subject": "Templates",
+      "verdict": "rewrite",
+      "assumption": "the store runs Magento Open Source 2.4.7 or later, not Adobe Commerce",
+      "detail": "every .phtml with Alpine directives becomes a .twig with Vue islands. The markup and the classes survive as a starting point; x-data, x-on and x-show do not, and neither does the PHP inside the template — this project's templates read a ViewModel and nothing else. Count on one rewrite per template, and note that the reference splits a page into more partials than this project does, so the file count falls."
+    },
+    {
+      "id": "migration/tailwind",
+      "subject": "Tailwind configuration and design tokens",
+      "verdict": "equivalent",
+      "assumption": "the store runs Magento Open Source 2.4.7 or later, not Adobe Commerce",
+      "detail": "both stacks are Tailwind, and a store's own colours, spacing and type scale move as configuration. The version has to be checked: this project is on Tailwind 4, whose configuration is CSS-first, so a JavaScript tailwind.config.js becomes a @theme block."
+    },
+    {
+      "id": "migration/view-models",
+      "subject": "View models",
+      "verdict": "rewrite",
+      "assumption": "the store runs Magento Open Source 2.4.7 or later, not Adobe Commerce",
+      "detail": "the reference's view models and this project's are both plain classes a template asks for, which makes the shape familiar, but they are the reference's code under OSL-3.0. What moves is the list of what a template needs; the classes get written again."
+    },
+    {
+      "id": "migration/alpine-third-party",
+      "subject": "Third-party modules that ship Alpine components for the reference",
+      "verdict": "loss",
+      "assumption": "the store runs Magento Open Source 2.4.7 or later, not Adobe Commerce",
+      "detail": "a module built against the reference's Alpine conventions has nothing to attach to here. There is no shim: its storefront half has to be rebuilt as an island. This is the item most likely to decide whether a migration is worth it, because it scales with how many such modules a store has bought."
+    },
+    {
+      "id": "migration/legacy-module-fallback",
+      "subject": "Third-party modules that only ship Luma frontend assets",
+      "verdict": "rewrite",
+      "assumption": "the store runs Magento Open Source 2.4.7 or later, not Adobe Commerce",
+      "detail": "the reference keeps them alive with a compatibility fallback module. This project's contract decides which modules contribute layout at all, so a legacy module is simply not wired in and its storefront half has to be re-declared. Same outcome, reached from the other direction."
+    },
+    {
+      "id": "migration/checkout",
+      "subject": "The checkout",
+      "verdict": "no-equivalent",
+      "assumption": "the reference's commercial products it has licensed are named up front, because nothing about them can be derived",
+      "detail": "a store on the reference's own checkout product has nothing here to receive it: this project's checkout is its own island over the native quote endpoints. A migrating store gets this project's checkout, not a port of theirs — which is a rebuild of every customisation made to it.",
+      "gapId": "competitive/gap/checkout-product"
+    },
+    {
+      "id": "migration/component-library",
+      "subject": "A store built on the reference's commercial component library",
+      "verdict": "no-equivalent",
+      "assumption": "the reference's commercial products it has licensed are named up front, because nothing about them can be derived",
+      "detail": "the components were copied into the store's own theme, so they are the store's markup now — but they are Alpine markup, which puts them under the template rewrite, and there is no library here to copy the next one from.",
+      "gapId": "competitive/gap/component-library"
+    },
+    {
+      "id": "migration/page-builder",
+      "subject": "Page Builder content",
+      "verdict": "no-equivalent",
+      "assumption": "the store runs Magento Open Source 2.4.7 or later, not Adobe Commerce",
+      "detail": "a store whose content team uses Page Builder loses the rendering of that content entirely. This is the first thing to check before quoting a migration, because it is invisible in a template count and decisive in a content team's day.",
+      "gapId": "competitive/gap/page-builder"
+    },
+    {
+      "id": "migration/recaptcha",
+      "subject": "The human-verification challenge",
+      "verdict": "no-equivalent",
+      "assumption": "the store runs Magento Open Source 2.4.7 or later, not Adobe Commerce",
+      "detail": "the reference renders it on contact, newsletter, review, send-to-friend, login and checkout. Here it renders nowhere, and the platform still demands it — which means a migrated store can reach a state where a real customer cannot sign in.",
+      "gapId": "parity/magento-captcha/captcha-challenge"
+    },
+    {
+      "id": "migration/analytics",
+      "subject": "Analytics and tag manager integration",
+      "verdict": "no-equivalent",
+      "assumption": "the store runs Magento Open Source 2.4.7 or later, not Adobe Commerce",
+      "detail": "nothing here renders the platform's analytics templates, so a store's measurement stops at the migration unless it is rebuilt.",
+      "gapId": "competitive/gap/analytics-tags"
+    },
+    {
+      "id": "migration/transactional-email",
+      "subject": "Transactional email templates",
+      "verdict": "rewrite",
+      "assumption": "the store has customised its transactional emails, which most have",
+      "detail": "both sides override the platform's email templates. They are not Alpine, so they carry across more cheaply than storefront templates — but this audit already found that the four emails this project renders come out with no items, no totals and no amounts, so a migrating store would be rebuilding onto a floor that is not solid yet."
+    },
+    {
+      "id": "migration/graphql-in-templates",
+      "subject": "Reaching data from a template without a REST round trip",
+      "verdict": "rewrite",
+      "assumption": "the store runs Magento Open Source 2.4.7 or later, not Adobe Commerce",
+      "detail": "the reference offers a GraphQL view model for this. This project's islands are seeded from the server and then talk to the native REST endpoints, so the pattern is different and any template that used the reference's shortcut gets rethought rather than translated."
+    },
+    {
+      "id": "migration/csp",
+      "subject": "Content security policy posture",
+      "verdict": "loss",
+      "assumption": "the store had adopted the reference's CSP-strict theme, which not all have",
+      "detail": "the reference ships a whole second theme whose templates satisfy a strict policy. This project has no such variant, and this audit measured seventeen inline fragments with no nonce. A store that had moved to the reference's CSP-strict theme would be giving that up."
+    }
+  ]
+}

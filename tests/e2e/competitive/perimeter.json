@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "reference": "Hyvä",
+  "checkedAt": "2026-08-26",
+  "canonicalHome": "gitlab.hyva.io; the github.com/hyva-themes organisation is the public mirror, and the changelog's compare links point back at the GitLab origin",
+  "licenceOfReference": "OSL-3.0 (the theme repository is dual-licensed OSL-3.0 / AFL-3.0)",
+  "licenceOfThisProject": "MIT",
+  "productVersion": "Hyvä default theme 1.5.2, released 2026-07-10; the pinned revision is main at the time of the comparison",
+  "inside": [
+    {
+      "repository": "hyva-themes/magento2-default-theme",
+      "revision": "3537b0784e47569aed22c70b7a5aa5a29f50d675",
+      "licence": "OSL-3.0",
+      "role": "the storefront theme itself: one directory per core module, templates in .phtml with Alpine.js and Tailwind",
+      "comparedAs": "reference-theme"
+    },
+    {
+      "repository": "hyva-themes/magento2-theme-module",
+      "revision": "6f602cce4248cc626be0f50076188200e3e5d7d5",
+      "licence": "OSL-3.0",
+      "role": "Hyva_Theme: the view models, helpers and services the theme's templates call",
+      "comparedAs": "reference-module"
+    },
+    {
+      "repository": "hyva-themes/magento2-base-layout-reset",
+      "revision": "f39cf05a0e69c4ece318703c567a91d585ad89f7",
+      "licence": "OSL-3.0",
+      "role": "how the reference suppresses the platform's own frontend layout — the counterpart of MageObsidian's module manager",
+      "comparedAs": "mechanism"
+    },
+    {
+      "repository": "hyva-themes/magento2-default-theme-csp",
+      "revision": "8488ed20744ad723d6452633515d696749dd067b",
+      "licence": "OSL-3.0",
+      "role": "a second theme whose templates satisfy a strict content security policy",
+      "comparedAs": "mechanism"
+    },
+    {
+      "repository": "hyva-themes/magento2-email-module",
+      "revision": "da3d9a8cf15d12dd78837188165a6619f19c5066",
+      "licence": "OSL-3.0",
+      "role": "transactional email templates",
+      "comparedAs": "mechanism"
+    },
+    {
+      "repository": "hyva-themes/magento2-luma-checkout",
+      "revision": "fb09106213ed4407d3fd5788b8f601513bda5785",
+      "licence": "OSL-3.0",
+      "role": "the fallback that keeps the platform's own checkout usable inside the reference theme",
+      "comparedAs": "mechanism"
+    },
+    {
+      "repository": "hyva-themes/magento2-compat-module-fallback",
+      "revision": "bddce5a26b80c10f34218922704cb175d169f9c7",
+      "licence": "OSL-3.0",
+      "role": "how a third-party module that only ships legacy frontend assets is kept working",
+      "comparedAs": "mechanism"
+    },
+    {
+      "repository": "hyva-themes/magento2-graphql-view-model",
+      "revision": "767003e0a1ab512e915d5b8f462012c5d211fe61",
+      "licence": "OSL-3.0",
+      "role": "how the reference reaches data from a template without a REST round trip",
+      "comparedAs": "mechanism"
+    }
+  ],
+  "publicButNotCompared": [
+    "hyva-themes/magento2-hyva-admin, hyva-admin-test-module, commerce-module-admin-dashboard-api — admin-side, and this audit is about the storefront",
+    "hyva-themes/hyva-ai-tools, magento2-module-ai, magento2-module-ai-anthropic, magento2-module-ai-gemini, magento2-module-ai-open-ai, magento2-module-ai-deep-l, magento2-ai-providers — an AI product line with no counterpart here",
+    "hyva-themes/hyva-coding-standard, hyva-modules-tailwind-js, magento2-i18n-csv-diff, magento2-wysiwyg-svg, magento2-graphql-tokens, magento2-theme-fallback, magento2-mollie-theme-bundle, magento2-optimized-csp-allowlist, magento2-order-cancellation-webapi — tooling and integrations outside the storefront comparison"
+  ],
+  "outside": [
+    {
+      "product": "Hyvä Checkout",
+      "why": "sold separately and distributed from a private repository; no public source exists to compare against",
+      "regime": "declared-by-source"
+    },
+    {
+      "product": "Hyvä UI",
+      "why": "a commercial component library, distributed to licence holders only",
+      "regime": "declared-by-source"
+    },
+    {
+      "product": "Hyvä POS",
+      "why": "a commercial point-of-sale product with no storefront counterpart here",
+      "regime": "declared-by-source"
+    },
+    {
+      "product": "Hyvä Enterprise",
+      "why": "the Adobe Commerce bundle; this project targets Magento Open Source, and the Adobe-only surface is out of scope",
+      "regime": "declared-by-source"
+    }
+  ],
+  "sourceForOutside": {
+    "source": "hyva.io product navigation",
+    "url": "https://www.hyva.io/",
+    "readAt": "2026-08-26",
+    "states": "Hyvä Theme, Hyvä UI, Hyvä Checkout and Hyvä POS are listed as separate products, with Hyvä Commerce and Hyvä Enterprise as the bundles; of these only Hyvä Theme has public source in the hyva-themes organisation"
+  },
+  "howThePerimeterWasEstablished": "the 27 repositories in the hyva-themes GitHub organisation were listed through the GitHub API on 2026-08-26; all 27 declare OSL-3.0 and none is archived. Anything a product page names that is not among them is outside the code perimeter and can only be covered by a cited source."
+}
