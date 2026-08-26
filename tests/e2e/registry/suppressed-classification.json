@@ -1,0 +1,71 @@
+{
+  "rules": [
+    {
+      "match": ["default_head_blocks", "customer_form_template_handle", "page_calendar", "review_product_form_component", "review_product_listajax", "shipping_tracking_popup", "print", "multishipping_checkout", "checkout_onepage_review", "cms_index_index"],
+      "status": "out-of-scope",
+      "severity": "informational",
+      "reason": "not a storefront screen: it is a fragment, a base handle every concrete one already re-declares, or a Knockout endpoint the stack replaced wholesale"
+    },
+    {
+      "match": ["robots_index_index", "rss_index_index", "wishlist_email_rss", "catalog_product_rss_feed_renderer_list", "swagger_index_index"],
+      "status": "out-of-scope",
+      "severity": "informational",
+      "reason": "produces a non-HTML response (robots, RSS) or an API tool, so the theme has nothing to contribute to it"
+    },
+    {
+      "match": ["msrp_popup", "MAP_price_msrp_item", "MAP_price_msrp_wishlist_item", "remember_me"],
+      "status": "out-of-scope",
+      "severity": "informational",
+      "reason": "deliberately re-expressed: MAP as a native disclosure with no JS, remember-me as a centralised Twig partial, so the core handle has no counterpart by design"
+    },
+    {
+      "match": ["loginascustomer_login_index"],
+      "status": "out-of-scope",
+      "severity": "informational",
+      "reason": "entered from the admin, not a storefront journey a customer can reach"
+    },
+    {
+      "match": ["catalog_product_view_type_simple", "catalog_product_view_type_virtual", "catalog_product_view_type_configurable", "catalog_product_view_type_bundle", "catalog_product_view_type_grouped", "catalog_product_view_type_downloadable", "catalog_category_view_type_default", "catalog_category_view_type_default_without_children", "catalog_category_view_type_layered", "catalog_category_view_type_layered_without_children", "catalog_product_gallery", "sales_order_item_price", "sales_order_info_links", "sales_order_guest_info_links"],
+      "status": "out-of-scope",
+      "severity": "informational",
+      "reason": "equivalence by another route: MageObsidian consolidates what the core splits per product type into its own catalog_product_view and order templates, which carry downloadable.links, downloadable.samples, product.info.grouped and product.info.bundle.options"
+    },
+    {
+      "match": ["paypal_billing_agreement_index", "paypal_billing_agreement_view", "paypal_express_review", "paypal_express_review_details", "paypal_payflow_cancelpayment", "paypal_payflow_form", "paypal_payflow_returnurl", "paypal_payflowadvanced_cancelpayment", "paypal_payflowadvanced_form", "paypal_payflowadvanced_returnurl", "paypal_payflowexpress_review", "transparent_payment_redirect", "transparent_payment_response", "paymentservicespaypal_smartbuttons_review", "paymentservicespaypal_smartbuttons_review_details", "paymentservicespaypal_smartbuttons_success", "paymentservicespaypal_vault_addcard"],
+      "status": "blocked",
+      "severity": "minor",
+      "reason": "payment gateway screens that only render once that gateway is configured, and no environment has one",
+      "unblockedBy": "a configured PayPal or Payment Services account in a verification environment"
+    },
+    {
+      "match": ["wishlist_index_configure_type_simple", "wishlist_index_configure_type_configurable", "wishlist_index_configure_type_bundle", "wishlist_index_configure_type_grouped", "wishlist_index_configure_type_downloadable"],
+      "status": "uncovered",
+      "severity": "major",
+      "reason": "real gap candidate: wishlist_index_configure is re-declared but none of its per-type handles are, so re-configuring a bundle or a configurable saved to the wish list has no options form"
+    },
+    {
+      "match": ["checkout_cart_configure_type_simple", "checkout_cart_configure_type_configurable", "checkout_cart_configure_type_bundle", "checkout_cart_configure_type_downloadable"],
+      "status": "uncovered",
+      "severity": "major",
+      "reason": "real gap candidate: checkout_cart_configure is re-declared but none of its per-type handles are, so editing a configured line already in the cart has no options form"
+    },
+    {
+      "match": ["sales_guest_print", "sales_guest_printinvoice", "sales_guest_printcreditmemo", "sales_guest_printshipment", "sales_guest_reorder"],
+      "status": "uncovered",
+      "severity": "major",
+      "reason": "real gap candidate: the guest order screens are re-declared but printing any of its documents and reordering are not, so a guest can read an order and not print it"
+    },
+    {
+      "match": ["cms_index_defaultindex", "cms_index_defaultnoroute", "cms_noroute_index", "cms_index_nocookies", "cms_page_view"],
+      "status": "uncovered",
+      "severity": "major",
+      "reason": "real gap candidate: no module re-declares the CMS page, the not-found page or the cookies-disabled page, so what a visitor gets on those routes is whatever the default handle alone produces"
+    },
+    {
+      "match": ["catalog_product_opengraph", "catalog_widget_product_list", "productalert_unsubscribe_email", "wishlist_search_view"],
+      "status": "uncovered",
+      "severity": "minor",
+      "reason": "real gap candidate: a discrete capability the core contributes and nothing replaces - Open Graph metadata, the CMS product-list widget, the alert unsubscribe mail and the searched wish list"
+    }
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-08-26",
+  "note": "derived from the registers at the end of the audit. Ordered by what it costs to leave it alone, not by what it costs to do. Anything marked needsApprovalFirst comes from the competitive comparison and cannot be started until its backlog item is approved.",
+  "changes": [
+    {
+      "order": 1,
+      "name": "fix-transactional-email-contents",
+      "why": "the four transactional emails this project renders come out with no items, no totals and no amounts. It is the only critical finding in the whole audit, and it reaches a customer's inbox rather than a page nobody looks at.",
+      "motivatedBy": [
+        "parity/magento-sales/email-items-missing"
+      ],
+      "kind": "defect",
+      "needsApprovalFirst": false
+    },
+    {
+      "order": 2,
+      "name": "route-product-attributes-through-the-output-filter",
+      "why": "two templates print a product attribute value unescaped and skip the filter core applies at the same positions. Small, contained, and it closes the only escaping divergence the audit found.",
+      "motivatedBy": [
+        "security/magento-catalog/product-attribute-unescaped"
+      ],
+      "kind": "defect",
+      "needsApprovalFirst": false
+    },
+    {
+      "order": 3,
+      "name": "stop-double-escaping-the-search-term",
+      "why": "a shopper searching for Ben & Jerry sees Ben &amp; Jerry in the box, the breadcrumb and the autocomplete island. One accessor is the cause.",
+      "motivatedBy": [
+        "security/magento-search/double-escaped-query"
+      ],
+      "kind": "defect",
+      "needsApprovalFirst": false
+    },
+    {
+      "order": 4,
+      "name": "cover-the-parity-tracks-still-open",
+      "why": "103 capabilities the platform ships are still uncovered, concentrated in sales, multishipping, weee, wishlist and bundle. Each one is a page a shopper can reach with nothing verifying it.",
+      "motivatedBy": [
+        "parity/magento-sales",
+        "parity/magento-multishipping",
+        "parity/magento-weee",
+        "parity/magento-wishlist",
+        "parity/magento-bundle"
+      ],
+      "kind": "coverage",
+      "needsApprovalFirst": false
+    },
+    {
+      "order": 5,
+      "name": "carry-a-content-security-policy-nonce-through-the-runtime-seeds",
+      "why": "seventeen inline fragments with no nonce are what stands between this deployment and an enforcing policy. The storefront already survives with all of them blocked, so this is reachable rather than a rewrite.",
+      "motivatedBy": [
+        "security/csp/inline-without-nonce"
+      ],
+      "kind": "hardening",
+      "needsApprovalFirst": false
+    },
+    {
+      "order": 6,
+      "name": "cut-the-repeated-queries-on-the-listing-and-the-product-page",
+      "why": "the largest repeated pattern left on a category page is 23 queries on catalog_product_super_link from the configurable type resolver, and 18 on the product page. The menu N+1 that the notes blamed is already fixed; this is what actually dominates now.",
+      "motivatedBy": [
+        "performance/catalog_category_view/menu-url-rewrite-repeat"
+      ],
+      "kind": "performance",
+      "needsApprovalFirst": false
+    },
+    {
+      "order": 7,
+      "name": "render-the-human-verification-challenge",
+      "why": "the platform demands it and nothing here renders it, which means a real customer can reach a state where they cannot sign in. The register carries it as blocked for the login form; the comparison widened it to contact, newsletter, review, send-to-friend and checkout, which the reference covers with eight templates and this project with none.",
+      "motivatedBy": [
+        "parity/magento-captcha/captcha-challenge"
+      ],
+      "kind": "gap",
+      "needsApprovalFirst": true
+    },
+    {
+      "order": 8,
+      "name": "render-page-builder-content",
+      "why": "the largest single surface the reference covers and this does not. A store whose content team uses Page Builder cannot launch here.",
+      "motivatedBy": [
+        "competitive/gap/page-builder"
+      ],
+      "kind": "gap",
+      "needsApprovalFirst": true
+    },
+    {
+      "order": 9,
+      "name": "hold-third-party-scripts-until-interaction-then-carry-analytics",
+      "why": "analytics is the gap most stores meet, and landing it without the deferral mechanism would spend the performance budget this audit just measured. The two travel together, in that order.",
+      "motivatedBy": [
+        "competitive/gap/deferred-third-party-scripts",
+        "competitive/gap/analytics-tags"
+      ],
+      "kind": "gap",
+      "needsApprovalFirst": true
+    },
+    {
+      "order": 10,
+      "name": "render-the-catalog-product-list-widget",
+      "why": "small, and confirmed independently by the parity sweep and by the comparison.",
+      "motivatedBy": [
+        "competitive/gap/catalog-widget"
+      ],
+      "kind": "gap",
+      "needsApprovalFirst": true
+    },
+    {
+      "order": 11,
+      "name": "unblock-the-gateway-dependent-tracks",
+      "why": "21 capabilities are blocked for want of gateway credentials rather than for want of code. What unblocks them is an environment, not a change to the storefront — but until someone provides one, nothing about vault, instant purchase or PayPal is verified.",
+      "motivatedBy": [
+        "parity/magento-vault/vault-checkout-charge",
+        "parity/magento-instantpurchase/instant-purchase-charge"
+      ],
+      "kind": "environment",
+      "needsApprovalFirst": false
+    }
+  ]
+}

@@ -1,0 +1,410 @@
+{
+  "entries": [
+    {
+      "id": "parity/magento-captcha/captcha-challenge",
+      "capabilityTag": "captcha",
+      "capability": "The storefront renders the CAPTCHA challenge when Magento demands one",
+      "origin": "parity",
+      "status": "blocked",
+      "severity": "major",
+      "evidence": {
+        "observation": "the login template has nowhere to put the challenge, so once Magento demands one a real customer cannot sign in and the page never says why; the seed switches the challenge off to keep the suite moving",
+        "confirmed": true
+      },
+      "reason": "no slot exists in the migrated login template for the challenge block",
+      "unblockedBy": "a slot for the challenge in the login template, plus a seed that leaves the challenge on",
+      "tests": [
+        "auth.guest.spec.ts:renders the CAPTCHA challenge when Magento asks for one"
+      ]
+    },
+    {
+      "id": "parity/magento-vault/vault-checkout-charge",
+      "capability": "Paying with a stored card actually charges the token at checkout",
+      "origin": "parity",
+      "status": "blocked",
+      "severity": "major",
+      "evidence": {
+        "observation": "the vault selector self-gates to empty without an active tokenising gateway, so the migration landed structurally but the charge was never exercised",
+        "confirmed": true
+      },
+      "reason": "no tokenising gateway is configured in any available environment",
+      "unblockedBy": "Braintree sandbox credentials"
+    },
+    {
+      "id": "parity/magento-instantpurchase/instant-purchase-charge",
+      "capability": "The instant purchase button renders and places an order from a stored token",
+      "origin": "parity",
+      "status": "blocked",
+      "severity": "major",
+      "evidence": {
+        "observation": "the button self-gates on the instant-purchase customer section, which reports unavailable without a token, so neither its render nor its charge were exercised",
+        "confirmed": true
+      },
+      "reason": "no stored token exists without a tokenising gateway",
+      "unblockedBy": "Braintree sandbox credentials"
+    },
+    {
+      "id": "security/environment/customer-bypass",
+      "capability": "Authentication rejects a wrong password",
+      "origin": "security",
+      "status": "blocked",
+      "severity": "major",
+      "evidence": {
+        "observation": "the development environment carries Development_CustomerBypass, which lets any password through, so the rejected sign-in check uses an unknown account rather than a wrong password and proves less than it appears to",
+        "confirmed": true
+      },
+      "reason": "the verification environment relaxes the control this check depends on",
+      "unblockedBy": "an environment without Development_CustomerBypass installed"
+    },
+    {
+      "id": "parity/magento-sales/email-items-missing",
+      "capabilityTag": "sales_email_order_items",
+      "capability": "Transactional emails state what was bought and what it cost",
+      "origin": "parity",
+      "status": "uncovered",
+      "severity": "critical",
+      "evidence": {
+        "observation": "all four transactional emails for the seeded order (confirmation, invoice, shipment, credit memo) render and name the order, its addresses, payment and shipping method, and carry no item table, no line, no subtotal and no amount at all: a customer is told their order was placed without being told what they bought or what they paid. Captured in mailcatcher on 2026-08-26 from order 000000076, 3.8-4.0 KB each. Rendering the sales_email_order_items handle through the layout directly produces no blocks either, which points at the same cause; reproduce with npm run emails:send && npm run emails:verify",
+        "confirmed": true
+      },
+      "reason": "real gap: the sales_email_* handles MageObsidian re-declares contribute no content to the rendered email"
+    },
+    {
+      "id": "performance/catalog_category_view/menu-url-rewrite-repeat",
+      "capability": "The category page does not pay a url_rewrite lookup per category in the menu",
+      "origin": "performance",
+      "status": "resolved",
+      "severity": "major",
+      "evidence": {
+        "observation": "the reported shape — 153 of 207 queries on a category page being one url_rewrite N+1 in the menu — does not reproduce. Instrumented with tools/perf/measure-queries.ts against a cold block_html cache and 289 categories in the menu: 183 queries on the listing, 15 of them on url_rewrite (8%), and only 4 attributed to the menu. MenuTree::load seeds every category's request_path through RequestPathResolver::seed, which is a single UrlFinder::findAllByData for the whole tree; the 4 are one per nav rendering (primary, mobile, footer, and the depth-limited variant), not one per category",
+        "confirmed": true,
+        "checkedAt": "2026-08-26"
+      },
+      "resolvedBy": "module-storefront commits 13161a4 'perf(storefront): batch category url rewrite lookups into one query' and 0f0859f 'perf(storefront): cache the menu tree in block_html with a 1h ttl', both 2026-07-27; re-measured 2026-08-26 with pnpm perf:queries and asserted by perf-queries.perf.spec.ts",
+      "tests": [
+        "perf-queries.perf.spec.ts:plp renders inside its query ceiling"
+      ]
+    },
+    {
+      "id": "performance/checkout_index_index/edge-cacheable-shell",
+      "capability": "The checkout page is served from the edge cache and still carries nothing private",
+      "origin": "performance",
+      "status": "covered",
+      "severity": "informational",
+      "evidence": {
+        "observation": "unlike checkout_cart_index, the migrated checkout_index_index declares no cacheable=\"false\", and Varnish answers /checkout/ with x-magento-cache-debug: HIT. It is deliberate, not an omission: CheckoutConfig::getInlineConfig writes only the public half into the page while the page is cacheable, and the quote arrives through the obsidian-checkout section that SectionPrefetchRuntime prefetches. Held to that by a test that fails if the shell ever stops being cacheable or starts carrying the customer's data",
+        "confirmed": true,
+        "checkedAt": "2026-08-26"
+      },
+      "tests": [
+        "private-data.spec.ts:the checkout page is served from the edge cache, and still carries nothing private"
+      ]
+    },
+    {
+      "id": "performance/catalogsearch_result_index/first-search-uncacheable",
+      "capability": "A search term that has never been asked for is rendered without the page cache",
+      "origin": "performance",
+      "status": "out-of-scope",
+      "severity": "informational",
+      "evidence": {
+        "observation": "the first request for any search term answers x-magento-cache-debug: UNCACHEABLE and only later requests for the same term become cacheable; measured 2026-08-26 on /catalogsearch/result/?q=<fresh term>. It is core Magento behaviour, not something the migrated storefront introduces, and it is why the cold protocol accepts UNCACHEABLE as well as MISS for that page",
+        "confirmed": true,
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "core behaviour of Magento_CatalogSearch, outside what this storefront controls"
+    },
+    {
+      "id": "performance/console/public-pages-quiet",
+      "capability": "The public pages load with no console error, page error or failed request",
+      "origin": "performance",
+      "status": "covered",
+      "severity": "informational",
+      "evidence": {
+        "observation": "measured 2026-08-26 in production mode: home, listing, product, search, cart and checkout emit nothing at all, so perf/accepted-console.json is empty. The wish list counter warning the audit notes mention does not reproduce — no console.warn survives anywhere in module-wishlist or module-storefront's own sources. The check proves itself by planting a warning and showing it both fails undeclared and passes declared",
+        "confirmed": true,
+        "checkedAt": "2026-08-26"
+      },
+      "tests": [
+        "console-clean.guest.spec.ts:home logs nothing that is not declared",
+        "console-clean.guest.spec.ts:a warning nobody declared reaches the check, and declaring it silences it"
+      ]
+    },
+    {
+      "id": "security/theme/unescaped-output-classified",
+      "capability": "Every value the theme emits unescaped is classified with the origin of the value and why it is safe",
+      "origin": "security",
+      "status": "covered",
+      "severity": "informational",
+      "evidence": {
+        "observation": "207 unescaped output points across 151 templates (185 distinct once the same expression in the same file and context is counted once), extracted on 2026-08-26. The sweep covers both engines: the .twig templates the migration wrote and the 25 .phtml templates the theme still keeps — four of its own and twenty-one inherited from theme-base that this theme does not override. A first pass that read only .twig reported 162 across 147 and missed 45 points in 4 files; the structural comparison against the reference is what turned that up. 167 are covered by eleven declared rules and 18 are classified by hand against the code that produces the value. The plain text search finds 164 |raw in .twig because two of them sit inside Twig comments and never reach the output. By emission context: 191 text, 7 attribute, 5 tag, 2 script, 2 style. The PHP templates escape at assignment rather than at the echo, which is why they carry @noEscape; each one was followed back to its assignment.",
+        "confirmed": true,
+        "checkedAt": "2026-08-26"
+      },
+      "tests": [
+        "unescaped-output.guest.spec.ts:no unescaped output point is unclassified, and none carries end-user content without a guarantee"
+      ]
+    },
+    {
+      "id": "security/magento-catalog/product-attribute-unescaped",
+      "capability": "A product attribute value reaches the page through the same output filter core uses",
+      "origin": "security",
+      "status": "uncovered",
+      "severity": "major",
+      "evidence": {
+        "observation": "two templates print a product attribute value unescaped and skip Magento\\Catalog\\Helper\\Output::productAttribute, which core applies at the same positions: Magento_Catalog/templates/product/view.twig:147 (the spec list, against core's attributes.phtml:27) and Magento_Catalog/templates/product/compare/list.twig:39 (against core's compare/list.phtml:132). The helper escapes every attribute that is not on the allowed-HTML list and resolves CMS directives, so the theme is less strict than the platform it replaced. The value is administrator content rather than shopper content, which is why this is major and not critical; the same divergence also means {{media url=...}} inside an attribute never resolves.",
+        "confirmed": true,
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "found by reading both sides; not yet exercised end to end because this store has no free-text attribute marked visible on the front, so a live proof would need the fixture to create one",
+      "tests": [
+        "unescaped-output.guest.spec.ts:the defects the audit already found are still exactly the ones recorded"
+      ]
+    },
+    {
+      "id": "security/magento-search/double-escaped-query",
+      "capability": "A search term comes back to the shopper the way they typed it",
+      "origin": "security",
+      "status": "uncovered",
+      "severity": "minor",
+      "evidence": {
+        "observation": "MageObsidian\\Storefront\\ViewModel\\SearchForm::getQueryValue returns Magento\\Search\\Helper\\Data::getEscapedQueryText, which is already HTML-escaped. Twig escapes it a second time everywhere it is used outside the one |raw site, so searching for \"Ben & Jerry\" shows \"Ben &amp; Jerry\" in the header search box, in the breadcrumb and in the SearchAutocomplete island's props. Reproduced 2026-08-26 on /catalogsearch/result/?q=Ben+%26+Jerry. It is a correctness defect, not an injection: the value is over-escaped, never under-escaped.",
+        "confirmed": true,
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "the fix is to return the unescaped query text and let the template escape it once, which is a change to MageObsidian and needs approval before it is made",
+      "tests": [
+        "embedded-data.guest.spec.ts:a search term with an ampersand comes back the way the shopper typed it"
+      ]
+    },
+    {
+      "id": "security/theme/embedded-data-serialisation",
+      "capability": "Data the server embeds in the page cannot close its own context",
+      "origin": "security",
+      "status": "covered",
+      "severity": "informational",
+      "evidence": {
+        "observation": "every JSON-LD block, every script of type application/json and every data-props attribute on the six public pages parses as JSON, and neither a search term nor a review title carrying </script><img src=x onerror=...> produces an element or runs a handler. The review probe is the fixture's own <!--<script> title, which is the tokenizer trap rather than the obvious one.",
+        "confirmed": true,
+        "checkedAt": "2026-08-26"
+      },
+      "tests": [
+        "embedded-data.guest.spec.ts:home embeds only blocks that parse as JSON",
+        "embedded-data.guest.spec.ts:a search term that tries to close a script block is carried as text",
+        "embedded-data.guest.spec.ts:a review whose title opens a comment and a script does not reopen the tokenizer"
+      ]
+    },
+    {
+      "id": "security/islands/session-authorization",
+      "capability": "The calls the islands make authorise as the customer they claim to be",
+      "origin": "security",
+      "status": "covered",
+      "severity": "informational",
+      "evidence": {
+        "observation": "customers/me, carts/mine/totals and carts/mine/payment-methods all answer 401 without a session and 200 with one; another customer's account answers 401 to a signed-in customer and returns no data; a guest cart addressed with a mask nobody minted, with a numeric quote id, or with an empty mask is refused. Session authorisation depends on X-Requested-With: XMLHttpRequest, which Magento\\Webapi\\Model\\Plugin\\Authorization\\CustomerSessionUserContext requires and a cross-origin form cannot set — so the same header that makes the islands work also keeps a cross-site request out.",
+        "confirmed": true,
+        "checkedAt": "2026-08-26"
+      },
+      "tests": [
+        "island-authorization.guest.spec.ts:the customer's own account is refused without a session",
+        "island-authorization.spec.ts:another customer's account is refused to a signed-in customer",
+        "island-authorization.spec.ts:a signed-in customer cannot reach their own cart through the guest door"
+      ]
+    },
+    {
+      "id": "security/csp/inline-without-nonce",
+      "capability": "The storefront runs under an enforcing content security policy",
+      "origin": "security",
+      "status": "uncovered",
+      "severity": "major",
+      "evidence": {
+        "observation": "under an enforcing policy of self and nothing else, every public page violates three directives. seventeen distinct fragments, all emitted by the theme or by core, none by a third party: eight inline scripts (the import map, the speculation rules, and the PREPAINT, I18N, SECTIONS, SECTION_PREFETCH, UX and ICONS runtime seeds), four inline stylesheets (the v-cloak rule, the view-transition rules, NavOverflow::getStyle, and core's per-image sizing rule) and five families of inline style attributes (display, the fluid type scale, swatch colours, view-transition names and computed widths). What none of them carry is a nonce. The storefront does keep working with all of them blocked — a shopper can still add to the cart with no page error — so this is what stands between the deployment and an enforcing policy, not a broken page.",
+        "confirmed": true,
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "closing it means threading Magento's CSP nonce through the runtime seeds and moving the per-element style attributes onto classes or custom properties, which is a change to MageObsidian and needs approval before it is made",
+      "tests": [
+        "csp.guest.spec.ts:home violates nothing that is not declared",
+        "csp.guest.spec.ts:a shopper can still buy under the policy, even with every inline fragment blocked"
+      ]
+    },
+    {
+      "id": "security/environment/relaxed-controls",
+      "capability": "The environment a security check ran in is declared, and a relaxed control makes the check non-conclusive",
+      "origin": "security",
+      "status": "covered",
+      "severity": "informational",
+      "evidence": {
+        "observation": "tools/security/environment.php reports the mode, the store and every control this deployment relaxes. On 2026-08-26 it found four: Development_CustomerBypass (any password is accepted), login_as_customer/general/enabled (an administrator can assume a customer session), customer/captcha/enable off, and csp/mode/storefront/report_only. Each one is reported as a not-executed check naming the control, so it lands in the run summary as an absence rather than an approval.",
+        "confirmed": true,
+        "checkedAt": "2026-08-26"
+      },
+      "tests": [
+        "environment-relaxations.guest.spec.ts:the environment declares the mode and store the security checks ran against"
+      ]
+    },
+    {
+      "id": "competitive/gap/page-builder",
+      "capability": "Rendering Page Builder content on a CMS page, block or product description",
+      "origin": "competitive",
+      "status": "uncovered",
+      "severity": "major",
+      "evidence": {
+        "observation": "the reference ships eleven Page Builder renderers under Magento_PageBuilder; a text search of the whole theme and of all nineteen storefront modules finds no Page Builder anything. A store whose content team uses Page Builder has nothing here to render it with, and the absence is invisible in a parity sweep because Page Builder ships no layout handle of its own.",
+        "confirmed": true,
+        "regime": "derived-from-code",
+        "revisions": {
+          "hyva-themes/magento2-default-theme": "3537b0784e47569aed22c70b7a5aa5a29f50d675",
+          "mage-obsidian/theme-default": "working tree of 2026-08-26"
+        },
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "found by comparing the two template trees; nothing is built until the backlog item is approved",
+      "approval": {
+        "state": "not-approved"
+      }
+    },
+    {
+      "id": "competitive/gap/analytics-tags",
+      "capability": "Google Analytics, gtag and Tag Manager integration",
+      "origin": "competitive",
+      "status": "uncovered",
+      "severity": "major",
+      "evidence": {
+        "observation": "six templates across Magento_GoogleAnalytics, Magento_GoogleGtag and Magento_GoogleTagManager in the reference; none here. The only occurrence of the word in this theme is inside a privacy policy CMS page.",
+        "confirmed": true,
+        "regime": "derived-from-code",
+        "revisions": {
+          "hyva-themes/magento2-default-theme": "3537b0784e47569aed22c70b7a5aa5a29f50d675",
+          "mage-obsidian/theme-default": "working tree of 2026-08-26"
+        },
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "found by comparing the two template trees; nothing is built until the backlog item is approved",
+      "approval": {
+        "state": "not-approved"
+      }
+    },
+    {
+      "id": "competitive/gap/catalog-widget",
+      "capability": "The product-list widget a content editor drops into a CMS page or block",
+      "origin": "competitive",
+      "status": "uncovered",
+      "severity": "major",
+      "evidence": {
+        "observation": "Magento_CatalogWidget renders it in the reference and nothing renders it here. The parity sweep had already flagged it as a candidate; the structural comparison confirms it from the other direction.",
+        "confirmed": true,
+        "regime": "derived-from-code",
+        "revisions": {
+          "hyva-themes/magento2-default-theme": "3537b0784e47569aed22c70b7a5aa5a29f50d675",
+          "mage-obsidian/theme-default": "working tree of 2026-08-26"
+        },
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "found by comparing the two template trees; nothing is built until the backlog item is approved",
+      "approval": {
+        "state": "not-approved"
+      }
+    },
+    {
+      "id": "competitive/gap/deferred-third-party-scripts",
+      "capability": "Holding third-party scripts until the shopper interacts, with a declared bypass",
+      "origin": "competitive",
+      "status": "uncovered",
+      "severity": "major",
+      "evidence": {
+        "observation": "the reference's Hyva_Theme ships init-external-scripts and a user-interaction bypass beside it; no equivalent exists here. It matters more than its two templates suggest: it is the mechanism that keeps a tag manager or a chat widget from spending the performance budget this audit measured, and the analytics gap above cannot be closed safely without it.",
+        "confirmed": true,
+        "regime": "derived-from-code",
+        "revisions": {
+          "hyva-themes/magento2-default-theme": "3537b0784e47569aed22c70b7a5aa5a29f50d675",
+          "mage-obsidian/theme-default": "working tree of 2026-08-26"
+        },
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "found by comparing the two template trees; nothing is built until the backlog item is approved",
+      "approval": {
+        "state": "not-approved"
+      }
+    },
+    {
+      "id": "competitive/gap/login-as-customer",
+      "capability": "The storefront half of an administrator assisting a signed-in customer",
+      "origin": "competitive",
+      "status": "uncovered",
+      "severity": "minor",
+      "evidence": {
+        "observation": "four templates across Magento_LoginAsCustomerFrontendUi and Magento_LoginAsCustomerAssistance in the reference, none here — although login_as_customer/general/enabled is on in this deployment, which the environment probe reports as a relaxed control.",
+        "confirmed": true,
+        "regime": "derived-from-code",
+        "revisions": {
+          "hyva-themes/magento2-default-theme": "3537b0784e47569aed22c70b7a5aa5a29f50d675",
+          "mage-obsidian/theme-default": "working tree of 2026-08-26"
+        },
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "found by comparing the two template trees; nothing is built until the backlog item is approved",
+      "approval": {
+        "state": "not-approved"
+      }
+    },
+    {
+      "id": "competitive/gap/slider-primitive",
+      "capability": "A reusable carousel primitive the templates can share",
+      "origin": "competitive",
+      "status": "uncovered",
+      "severity": "minor",
+      "evidence": {
+        "observation": "the reference ships Hyva_Theme/templates/elements/slider.phtml; there is no slider component in module-storefront's component tree. The product gallery here has its own implementation, so what is missing is the shared piece, not the gallery.",
+        "confirmed": true,
+        "regime": "derived-from-code",
+        "revisions": {
+          "hyva-themes/magento2-default-theme": "3537b0784e47569aed22c70b7a5aa5a29f50d675",
+          "mage-obsidian/theme-default": "working tree of 2026-08-26"
+        },
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "found by comparing the two template trees; nothing is built until the backlog item is approved",
+      "approval": {
+        "state": "not-approved"
+      }
+    },
+    {
+      "id": "competitive/gap/checkout-product",
+      "capability": "A checkout sold as a separate product rather than built into the theme",
+      "origin": "competitive",
+      "status": "uncovered",
+      "severity": "informational",
+      "evidence": {
+        "observation": "Hyvä Checkout is listed as a separate product on the vendor's own site and has no public source in the hyva-themes organisation, so nothing about how it works can be derived. This project's checkout is a Vue island over the native quote endpoints and is covered end to end by the suite, so what is recorded here is a difference in product shape, not a missing storefront capability.",
+        "confirmed": false,
+        "regime": "declared-by-source",
+        "source": "hyva.io product navigation",
+        "sourceVersion": "product line as listed on 2026-08-26",
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "no public source exists, so this cannot be confirmed by instrumenting or reading anything; it carries only what the vendor states",
+      "approval": {
+        "state": "not-approved"
+      }
+    },
+    {
+      "id": "competitive/gap/component-library",
+      "capability": "A copy-and-paste component library",
+      "origin": "competitive",
+      "status": "uncovered",
+      "severity": "informational",
+      "evidence": {
+        "observation": "Hyvä UI is listed as a commercial component library distributed to licence holders. No public source exists, so this entry carries none of the weight of the entries derived from code.",
+        "confirmed": false,
+        "regime": "declared-by-source",
+        "source": "hyva.io product navigation",
+        "sourceVersion": "product line as listed on 2026-08-26",
+        "checkedAt": "2026-08-26"
+      },
+      "reason": "no public source exists, so this cannot be confirmed by instrumenting or reading anything; it carries only what the vendor states",
+      "approval": {
+        "state": "not-approved"
+      }
+    }
+  ]
+}
