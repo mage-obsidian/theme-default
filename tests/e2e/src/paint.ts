@@ -131,10 +131,18 @@ export async function installPaintProbe(context: BrowserContext): Promise<void> 
 }
 
 /** Slows the machine down to where the gap between paint and mount is visible. */
-export async function throttle(context: BrowserContext, page: Page, rate = 4): Promise<void> {
-    const cdp = await context.newCDPSession(page);
-    await cdp.send("Emulation.setCPUThrottlingRate", { rate });
+export async function throttle(context: BrowserContext, page: Page, rate = 4): Promise<boolean> {
+    try {
+        const cdp = await context.newCDPSession(page);
+        await cdp.send("Emulation.setCPUThrottlingRate", { rate });
+        return true;
+    } catch {
+        return false;
+    }
 }
+
+export const NO_THROTTLING =
+    "needs CPU throttling: on an idle machine the gap between the server's paint and the client taking over is invisible, so a green run would assert nothing";
 
 export const settle = (page: Page, ms = 4200): Promise<void> => page.waitForTimeout(ms);
 

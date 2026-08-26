@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import {
     happyPath,
     installPaintProbe,
+    NO_THROTTLING,
     readBlinks,
     readIslands,
     settle,
@@ -17,7 +18,7 @@ import {
 const instrument = () => {
     test.beforeEach(async ({ context, page }) => {
         await installPaintProbe(context);
-        await throttle(context, page);
+        test.skip(!(await throttle(context, page)), NO_THROTTLING);
     });
 };
 
@@ -25,7 +26,7 @@ test.describe("islands", () => {
     instrument();
 
     for (const step of happyPath) {
-        test(`${step.name} adopts the markup the server sent`, async ({ page }) => {
+        test(`${step.name} adopts the markup the server sent`, { tag: "@behaviour:client-startup" }, async ({ page }) => {
             await page.goto(step.path, { waitUntil: "commit" });
             await page.waitForLoadState("load").catch(() => {});
             await settle(page);
@@ -40,7 +41,7 @@ test.describe("islands", () => {
         });
     }
 
-    test("every eager island above the fold carries a state to adopt", async ({ page }) => {
+    test("every eager island above the fold carries a state to adopt", { tag: "@behaviour:client-startup" }, async ({ page }) => {
         await page.goto("/", { waitUntil: "commit" });
         await settle(page, 2000);
 
@@ -55,7 +56,7 @@ test.describe("no blank ticks", () => {
     instrument();
 
     for (const step of happyPath) {
-        test(`${step.name} never blanks a region it already painted`, async ({ page }) => {
+        test(`${step.name} never blanks a region it already painted`, { tag: "@behaviour:client-startup" }, async ({ page }) => {
             await page.goto(step.path, { waitUntil: "commit" });
             await page.waitForLoadState("load").catch(() => {});
             await settle(page);
