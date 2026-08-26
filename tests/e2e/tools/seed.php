@@ -37,6 +37,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\App\State;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\InventoryApi\Api\Data\SourceItemInterface;
+use Magento\InventoryApi\Api\Data\SourceItemInterfaceFactory;
 use Magento\InventoryApi\Api\GetSourcesAssignedToStockOrderedByPriorityInterface;
 use Magento\InventoryApi\Api\SourceItemRepositoryInterface;
 use Magento\InventoryApi\Api\SourceItemsSaveInterface;
@@ -63,7 +64,7 @@ const LAST_NAME = 'Obsidian';
 
 /** Above the ten-row page size of every account list, so the pager has to appear. */
 const TARGET_ORDERS = 13;
-const TARGET_WISHLIST = 13;
+const TARGET_WISHLIST = 18;
 const TARGET_REVIEWS = 3;
 
 /**
@@ -273,8 +274,10 @@ $salableFloor = static function (array $skus) use ($objectManager, $out, $store)
     $sourceItems = $objectManager->get(SourceItemRepositoryInterface::class);
     $searchCriteria = $objectManager->get(SearchCriteriaBuilder::class);
     $save = $objectManager->get(SourceItemsSaveInterface::class);
+    $sourceItemFactory = $objectManager->get(SourceItemInterfaceFactory::class);
 
     $raised = [];
+    $created = [];
 
     foreach ($skus as $sku) {
         try {
@@ -293,6 +296,17 @@ $salableFloor = static function (array $skus) use ($objectManager, $out, $store)
             ->create();
         $items = array_values($sourceItems->getList($criteria)->getItems());
 
+        if ($items === [] && $sourceCodes !== []) {
+            $item = $sourceItemFactory->create();
+            $item->setSku($sku);
+            $item->setSourceCode($sourceCodes[0]);
+            $item->setQuantity(TARGET_SALABLE);
+            $item->setStatus(SourceItemInterface::STATUS_IN_STOCK);
+            $save->execute([$item]);
+            $created[] = $sku;
+            continue;
+        }
+
         if ($items === []) {
             continue;
         }
@@ -302,6 +316,10 @@ $salableFloor = static function (array $skus) use ($objectManager, $out, $store)
         $item->setStatus(SourceItemInterface::STATUS_IN_STOCK);
         $save->execute([$item]);
         $raised[] = $sku;
+    }
+
+    if ($created !== []) {
+        $out('stock: opened ' . count($created) . ' sku(s) on source ' . $sourceCodes[0] . ' — they had none in stock ' . $stockId);
     }
 
     $out(
@@ -593,6 +611,136 @@ $customerModel = $customerRegistry->retrieve($customerId);
 $customerModel->changeResetPasswordLinkToken($resetToken);
 $customerModel->save();
 
+
+const VIRTUAL_SKU = 'OBSIDIAN-E2E-VIRTUAL';
+
+$catalogRepository = $objectManager->get(ProductRepositoryInterface::class);
+
+$urlKeyOf = static function (int $productId) use ($connection): ?string {
+    $value = $connection->fetchOne(
+        'SELECT v.value FROM catalog_product_entity_varchar v'
+        . ' JOIN eav_attribute a ON a.attribute_id = v.attribute_id AND a.attribute_code = \'url_key\''
+        . ' WHERE v.entity_id = ? AND v.store_id = 0',
+        [$productId]
+    );
+    return $value !== false && $value !== null && $value !== '' ? (string)$value : null;
+};
+
+$firstOfType = static function (string $type) use ($connection, $urlKeyOf): ?array {
+    $rows = $connection->fetchAll(
+        'SELECT e.entity_id, e.sku FROM catalog_product_entity e'
+        . ' JOIN catalog_product_website w ON w.product_id = e.entity_id'
+        . ' JOIN catalog_product_entity_int st ON st.entity_id = e.entity_id AND st.store_id = 0'
+        . ' JOIN eav_attribute sta ON sta.attribute_id = st.attribute_id AND sta.attribute_code = \'status\''
+        . ' JOIN catalog_product_entity_int vi ON vi.entity_id = e.entity_id AND vi.store_id = 0'
+        . ' JOIN eav_attribute via ON via.attribute_id = vi.attribute_id AND via.attribute_code = \'visibility\''
+        . ' JOIN cataloginventory_stock_status ss ON ss.product_id = e.entity_id AND ss.stock_status = 1'
+        . ' WHERE e.type_id = ? AND st.value = 1 AND vi.value IN (2, 4)'
+        . ' ORDER BY e.entity_id LIMIT 10',
+        [$type]
+    );
+
+    foreach ($rows as $row) {
+        $urlKey = $urlKeyOf((int)$row['entity_id']);
+        if ($urlKey !== null) {
+            return ['sku' => (string)$row['sku'], 'urlKey' => $urlKey, 'id' => (int)$row['entity_id']];
+        }
+    }
+    return null;
+};
+
+$withDecimalAttribute = static function (string $attributeCode) use ($connection, $urlKeyOf): ?array {
+    $row = $connection->fetchRow(
+        'SELECT e.entity_id, e.sku FROM catalog_product_entity e'
+        . ' JOIN catalog_product_entity_decimal d ON d.entity_id = e.entity_id'
+        . ' JOIN eav_attribute a ON a.attribute_id = d.attribute_id AND a.attribute_code = ?'
+        . ' WHERE d.value IS NOT NULL AND d.value > 0 LIMIT 1',
+        [$attributeCode]
+    );
+    if (!$row) {
+        return null;
+    }
+    $urlKey = $urlKeyOf((int)$row['entity_id']);
+    return $urlKey === null ? null : ['sku' => (string)$row['sku'], 'urlKey' => $urlKey, 'id' => (int)$row['entity_id']];
+};
+
+$fixedProductTax = static function () use ($connection, $urlKeyOf): ?array {
+    $row = $connection->fetchRow(
+        'SELECT e.entity_id, e.sku FROM weee_tax w JOIN catalog_product_entity e ON e.entity_id = w.entity_id LIMIT 1'
+    );
+    if (!$row) {
+        return null;
+    }
+    $urlKey = $urlKeyOf((int)$row['entity_id']);
+    return $urlKey === null ? null : ['sku' => (string)$row['sku'], 'urlKey' => $urlKey, 'id' => (int)$row['entity_id']];
+};
+
+$ensureVirtual = static function () use ($objectManager, $catalogRepository, $urlKeyOf, $out): ?array {
+    try {
+        $product = $catalogRepository->get(VIRTUAL_SKU);
+    } catch (NoSuchEntityException) {
+        $product = $objectManager->create(\Magento\Catalog\Model\Product::class);
+        $product->setSku(VIRTUAL_SKU)
+                ->setName('Obsidian E2E Virtual Session')
+                ->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_VIRTUAL)
+                ->setAttributeSetId(4)
+                ->setPrice(29.0)
+                ->setVisibility(Visibility::VISIBILITY_BOTH)
+                ->setStatus(1)
+                ->setUrlKey('obsidian-e2e-virtual-session')
+                ->setWebsiteIds([1])
+                ->setStockData(['use_config_manage_stock' => 1, 'qty' => 999, 'is_in_stock' => 1]);
+        $product = $catalogRepository->save($product);
+        $out('products: minted the virtual product the catalogue lacks');
+    }
+
+    $urlKey = $urlKeyOf((int)$product->getId()) ?? 'obsidian-e2e-virtual-session';
+    return ['sku' => (string)$product->getSku(), 'urlKey' => $urlKey, 'id' => (int)$product->getId()];
+};
+
+$productFixtures = [
+    'simple' => $firstOfType('simple'),
+    'configurable' => $firstOfType('configurable'),
+    'bundle' => $firstOfType('bundle'),
+    'grouped' => $firstOfType('grouped'),
+    'downloadable' => $firstOfType('downloadable'),
+    'virtual' => $ensureVirtual(),
+    'msrp' => $withDecimalAttribute('msrp'),
+    'fpt' => $fixedProductTax(),
+];
+
+$childrenOf = static function (array $fixture) use ($connection): array {
+    $bundle = $connection->fetchCol(
+        'SELECT e.sku FROM catalog_product_bundle_selection s'
+        . ' JOIN catalog_product_entity e ON e.entity_id = s.product_id'
+        . ' WHERE s.parent_product_id = ?',
+        [$fixture['id']]
+    );
+    $grouped = $connection->fetchCol(
+        'SELECT e.sku FROM catalog_product_link l'
+        . ' JOIN catalog_product_entity e ON e.entity_id = l.linked_product_id'
+        . ' WHERE l.product_id = ? AND l.link_type_id = 3',
+        [$fixture['id']]
+    );
+    return array_map('strval', array_merge($bundle, $grouped));
+};
+
+$fixtureSkus = [];
+foreach ($productFixtures as $fixture) {
+    if ($fixture === null) {
+        continue;
+    }
+    $fixtureSkus[] = $fixture['sku'];
+    $fixtureSkus = array_merge($fixtureSkus, $childrenOf($fixture));
+}
+$salableFloor(array_values(array_unique($fixtureSkus)));
+
+foreach ($productFixtures as $role => $fixture) {
+    $out($fixture === null
+        ? 'products: no ' . $role . ' product in this catalogue — its specs will skip'
+        : 'products: ' . $role . ' is ' . $fixture['sku'] . ' (/' . $fixture['urlKey'] . '.html)');
+}
+
 $handover = dirname(__DIR__) . '/.artifacts';
 if (!is_dir($handover)) {
     mkdir($handover, 0o775, true);
@@ -611,6 +759,7 @@ file_put_contents(
         'documentedOrderId' => $documentedId,
         'trackableOrderId' => $trackableId,
         'hostileReviewUrl' => $hostileUrl,
+        'products' => $productFixtures,
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
 );
 $out('handover: tests/e2e/.artifacts/fixture.json');
