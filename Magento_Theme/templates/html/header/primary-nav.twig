@@ -2,7 +2,7 @@
 {% set label = __('Primary') %}
 {% set moreLabel = __('More') %}
 
-<style>{{ block.getOverflow().getStyle(links, {
+{{ inline_style(block.getOverflow().getStyle(links, {
     container: 'obsidian-nav',
     tracking: 0.16,
     chevron: 16,
@@ -10,7 +10,7 @@
     moreExtra: 18,
     uppercase: true,
     gaps: [{ gap: 24 }, { from: 1280, gap: 32 }]
-})|raw }}</style>
+})) }}
 
 {% set serverHtml %}
     {% include 'Magento_Theme::html/header/primary-nav/initial.twig' with {

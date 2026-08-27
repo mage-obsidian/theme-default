@@ -7,5 +7,5 @@
   extraction keeps only the rules whose selectors match the rendered DOM — a
   ::view-transition pseudo never appears there.
 #}
-<style>{{ inline_view_file('Magento_Theme::css/view-transitions.css') }}</style>
+{{ inline_style(inline_view_file('Magento_Theme::css/view-transitions.css')) }}
 {{ script('MageObsidian_Storefront::js/viewTransitions') }}
