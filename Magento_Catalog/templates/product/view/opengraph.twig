@@ -1,0 +1,6 @@
+{# Link preview metadata for a product page. `open_graph` decides what there is
+   to say; a property with nothing behind it never reaches the array. #}
+{% set properties = block.getOpenGraph().getProperties() %}
+{% for property, content in properties %}
+    <meta property="{{ property }}" content="{{ content }}"/>
+{% endfor %}
