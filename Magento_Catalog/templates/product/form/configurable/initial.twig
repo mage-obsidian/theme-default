@@ -5,20 +5,6 @@
         {% apply island_if(oldPrice) %}<span class="pdp__price-regular font-mono text-base text-ink-soft line-through">{{ oldPrice }}</span>{% endapply %}
     </div>
 
-    {# A swatch's colour or image is the option's own value and cannot live in the
-       stylesheet, but a style attribute is exactly what an enforcing policy drops.
-       Collected here, the rules are hashed into the response's own policy. The
-       island re-renders these through the CSSOM, which a policy does not touch. #}
-    {{ style_rules(groups|reduce((rules, group) => rules|merge(
-        group.options|reduce((chips, option) =>
-            option.kind == 'color' and option.value matches '/^#[0-9a-fA-F]{3,8}$/'
-                ? chips|merge({ ('.pdp__swatch-chip--' ~ option.id): 'background-color:' ~ option.value })
-                : (option.kind == 'image' and option.value
-                    ? chips|merge({ ('.pdp__swatch-chip--' ~ option.id): 'background-image:url("' ~ option.value|replace({'"': '', '\\': ''}) ~ '")' })
-                    : chips),
-            {})
-    ), {})) }}
-
     {% apply island_list %}
         {% for group in groups %}
             <fieldset class="pdp__swatch-group mb-6 border-0 p-0">

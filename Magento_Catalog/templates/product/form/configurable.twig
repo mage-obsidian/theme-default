@@ -33,10 +33,26 @@
     failed: __('Could not add to cart')
 } %}
 
+{% set swatchGroups = view.getSwatchGroups(cfg.getJsonConfig(), cfg.getJsonSwatchConfig()) %}
+
+{# A swatch's colour or image is the option's own value and cannot live in the
+   stylesheet, but a style attribute is what an enforcing policy drops. Emitted
+   here rather than inside the island's server markup so it survives hydration:
+   the island replaces everything it was handed. #}
+{{ style_rules(swatchGroups|reduce((rules, group) => rules|merge(
+    group.options|reduce((chips, option) =>
+        option.kind == 'color' and option.value matches '/^#[0-9a-fA-F]{3,8}$/'
+            ? chips|merge({ ('.pdp__swatch-chip--' ~ option.id): 'background-color:' ~ option.value })
+            : (option.kind == 'image' and option.value
+                ? chips|merge({ ('.pdp__swatch-chip--' ~ option.id): 'background-image:url("' ~ option.value|replace({'"': ''}) ~ '")' })
+                : chips),
+        {})
+), {})) }}
+
 {% set serverHtml %}
     {% if view.getPreconfiguredSuperAttribute() is empty %}
         {% include 'Magento_Catalog::product/form/configurable/initial.twig' with {
-            groups: view.getSwatchGroups(cfg.getJsonConfig(), cfg.getJsonSwatchConfig()),
+            groups: swatchGroups,
             price: view.formatPrice(view.getFinalPrice()),
             oldPrice: null,
             qty: 1,
