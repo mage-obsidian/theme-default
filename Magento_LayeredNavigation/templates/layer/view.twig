@@ -65,8 +65,17 @@
                     <details class="ln__filter" open>
                         <summary class="ln__filter-title">{{ filter.getName() }}</summary>
                         {% if swatchVm and swatchVm.isSwatch(filter) %}
+                            {% set swatches = swatchVm.getData(filter) %}
+                            {# The colour is the option's own value, so it cannot live in the
+                               stylesheet; collected here it is hashed into the response policy
+                               instead of riding a style attribute a nonce cannot cover. The hex
+                               is validated before it reaches either the class or the rule. #}
+                            {{ style_rules(swatches|reduce((rules, option) =>
+                                option.color matches '/^#[0-9a-fA-F]{3,8}$/'
+                                    ? rules|merge({ ('.ln__swatch-color--' ~ option.color|slice(1)): 'background-color: ' ~ option.color })
+                                    : rules, {})) }}
                             <ul class="ln__swatches">
-                                {% for opt in swatchVm.getData(filter) %}
+                                {% for opt in swatches %}
                                     <li>
                                         <a href="{{ opt.link|escape_url }}" class="ln__swatch" rel="nofollow"
                                            title="{{ opt.label|escape_html_attr }}">
@@ -76,7 +85,7 @@
                                                attribute holds. #}
                                             {% set swatchColor = opt.color matches '/^#[0-9a-fA-F]{3,8}$/' ? opt.color : '' %}
                                             {% if swatchColor %}
-                                                <span class="ln__swatch-color" style="background-color: {{ swatchColor }}"></span>
+                                                <span class="ln__swatch-color ln__swatch-color--{{ swatchColor|slice(1) }}"></span>
                                             {% else %}
                                                 <span class="ln__swatch-text">{{ opt.label }}</span>
                                             {% endif %}

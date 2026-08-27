@@ -12,9 +12,14 @@
 
 <div class="search-terms mx-auto max-w-shell px-4 pb-16 md:px-8">
     {% if terms is not empty %}
+        {# The weight is the term's own ratio, so it cannot live in the stylesheet
+           — and a style attribute is what an enforcing policy drops. #}
+        {{ style_rules(terms|reduce((rules, entry) => rules|merge({
+            ('.search-terms__item--' ~ entry.getQueryId()): '--term-weight: ' ~ entry.getRatio()|round(3)
+        }), {})) }}
         <ul class="search-terms__list">
             {% for term in terms %}
-                <li class="search-terms__item" style="--term-weight: {{ term.getRatio()|round(3) }}">
+                <li class="search-terms__item search-terms__item--{{ term.getQueryId() }}">
                     <a class="search-terms__link" href="{{ block.getSearchUrl(term)|escape_url }}">
                         {{ term.getQueryText() }}
                     </a>
