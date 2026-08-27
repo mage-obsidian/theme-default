@@ -137,14 +137,14 @@
                 </a>
             {% endif %}
 
-            {% set attributes = block.getChildBlock('product_attributes') ? block.getChildBlock('product_attributes').getAdditionalData() : [] %}
-            {% if attributes is not empty %}
+            {% set specifications = view.getSpecifications() %}
+            {% if specifications is not empty %}
                 <section class="pdp__specs mt-12 border-t border-ash-200 pt-8" aria-labelledby="pdp-specs-title">
                     <h2 id="pdp-specs-title" class="eyebrow">{{ __('Details') }}</h2>
                     <dl class="mt-4 grid grid-cols-1 gap-y-3 sm:grid-cols-[auto_1fr] sm:gap-x-8">
-                        {% for attribute in attributes %}
-                            <dt class="font-mono text-eyebrow uppercase tracking-mono text-ink-soft">{{ attribute.label }}</dt>
-                            <dd class="text-sm text-ink">{{ attribute.value|raw }}</dd>
+                        {% for specification in specifications %}
+                            <dt class="font-mono text-eyebrow uppercase tracking-mono text-ink-soft">{{ specification.label }}</dt>
+                            <dd class="text-sm text-ink">{{ specification.html|raw }}</dd>
                         {% endfor %}
                     </dl>
                 </section>

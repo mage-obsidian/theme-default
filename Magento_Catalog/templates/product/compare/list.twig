@@ -36,7 +36,7 @@
                         <tr>
                             <th scope="row" class="border-b border-ash-200 p-4 font-mono text-eyebrow uppercase tracking-eyebrow text-ink-soft">{{ attribute.getStoreLabel() }}</th>
                             {% for item in items %}
-                                <td class="border-b border-ash-200 p-4 text-sm text-ink-soft">{{ block.getProductAttributeValue(item, attribute)|raw }}</td>
+                                <td class="border-b border-ash-200 p-4 text-sm text-ink-soft">{{ block.getAttributeOutput().filter(item, block.getProductAttributeValue(item, attribute), attribute.getAttributeCode())|raw }}</td>
                             {% endfor %}
                         </tr>
                     {% endfor %}
