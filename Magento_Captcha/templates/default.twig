@@ -1,0 +1,44 @@
+{# The platform's own image challenge. `block` is
+   Magento\Captcha\Block\Captcha\DefaultCaptcha, declared per form by the module
+   that owns that form; it returns nothing at all unless the platform says the
+   challenge is required for this form and this visitor, so the slot costs an
+   empty string on the ordinary path. #}
+{% import 'Magento_Theme::macros/form.twig' as form %}
+{% set captcha = block.getCaptchaModel() %}
+{% set formId = block.getFormId() %}
+{% set fieldId = 'captcha-' ~ formId|replace({'_': '-'}) %}
+
+<div class="field-captcha"
+     data-captcha="{{ formId|escape_html_attr }}"
+     data-captcha-refresh="{{ block.getRefreshUrl()|escape_url }}">
+    {{ form.field({
+        name: 'captcha[' ~ formId ~ ']',
+        id: fieldId,
+        label: __('Please type the letters and numbers below'),
+        required: true,
+        autocomplete: 'off',
+        attrs: { autocapitalize: 'off', spellcheck: 'false' }
+    }) }}
+
+    <div class="field-captcha__challenge">
+        <img data-captcha-image
+             class="field-captcha__image"
+             src="{{ captcha.getImgSrc()|escape_url }}"
+             width="{{ block.getImgWidth()|default(230) }}"
+             height="{{ block.getImgHeight()|default(50) }}"
+             alt="{{ __('The letters and numbers to type')|escape_html_attr }}">
+        {# Text rather than an icon: this template is rendered by the platform's
+           own block, and `hero_icon` needs a MageObsidian one. #}
+        <button type="button"
+                class="field-captcha__reload btn btn--outline btn--sm"
+                data-captcha-reload>
+            {{ __('New image') }}
+        </button>
+    </div>
+
+    {% if captcha.isCaseSensitive() %}
+        <p class="field__hint">{{ __('Capital and small letters are not the same here.') }}</p>
+    {% endif %}
+</div>
+
+{{ script('MageObsidian_Storefront::js/captcha-refresh') }}

@@ -109,6 +109,14 @@
         </div>
     </section>
 
+    {# The platform's challenges, when it asks for one. Both live inside the form so
+       a native POST carries their answer without JavaScript. #}
+    {{ child_html('captcha') }}
+    {{ child_html('recaptcha') }}
+
+    {# The customer's own decision about being assisted, when the store offers it. #}
+    {{ child_html('assistance') }}
+
     {{ form.required_note(__('Required fields')) }}
 
     <div class="flex items-center gap-5">

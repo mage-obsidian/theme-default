@@ -51,6 +51,11 @@
             attrs: { rows: 5 }
         }) }}
 
+        {# The platform's challenges, when it asks for one. Inside the form so a native
+           POST carries their answer without JavaScript. #}
+        {{ child_html('captcha') }}
+        {{ child_html('recaptcha') }}
+
         {{ form.required_note(__('Required Fields')) }}
 
         <button type="submit"

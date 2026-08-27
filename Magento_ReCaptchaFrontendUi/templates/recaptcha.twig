@@ -1,0 +1,15 @@
+{# The reCAPTCHA slot. Renders nothing unless the store configured a challenge
+   for this form, so a module can declare the slot once and leave the decision
+   to the platform. `recaptcha_for` is the same key Magento configures under
+   recaptcha_frontend/type_for. #}
+{% set vm = block.getViewModel() %}
+{% set formKey = block.getRecaptchaFor()|default('') %}
+{% set settings = vm.settingsFor(formKey) %}
+
+{% if settings %}
+    <div class="field-recaptcha"
+         id="{{ vm.idFor(formKey)|escape_html_attr }}"
+         data-recaptcha="{{ settings|escape_html_attr }}"></div>
+
+    {{ script('MageObsidian_Storefront::js/recaptcha') }}
+{% endif %}

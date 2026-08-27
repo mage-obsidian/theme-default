@@ -20,6 +20,7 @@ $locked = $block->getButtonLockManager()->isDisabled('newsletter_form_submit');
                required
                placeholder="<?= $escaper->escapeHtmlAttr(__('Enter your email address')) ?>"
                class="w-full rounded-edge border border-obsidian-700 bg-transparent px-3 py-2.5 text-sm text-on-obsidian placeholder:text-on-obsidian-soft focus:border-on-obsidian focus:outline-none">
+        <?= $block->getChildHtml('recaptcha') ?>
         <button type="submit"
                 class="btn btn--sm btn--invert mt-3 disabled:cursor-not-allowed"
                 aria-label="<?= $escaper->escapeHtmlAttr(__('Subscribe')) ?>"

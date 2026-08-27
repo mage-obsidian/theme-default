@@ -91,6 +91,9 @@
                     attrs: { rows: 4 }
                 }) }}
 
+                {# The reCAPTCHA slot, when the store configured one for this form. #}
+                {{ child_html('recaptcha') }}
+
                 {{ form.required_note(__('Required fields')) }}
 
                 <button type="submit" class="action submit btn btn--solid btn--lg w-fit">
