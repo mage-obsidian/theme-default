@@ -1,0 +1,19 @@
+{# Google Analytics 4. `block` is Magento's own Ga block, used as the data source
+   it already is: the measurement id, the store's consent rule and — on the
+   success page — the order that was just placed all come from it unchanged.
+
+   What this theme decides is *when*: gtag is third-party and waits for the first
+   sign of a real visitor, so it never sits on the critical path. A page that
+   cannot wait says so in `defer_until`, and says why. #}
+{% set payload = block.getAnalyticsData() %}
+{% set until = block.getDeferUntil()|default('interaction') %}
+
+{% if payload %}
+    <div hidden
+         data-analytics="{{ payload|escape_html_attr }}"
+         data-until="{{ until|escape_html_attr }}"
+         {% if until == 'now' %}data-reason="{{ block.getDeferReason()|default('declared by the page')|escape_html_attr }}"{% endif %}></div>
+
+    {{ script('MageObsidian_Storefront::js/deferred-scripts') }}
+    {{ script('MageObsidian_Storefront::js/analytics') }}
+{% endif %}
