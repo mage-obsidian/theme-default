@@ -1,0 +1,8 @@
+{# `block` is the core AuthorizationLink: the label and the post parameters are
+   its own, so ending an assisted session goes through exactly the route the
+   platform expects. #}
+<a class="assisted-session__close link link--meta"
+   href="{{ block.getHref()|escape_url }}"
+   data-post="{{ block.getPostParams()|escape_html_attr }}">
+    {{ __('Close Session') }}
+</a>

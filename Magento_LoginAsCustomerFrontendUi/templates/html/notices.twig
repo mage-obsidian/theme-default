@@ -1,0 +1,22 @@
+{# The banner that says whose session this is. It ships on every page — empty,
+   hidden and cacheable — because whether an administrator is inside a customer's
+   session is per session, and the answer arrives with the private content rather
+   than with the page. The "close session" link is the administrator's way out
+   that is not the customer's own sign-out. #}
+{% set config = block.getConfig() %}
+
+{% if config.isEnabled() %}
+    {# A landmark rather than a status: the banner is part of the page from the
+       first byte and stays for the whole session, which is not what a status
+       message is. The announcement lives on the line that actually changes. #}
+    <div class="assisted-session"
+         role="region"
+         aria-label="{{ __('Assisted session')|escape_html_attr }}"
+         hidden
+         data-assisted-session="{{ __('You are connected as %1 on %2')|escape_html_attr }}">
+        <p class="assisted-session__text" aria-live="polite" data-assisted-session-text></p>
+        {{ child_html('login-as-customer-notice-links') }}
+    </div>
+
+    {{ script('MageObsidian_Storefront::js/assisted-session') }}
+{% endif %}

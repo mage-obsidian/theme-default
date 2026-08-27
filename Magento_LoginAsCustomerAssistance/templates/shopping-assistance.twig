@@ -1,0 +1,22 @@
+{# The customer's own decision about being assisted. The platform reads a value,
+   not a checkbox: an unchecked box posts nothing at all, so the hidden field is
+   what makes "no" mean no rather than "unchanged". #}
+{% set vm = block.getViewModel() %}
+
+{% if vm.isLoginAsCustomerEnabled() %}
+    <div class="field-check-group">
+        <label class="field-check" for="assistance_allowed_checkbox">
+            <input class="field-check__input"
+                   type="checkbox"
+                   id="assistance_allowed_checkbox"
+                   data-assistance-checkbox
+                   value="1"
+                   {% if vm.isAssistanceAllowed() %}checked{% endif %}>
+            <span class="field-check__label">{{ __(vm.getAssistanceCheckboxTitle()) }}</span>
+        </label>
+        <input type="hidden" name="assistance_allowed" value="" data-assistance-decision>
+        <p class="field__hint">{{ __(vm.getAssistanceCheckboxTooltip()) }}</p>
+    </div>
+
+    {{ script('MageObsidian_Storefront::js/shopping-assistance') }}
+{% endif %}
