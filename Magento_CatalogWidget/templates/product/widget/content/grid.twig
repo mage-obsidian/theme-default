@@ -1,0 +1,35 @@
+{# The product-list widget a content editor drops into a CMS page or block.
+   `block` is Magento's own ProductsList — the conditions, the collection and the
+   pager are all its work; this only renders it with the card the rest of the
+   storefront uses, so a widget does not look like a different shop.
+
+   The card reads its helpers off the block, and a widget block is built by the
+   widget system rather than by a layout, so the plugin that swaps this template
+   hands the card view model over with it. #}
+{% set products = block.getProductCollection() %}
+
+{% if products and products.count() %}
+    <div class="block widget block-products-list" data-content-type="products">
+        {% if block.getTitle() %}
+            <p class="font-mono text-xs uppercase tracking-eyebrow text-ink-soft">{{ __(block.getTitle()) }}</p>
+        {% endif %}
+
+        {# No per-card view-transition names here, unlike the category listing.
+           Magento caches this block's HTML for a day, and the hash that lets an
+           inline stylesheet past the policy lives in the response header, which
+           the block cache does not replay — so a cached widget would come back
+           with a stylesheet the browser drops. #}
+        <ol class="products-grid mt-6 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-4"
+            aria-label="{{ (block.getTitle() ?: __('Products'))|escape_html_attr }}">
+            {% for product in products.getItems() %}
+                <li class="product-item">
+                    {% include 'Magento_Catalog::product/card.twig' with { product: product, index: loop.index0, eager_count: 0, priority_count: 0 } %}
+                </li>
+            {% endfor %}
+        </ol>
+
+        {% if block.showPager() %}
+            {{ block.getPagerHtml()|raw }}
+        {% endif %}
+    </div>
+{% endif %}
