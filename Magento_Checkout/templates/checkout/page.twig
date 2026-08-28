@@ -19,6 +19,8 @@
 {{ render_vue('MageObsidian_Checkout::checkout/Checkout', {
     config: block.getCheckoutConfig().getInlineConfig(),
     directory: block.getDirectoryData().getData(),
+    paymentRenderers: block.getPaymentRenderers(),
+    withdrawnMethods: block.getWithdrawnMethods(),
     loginUrl: block.getUrl('customer/account/login'),
     labels: {
         steps: __('Checkout steps'),
