@@ -14,7 +14,7 @@
     <div class="pdp__grid grid grid-cols-1 gap-x-12 gap-y-10 lg:grid-cols-2">
 
         {# ---- Gallery (server-rendered, LCP-eager) ---- #}
-        {% include 'Magento_Catalog::product/gallery.twig' with { images: gallery.getImages() } %}
+        {% include 'Magento_Catalog::product/gallery.twig' with { images: gallery.getImages(), sizes: gallery.getLargeSizes() } %}
 
         {# ---- Buy box ---- #}
         <div class="pdp__info lg:sticky lg:top-24 lg:self-start">

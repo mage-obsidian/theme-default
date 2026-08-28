@@ -1,0 +1,14 @@
+{% set gallery = block.getGallery() %}
+{% set main = gallery.getMainImage() %}
+{% if main.large is defined and main.large %}
+    {% if main.largeSrcset|default('') %}
+        <link rel="preload"
+              as="image"
+              href="{{ main.large|escape_url }}"
+              imagesrcset="{{ main.largeSrcset }}"
+              imagesizes="{{ gallery.getLargeSizes() }}"
+              fetchpriority="high"/>
+    {% else %}
+        <link rel="preload" as="image" href="{{ main.large|escape_url }}" fetchpriority="high"/>
+    {% endif %}
+{% endif %}
