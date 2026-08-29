@@ -4,6 +4,7 @@
    iridescent sheen as the single signature · sharpened edges.
    ============================================================ */
 @import "tailwindcss";
+@import "./appearance.css";
 
 /* Self-hosted variable fonts (OFL, see web/fonts/OFL-*.txt). Replaces the
    Google Fonts <link> that fonts.twig used to load — no third-party round-trip,
@@ -104,6 +105,9 @@
      so a page that grows past the viewport nudges the whole header sideways. */
   html {
     scrollbar-gutter: stable;
+    background-color: var(--color-page);
+    color: var(--color-ink);
+    color-scheme: light;
   }
 
   :where(button, [role="button"]):not(:disabled, [aria-disabled="true"]) {
@@ -118,6 +122,14 @@
 
 [v-cloak] {
   display: none !important;
+}
+
+[data-appearance-switcher] {
+  display: none;
+}
+
+:root[data-appearance] [data-appearance-switcher] {
+  display: inline-flex;
 }
 
 /* iOS Safari zooms the viewport when a focused control renders below 16px, and

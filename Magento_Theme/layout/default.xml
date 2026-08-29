@@ -6,6 +6,15 @@
 <page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
+        <referenceContainer name="head.preload">
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.appearance_bootstrap"
+                   template="Magento_Theme::html/head/appearance.phtml" before="-"
+                   ifconfig="mage_obsidian/appearance/enabled"/>
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.appearance_tokens"
+                   template="Magento_Theme::html/head/appearance-tokens.twig"
+                   after="obsidian.appearance_bootstrap"
+                   ifconfig="mage_obsidian/appearance/enabled"/>
+        </referenceContainer>
         <referenceBlock name="head.additional">
             <block name="obsidian.favicon" template="Magento_Theme::html/head/favicon.twig"/>
             <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.view_transitions" template="Magento_Theme::html/head/view-transitions.twig"/>
@@ -75,6 +84,9 @@
                     <argument name="switcher" xsi:type="object">MageObsidian\Storefront\ViewModel\CurrencySwitcher</argument>
                 </arguments>
             </block>
+            <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.switcher.appearance"
+                   as="switcher_appearance" template="Magento_Theme::html/header/appearance-switcher.twig"
+                   ifconfig="mage_obsidian/appearance/enabled"/>
             <!-- Live bag count island (reactive via the customer-data bridge). -->
             <block class="MageObsidian\ModernFrontend\Block\Template" name="obsidian.cart_count"
                    as="cart_count" template="Magento_Theme::html/header/cart-count.twig"/>

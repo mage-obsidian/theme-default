@@ -12,6 +12,7 @@
     <div class="mx-auto flex h-9 max-w-shell items-center justify-between gap-4 px-4 font-mono text-micro uppercase leading-none tracking-eyebrow text-ink-soft md:px-8">
         <p class="truncate">{{ __('Powered by MageObsidian — a modern frontend for Magento') }}</p>
         <div class="flex items-center gap-4">
+            {{ child_html('switcher_appearance') }}
             {{ child_html('switcher_language') }}
             {{ child_html('switcher_currency') }}
         </div>

@@ -1,0 +1,73 @@
+<?php
+
+$appearanceBootstrap = <<<'JS'
+(function () {
+    var KEY = 'obsidian-appearance';
+    var root = document.documentElement;
+    var prefersDark = window.matchMedia
+        ? window.matchMedia('(prefers-color-scheme: dark)')
+        : { matches: false, addEventListener: function () {} };
+
+    function read() {
+        try {
+            var stored = window.localStorage.getItem(KEY);
+
+            return stored === 'light' || stored === 'dark' ? stored : 'auto';
+        } catch (error) {
+            return 'auto';
+        }
+    }
+
+    function remember(value) {
+        try {
+            if (value === 'auto') {
+                window.localStorage.removeItem(KEY);
+            } else {
+                window.localStorage.setItem(KEY, value);
+            }
+        } catch (error) {
+            return;
+        }
+    }
+
+    function apply(value) {
+        root.setAttribute('data-appearance', value);
+        root.setAttribute('data-theme', value === 'auto' ? (prefersDark.matches ? 'dark' : 'light') : value);
+    }
+
+    function settle() {
+        var choice = read();
+
+        apply(choice);
+
+        var selected = document.querySelector('[data-appearance-option][value="' + choice + '"]');
+
+        if (selected) {
+            selected.checked = true;
+        }
+    }
+
+    apply(read());
+
+    prefersDark.addEventListener('change', function () {
+        if (read() === 'auto') {
+            apply('auto');
+        }
+    });
+
+    document.addEventListener('change', function (event) {
+        var option = event.target;
+
+        if (!option || !option.hasAttribute || !option.hasAttribute('data-appearance-option')) {
+            return;
+        }
+
+        remember(option.value);
+        apply(option.value);
+    });
+
+    document.addEventListener('DOMContentLoaded', settle, { once: true });
+})();
+JS;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $appearanceBootstrap, false) ?>

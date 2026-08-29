@@ -1,0 +1,47 @@
+:root {
+  --dark-page: #08070b;
+  --dark-surface: #1a1922;
+  --dark-surface-raised: #211f2a;
+  --dark-surface-lift: #2a2734;
+  --dark-surface-high: #3a3647;
+  --dark-line: #2e2b39;
+  --dark-line-strong: #3a3647;
+  --dark-line-high: #484357;
+  --dark-text: #ecebf0;
+  --dark-text-muted: #a7a3b4;
+  --dark-text-dim: #9a95a8;
+  --dark-text-faint: #6f6b7c;
+  --dark-accent: #45a195;
+  --dark-accent-surface: #1d3b36;
+  --dark-sale: #c98a68;
+  --dark-danger: #e0655c;
+}
+
+:root[data-theme="dark"] {
+  --color-obsidian-950: var(--dark-surface);
+  --color-obsidian-900: var(--dark-surface-raised);
+  --color-obsidian-800: var(--dark-line);
+  --color-obsidian-700: var(--dark-surface-high);
+  --color-obsidian-600: var(--dark-line-high);
+
+  --color-alabaster: var(--dark-surface);
+  --color-alabaster-raised: var(--dark-surface-raised);
+  --color-paper: var(--dark-surface-lift);
+
+  --color-ash-200: var(--dark-line);
+  --color-ash-300: var(--dark-line-strong);
+  --color-ash-400: var(--dark-text-faint);
+  --color-ash-500: var(--dark-text-dim);
+
+  --color-ink: var(--dark-text);
+  --color-ink-soft: var(--dark-text-muted);
+
+  --color-accent: var(--dark-accent);
+  --color-accent-soft: var(--dark-accent-surface);
+  --color-sale: var(--dark-sale);
+  --color-danger: var(--dark-danger);
+
+  --color-page: var(--dark-page);
+
+  color-scheme: dark;
+}

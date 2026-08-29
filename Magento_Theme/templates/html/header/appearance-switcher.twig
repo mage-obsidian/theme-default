@@ -1,0 +1,22 @@
+{% set options = [
+    { value: 'light', label: 'Light appearance', icon: 'sun' },
+    { value: 'auto', label: 'Follow the system appearance', icon: 'computer-desktop' },
+    { value: 'dark', label: 'Dark appearance', icon: 'moon' }
+] %}
+<fieldset class="items-center gap-px rounded-edge border border-ash-200 p-px" data-appearance-switcher>
+    <legend class="sr-only">{{ __('Appearance') }}</legend>
+    {% for option in options %}
+        <label class="inline-flex cursor-pointer items-center">
+            <input type="radio"
+                   name="obsidian-appearance"
+                   value="{{ option.value }}"
+                   class="peer sr-only"
+                   data-appearance-option>
+            <span class="sr-only">{{ __(option.label) }}</span>
+            <span aria-hidden="true"
+                  class="inline-flex h-6 w-7 items-center justify-center rounded-edge text-ink-soft transition-colors hover:text-ink peer-checked:bg-ash-200 peer-checked:text-ink peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent [&_svg]:size-3.5">
+                {{ hero_icon(option.icon, 'outline', '24') }}
+            </span>
+        </label>
+    {% endfor %}
+</fieldset>
