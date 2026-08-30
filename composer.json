@@ -6,8 +6,8 @@
         "MIT"
     ],
     "require": {
-        "mage-obsidian/module-checkout": "^3.8",
-        "mage-obsidian/theme-base": "^3.10"
+        "mage-obsidian/module-checkout": "^3.10",
+        "mage-obsidian/theme-base": "^3.11"
     },
     "autoload": {
         "files": [
