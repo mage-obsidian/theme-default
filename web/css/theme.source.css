@@ -331,10 +331,6 @@ main#maincontent {
   z-index: 40;
 }
 
-/* Clears the sticky header bar so a toast never covers search or the bag. */
-:root {
-  --obsidian-top-inset: 5rem;
-}
 #page_bottom_container { view-transition-name: obsidian-footer; }
 .message.global.demo { view-transition-name: obsidian-notice; }
 
