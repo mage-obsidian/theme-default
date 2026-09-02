@@ -40,7 +40,7 @@
 
             {% set shortDescription = view.getShortDescriptionHtml() %}
             {% if shortDescription %}
-                <div class="pdp__short prose mt-6 max-w-prose text-ink-soft">{{ shortDescription|raw }}</div>
+                <div class="pdp__short cms-content mt-6 max-w-prose text-ink-soft">{{ shortDescription|raw }}</div>
             {% endif %}
 
             <div class="pdp__buy mt-8">
@@ -156,7 +156,7 @@
     {% if description %}
         <section class="pdp__description mt-16 border-t border-ash-200 pt-12" aria-labelledby="pdp-description-title">
             <h2 id="pdp-description-title" class="font-display text-xl text-ink">{{ __('About this product') }}</h2>
-            <div class="prose mt-6 max-w-prose text-ink-soft">{{ description|raw }}</div>
+            <div class="cms-content mt-6 max-w-prose text-ink-soft">{{ description|raw }}</div>
         </section>
     {% endif %}
 

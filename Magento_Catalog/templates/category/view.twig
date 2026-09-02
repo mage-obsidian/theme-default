@@ -11,7 +11,7 @@
 {% set description = landing.getDescriptionHtml() %}
 
 {% if description %}
-    <div class="category-description prose mb-10 max-w-prose text-ink-soft">{{ description|raw }}</div>
+    <div class="category-description cms-content mb-10 max-w-prose text-ink-soft">{{ description|raw }}</div>
 {% endif %}
 
 {% if block.isContentMode() or block.isMixedMode() %}
