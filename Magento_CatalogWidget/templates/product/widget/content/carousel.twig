@@ -1,0 +1,21 @@
+{% set products = block.getProductCollection() %}
+
+{% if products and products.count() %}
+    <div class="block widget block-products-list" data-content-type="products">
+        {% if block.getTitle() %}
+            <p class="font-mono text-xs uppercase tracking-eyebrow text-ink-soft">{{ __(block.getTitle()) }}</p>
+        {% endif %}
+
+        <ol data-carousel-strip
+            class="mt-6 flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth pb-4
+                   [scrollbar-width:thin] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            aria-label="{{ (block.getTitle() ?: __('Products'))|escape_html_attr }}">
+            {% for product in products.getItems() %}
+                <li data-carousel-item
+                    class="product-item w-[70%] shrink-0 snap-start sm:w-[45%] lg:w-[23%]">
+                    {% include 'Magento_Catalog::product/card.twig' with { product: product, index: loop.index0, eager_count: 0, priority_count: 0 } %}
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+{% endif %}
