@@ -21,7 +21,7 @@
 {% set media = block.getCard().getImage(product, 'category_page_grid') %}
 <article class="product-card group flex flex-col">
     <div class="product-card__media-wrap relative">
-        <a href="{{ url|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised" tabindex="-1">
+        <a href="{{ url|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-deep" tabindex="-1">
             {{ image(media.src, {
                 class: 'product-image-photo',
                 alt: media.label,

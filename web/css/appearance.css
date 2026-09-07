@@ -24,6 +24,7 @@
   --color-obsidian-700: var(--dark-surface-high);
   --color-obsidian-600: var(--dark-line-high);
 
+  --color-alabaster-deep: var(--dark-surface-raised);
   --color-alabaster: var(--dark-surface);
   --color-alabaster-raised: var(--dark-surface-raised);
   --color-paper: var(--dark-surface-lift);
