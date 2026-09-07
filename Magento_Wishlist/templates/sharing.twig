@@ -26,6 +26,13 @@
         value: sharing.getEnteredData('message'),
         attrs: { rows: 5 }
     }) }}
+    {% if block.getRssAllowed() %}
+        {{ form.checkbox({
+            name: 'rss_url',
+            id: 'rss_url',
+            label: __('Check here to link an RSS feed to your Wish List.')
+        }) }}
+    {% endif %}
     {{ block.getChildHtml('captcha')|raw }}
     {{ form.required_note(__('Required fields')) }}
     <div class="flex items-center gap-4">

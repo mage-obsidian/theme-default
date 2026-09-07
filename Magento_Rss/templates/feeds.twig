@@ -1,0 +1,42 @@
+<div class="rss-feeds mx-auto max-w-shell px-4 py-8 md:px-8">
+    <div class="overflow-x-auto">
+        <table class="data table rss w-full border-collapse text-sm">
+            <caption class="sr-only">{{ __('Feed') }}</caption>
+            <tbody>
+                {% set has_misc = false %}
+                {% for feed in block.getFeeds() %}
+                    {% if feed.group is not defined or feed.group is null %}
+                        {% if not has_misc %}
+                            <tr class="border-b border-ash-300">
+                                <th colspan="2" scope="col" class="py-3 text-left font-mono font-normal text-ink">{{ __('Miscellaneous Feeds') }}</th>
+                            </tr>
+                            {% set has_misc = true %}
+                        {% endif %}
+                        <tr class="border-b border-ash-200">
+                            <td class="py-3 pr-4 text-ink col feed">{{ feed.label }}</td>
+                            <td class="py-3 text-right col action">
+                                <a href="{{ feed.link|escape_url }}" class="action get link text-accent">
+                                    <span>{{ __('Get Feed') }}</span>
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr class="border-b border-ash-300">
+                            <th colspan="2" scope="col" class="py-3 text-left font-mono font-normal text-ink">{{ feed.group }}</th>
+                        </tr>
+                        {% for item in feed.feeds %}
+                            <tr class="border-b border-ash-200">
+                                <td class="py-3 pr-4 text-ink col feed">{{ item.label }}</td>
+                                <td class="py-3 text-right col action">
+                                    <a href="{{ item.link|escape_url }}" class="action get link text-accent">
+                                        <span>{{ __('Get Feed') }}</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

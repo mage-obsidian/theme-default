@@ -1,0 +1,6 @@
+<meta http-equiv="refresh" content="0;url={{ block.getUrl('customer/account')|escape_html_attr }}">
+<section class="mx-auto w-full max-w-md px-4 py-20 text-center">
+    <h1 class="page-heading">{{ __('You are logged in') }}</h1>
+    <p class="mt-4 text-sm text-ink-soft">{{ __('Redirecting you to your account...') }}</p>
+    <a href="{{ block.getUrl('customer/account')|escape_url }}" class="btn btn--solid btn--lg mt-8">{{ __('Go to your account') }}</a>
+</section>

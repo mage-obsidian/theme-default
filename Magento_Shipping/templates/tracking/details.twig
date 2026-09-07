@@ -1,0 +1,74 @@
+{% set parent = parentBlock|default(block) %}
+{% set email = storeSupportEmail|default(parent.getStoreSupportEmail()) %}
+{% set number = track is iterable ? (track.number|default('')) : track.getTracking() %}
+<table class="w-full border-collapse text-sm" id="tracking-table-popup-{{ number|escape_html_attr }}">
+    <caption class="sr-only">{{ __('Order tracking') }}</caption>
+    <tbody>
+    {% if not (track is iterable) %}
+        <tr class="border-b border-ash-100">
+            <th scope="row" class="py-2.5 pr-4 text-left font-mono font-normal text-ink-soft text-xs uppercase">{{ __('Tracking Number:') }}</th>
+            <td class="py-2.5 text-ink font-mono text-sm">{{ number }}</td>
+        </tr>
+        {% if track.getCarrierTitle() %}
+            <tr class="border-b border-ash-100">
+                <th scope="row" class="py-2.5 pr-4 text-left font-mono font-normal text-ink-soft text-xs uppercase">{{ __('Carrier:') }}</th>
+                <td class="py-2.5 text-ink text-sm">{{ track.getCarrierTitle() }}</td>
+            </tr>
+        {% endif %}
+        {% if track.getErrorMessage() %}
+            <tr class="border-b border-ash-100">
+                <th scope="row" class="py-2.5 pr-4 text-left font-mono font-normal text-ink-soft text-xs uppercase">{{ __('Error:') }}</th>
+                <td class="py-2.5 text-ink text-sm">
+                    {{ __('Tracking information is currently not available. Please ') }}
+                    {% if parent.getContactUsEnabled() %}
+                        <a href="{{ parent.getContactUs()|escape_url }}" target="_blank" rel="noopener" class="link" title="{{ __('contact us') }}">{{ __('contact us') }}</a>
+                        {{ __(' for more information or ') }}
+                    {% endif %}
+                    {{ __('email us at ') }}
+                    <a href="mailto:{{ email|escape_html_attr }}" class="link">{{ email }}</a>
+                </td>
+            </tr>
+        {% elseif track.getTrackSummary() %}
+            <tr class="border-b border-ash-100">
+                <th scope="row" class="py-2.5 pr-4 text-left font-mono font-normal text-ink-soft text-xs uppercase">{{ __('Info:') }}</th>
+                <td class="py-2.5 text-ink text-sm">{{ track.getTrackSummary() }}</td>
+            </tr>
+        {% elseif track.getUrl() %}
+            <tr class="border-b border-ash-100">
+                <th scope="row" class="py-2.5 pr-4 text-left font-mono font-normal text-ink-soft text-xs uppercase">{{ __('Track:') }}</th>
+                <td class="py-2.5 text-ink text-sm">
+                    <a href="{{ track.getUrl()|escape_url }}" target="_blank" rel="noopener" class="link font-mono">{{ track.getUrl() }}</a>
+                </td>
+            </tr>
+        {% else %}
+            {% set fields = {
+                'Status': track.getStatus(),
+                'Signed by': track.getSignedby(),
+                'Delivered to': track.getDeliveryLocation(),
+                'Shipped or billed on': track.getShippedDate(),
+                'Service Type': track.getService(),
+                'Weight': track.getWeight()
+            } %}
+            {% for label, val in fields %}
+                {% if val is not empty %}
+                    <tr class="border-b border-ash-100">
+                        <th scope="row" class="py-2.5 pr-4 text-left font-mono font-normal text-ink-soft text-xs uppercase">{{ __('%1:', label) }}</th>
+                        <td class="py-2.5 text-ink text-sm">{{ val }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            {% if track.getDeliverydate() %}
+                <tr class="border-b border-ash-100">
+                    <th scope="row" class="py-2.5 pr-4 text-left font-mono font-normal text-ink-soft text-xs uppercase">{{ parent.getDeliveryDateTitle().getTitle(track) }}</th>
+                    <td class="py-2.5 text-ink font-mono text-sm">{{ parent.formatDeliveryDateTime(track.getDeliverydate(), track.getDeliverytime()) }}</td>
+                </tr>
+            {% endif %}
+        {% endif %}
+    {% elseif track.title is defined and track.number is defined and track.number %}
+        <tr class="border-b border-ash-100">
+            <th scope="row" class="py-2.5 pr-4 text-left font-mono font-normal text-ink-soft text-xs uppercase">{{ track.title ? track.title : __('N/A') }}:</th>
+            <td class="py-2.5 text-ink font-mono text-sm">{{ track.number }}</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

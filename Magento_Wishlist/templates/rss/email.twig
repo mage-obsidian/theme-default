@@ -1,0 +1,7 @@
+{% if block.getLink() %}
+    <p id="wishlist-rss-email-link" style="font-size:12px;line-height:16px;margin:0 0 16px;">
+        {{ __("RSS link to %1's wishlist", block.getData('wishlistHelper').getCustomerName()) }}
+        <br />
+        <a href="{{ block.getLink()|escape_url }}">{{ block.getLink()|escape_url }}</a>
+    </p>
+{% endif %}

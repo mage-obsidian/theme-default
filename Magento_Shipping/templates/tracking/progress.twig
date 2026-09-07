@@ -1,0 +1,26 @@
+{% set parent = parentBlock|default(block) %}
+<div class="table-wrapper mt-4 overflow-x-auto">
+    <table class="w-full border-collapse text-sm" id="track-history-table-{{ track.getTracking()|escape_html_attr }}">
+        <caption class="sr-only">{{ __('Track history') }}</caption>
+        <thead>
+            <tr class="border-b border-ash-300 text-left table-label">
+                <th scope="col" class="py-2.5 pr-4 font-mono font-normal text-xs uppercase text-ink-soft">{{ __('Location') }}</th>
+                <th scope="col" class="py-2.5 pr-4 font-mono font-normal text-xs uppercase text-ink-soft">{{ __('Date') }}</th>
+                <th scope="col" class="py-2.5 pr-4 font-mono font-normal text-xs uppercase text-ink-soft">{{ __('Local Time') }}</th>
+                <th scope="col" class="py-2.5 pr-4 font-mono font-normal text-xs uppercase text-ink-soft">{{ __('Description') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detail in track.getProgressdetail() %}
+                {% set detailDate = detail.deliverydate ? parent.formatDeliveryDate(detail.deliverydate ~ ' ' ~ detail.deliverytime) : '' %}
+                {% set detailTime = detail.deliverytime ? parent.formatDeliveryTime(detail.deliverytime, detail.deliverydate) : '' %}
+                <tr class="border-b border-ash-100 align-top">
+                    <td class="py-2.5 pr-4 text-ink">{{ detail.deliverylocation|default('') }}</td>
+                    <td class="py-2.5 pr-4 text-ink font-mono">{{ detailDate }}</td>
+                    <td class="py-2.5 pr-4 text-ink font-mono">{{ detailTime }}</td>
+                    <td class="py-2.5 pr-4 text-ink">{{ detail.activity|default('') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

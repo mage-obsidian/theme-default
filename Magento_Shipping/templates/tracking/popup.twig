@@ -1,0 +1,40 @@
+{% set results = block.getTrackingInfo() %}
+<div class="page-tracking max-w-3xl mx-auto px-4 py-8">
+    <h1 class="text-2xl font-display font-bold text-ink mb-6">{{ __('Tracking Information') }}</h1>
+    {% if results is not empty %}
+        {% for shipId, result in results %}
+            <div class="mb-8">
+                {% if shipId %}
+                    <h2 class="text-lg font-display font-semibold text-ink mb-3">{{ __('Shipment #%1', shipId) }}</h2>
+                {% endif %}
+                {% if result is not empty %}
+                    {% for track in result %}
+                        <div class="mb-6 overflow-x-auto">
+                            {% include 'Magento_Shipping::tracking/details.twig' with {
+                                track: track,
+                                storeSupportEmail: block.getStoreSupportEmail(),
+                                parentBlock: block
+                            } %}
+                        </div>
+                        {% if not (track is iterable) and track.getProgressdetail() is not empty %}
+                            <div class="mb-6 overflow-x-auto">
+                                {% include 'Magento_Shipping::tracking/progress.twig' with {
+                                    track: track,
+                                    parentBlock: block
+                                } %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="p-4 bg-ash-100 text-ink-soft rounded text-sm">
+                        {{ __('There is no tracking available for this shipment.') }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="p-4 bg-ash-100 text-ink-soft rounded text-sm">
+            {{ __('There is no tracking available.') }}
+        </div>
+    {% endif %}
+</div>
