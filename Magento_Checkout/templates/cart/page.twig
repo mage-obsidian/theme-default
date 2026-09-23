@@ -123,7 +123,7 @@
             <aside class="flex flex-col gap-6">
                 <div class="cart-summary rounded-edge border border-ash-200 bg-alabaster-raised p-6">
                     {{ child_html('totals') }}
-                    <a href="{{ block.getUrl('checkout')|escape_url }}" class="btn btn--solid btn--block mt-6">
+                    <a href="{{ block.getUrl('checkout')|escape_url }}" class="btn btn--solid btn--block mt-6" data-checkout-link data-sign-in-url="{{ block.getUrl('customer/account/login')|escape_url }}">
                         {{ __('Proceed to checkout') }}
                     </a>
                     {% if multishippingLink and multishippingLink.isAvailable() %}

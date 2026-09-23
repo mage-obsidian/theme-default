@@ -7,6 +7,7 @@
 {{ render_vue('MageObsidian_Checkout::cart/MiniCart', {
     cartUrl: block.getUrl('checkout/cart'),
     checkoutUrl: block.getUrl('checkout'),
+    signInUrl: block.getUrl('customer/account/login'),
     updateUrl: block.getUrl('checkout/sidebar/updateItemQty'),
     removeUrl: block.getUrl('checkout/sidebar/removeItem'),
     labels: {
