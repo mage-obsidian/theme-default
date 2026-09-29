@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
 <!--
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+-->
+<!--
   OBSIDIAN home. The CMS "home" page is intentionally left empty; the storefront
   owns the home as a designed, versioned Twig composition. The demo doubles as the
   MageObsidian showcase, so the home presents the framework (hero + features +

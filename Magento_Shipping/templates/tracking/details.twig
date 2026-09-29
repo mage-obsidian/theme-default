@@ -1,3 +1,9 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
 {% set parent = parentBlock|default(block) %}
 {% set email = storeSupportEmail|default(parent.getStoreSupportEmail()) %}
 {% set number = track is iterable ? (track.number|default('')) : track.getTracking() %}
