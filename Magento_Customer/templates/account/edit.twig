@@ -15,6 +15,8 @@
 
 {% set edit = block.getChildBlock('form_data') %}
 {% set cust = edit.getCustomer() %}
+{% set attributes = block.getFormAttributes() %}
+{% set policy = block.getPasswordPolicy() %}
 
 {{ account.page_header({
     eyebrow: __('Account'),
@@ -30,10 +32,12 @@
     data-pwd-show="{{ __('Show password')|escape_html_attr }}"
     data-pwd-hide="{{ __('Hide password')|escape_html_attr }}"
     data-busy-submit
-    data-password-min-length="{{ edit.getMinimumPasswordLength()|escape_html_attr }}"
+    data-password-min-length="{{ policy.minLength() }}"
+    data-password-classes="{{ policy.requiredClasses() }}"
+    data-err-classes="{{ __('Use at least %1 of: lower case, upper case, digits and special characters.', policy.requiredClasses())|escape_html_attr }}"
     data-err-required="{{ __('This is a required field.')|escape_html_attr }}"
     data-err-email="{{ __('Please enter a valid email address.')|escape_html_attr }}"
-    data-err-minlength="{{ __('Please use at least %1 characters.', edit.getMinimumPasswordLength())|escape_html_attr }}"
+    data-err-minlength="{{ __('Please use at least %1 characters.', policy.minLength())|escape_html_attr }}"
     data-err-match="{{ __('The two passwords do not match.')|escape_html_attr }}"
 >
     {{ block.getBlockHtml('formkey')|raw }}
@@ -42,23 +46,9 @@
         <div class="account-panel__head">
             <h2 class="account-panel__title">{{ __('Personal Details') }}</h2>
         </div>
-        <div class="account-panel__body grid grid-cols-1 gap-5 sm:grid-cols-2">
-            {{ form.field({
-                name: 'firstname',
-                id: 'edit-firstname',
-                label: __('First Name'),
-                value: cust.getFirstname(),
-                required: true,
-                autocomplete: 'given-name'
-            }) }}
-            {{ form.field({
-                name: 'lastname',
-                id: 'edit-lastname',
-                label: __('Last Name'),
-                value: cust.getLastname(),
-                required: true,
-                autocomplete: 'family-name'
-            }) }}
+        <div class="account-panel__body flex flex-col gap-5">
+            {% include 'Magento_Customer::form/name-fields.twig' with { attributes: attributes, data: cust, idPrefix: 'edit' } only %}
+            {% include 'Magento_Customer::form/profile-extras.twig' with { attributes: attributes, data: cust, idPrefix: 'edit' } only %}
         </div>
     </section>
 
@@ -102,7 +92,8 @@
                     id: 'edit-password',
                     label: __('New Password'),
                     type: 'password',
-                    autocomplete: 'new-password'
+                    autocomplete: 'new-password',
+                    attrs: { minlength: policy.minLength() }
                 }) }}
                 {{ form.field({
                     name: 'password_confirmation',
@@ -111,6 +102,9 @@
                     type: 'password',
                     autocomplete: 'new-password'
                 }) }}
+                <div class="sm:col-span-2">
+                    {% include 'Magento_Customer::form/password-meter.twig' with { policy: policy } only %}
+                </div>
             </div>
         </div>
     </section>

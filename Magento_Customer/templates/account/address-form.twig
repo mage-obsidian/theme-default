@@ -14,12 +14,21 @@
 
 {% set edit = block.getChildBlock('edit') %}
 {% set addressForm = block.getAddressForm() %}
+{% set attributes = block.getFormAttributes() %}
+{% set prefixRule = attributes.addressField('prefix') %}
+{% set middlenameRule = attributes.addressField('middlename') %}
+{% set suffixRule = attributes.addressField('suffix') %}
+{% set companyRule = attributes.addressField('company') %}
+{% set telephoneRule = attributes.addressField('telephone') %}
+{% set faxRule = attributes.addressField('fax') %}
+{% set vatRule = attributes.addressField('vat_id') %}
+{% set optionalZip = attributes.optionalZipCountries() %}
 {% set addr = edit.getAddress() %}
 {% set currentCountry = edit.getCountryId() ?: addressForm.getDefaultCountryId() %}
 {% set regionOptions = addressForm.getRegionOptions(currentCountry) %}
 {% set hasRegions = regionOptions is not empty %}
 {% set regionId = edit.getRegionId() %}
-{% set streetLines = edit.getViewModel().addressGetStreetLines() %}
+{% set streetLines = attributes.streetLines() %}
 
 {{ account.page_header({
     eyebrow: __('Address Book'),
@@ -32,6 +41,7 @@
     class="mt-8 flex max-w-2xl flex-col gap-6"
     data-address-form
     data-busy-submit
+    data-optional-zip="{{ optionalZip|json_encode|escape_html_attr }}"
     data-err-required="{{ __('This is a required field.')|escape_html_attr }}"
 >
     {# Region data for the dependent select. Carried in a JSON script (not an
@@ -50,6 +60,17 @@
         </div>
         <div class="account-panel__body flex flex-col gap-5">
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {% if prefixRule.visible %}
+                    {{ form.text_or_list({
+                        name: 'prefix',
+                        id: 'addr-prefix',
+                        label: __('Prefix'),
+                        value: addr.getPrefix(),
+                        options: prefixRule.options,
+                        required: prefixRule.required,
+                        autocomplete: 'honorific-prefix'
+                    }) }}
+                {% endif %}
                 {{ form.field({
                     name: 'firstname',
                     id: 'addr-firstname',
@@ -58,6 +79,16 @@
                     required: true,
                     autocomplete: 'given-name'
                 }) }}
+                {% if middlenameRule.visible %}
+                    {{ form.field({
+                        name: 'middlename',
+                        id: 'addr-middlename',
+                        label: __('Middle Name/Initial'),
+                        value: addr.getMiddlename(),
+                        required: middlenameRule.required,
+                        autocomplete: 'additional-name'
+                    }) }}
+                {% endif %}
                 {{ form.field({
                     name: 'lastname',
                     id: 'addr-lastname',
@@ -66,25 +97,67 @@
                     required: true,
                     autocomplete: 'family-name'
                 }) }}
+                {% if suffixRule.visible %}
+                    {{ form.text_or_list({
+                        name: 'suffix',
+                        id: 'addr-suffix',
+                        label: __('Suffix'),
+                        value: addr.getSuffix(),
+                        options: suffixRule.options,
+                        required: suffixRule.required,
+                        autocomplete: 'honorific-suffix'
+                    }) }}
+                {% endif %}
             </div>
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                {{ form.field({
-                    name: 'company',
-                    id: 'addr-company',
-                    label: __('Company'),
-                    value: addr.getCompany(),
-                    autocomplete: 'organization'
-                }) }}
-                {{ form.field({
-                    name: 'telephone',
-                    id: 'addr-telephone',
-                    label: __('Phone Number'),
-                    type: 'tel',
-                    value: addr.getTelephone(),
-                    required: true,
-                    autocomplete: 'tel'
-                }) }}
-            </div>
+            {% if companyRule.visible or telephoneRule.visible %}
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    {% if companyRule.visible %}
+                        {{ form.field({
+                            name: 'company',
+                            id: 'addr-company',
+                            label: __('Company'),
+                            value: addr.getCompany(),
+                            required: companyRule.required,
+                            autocomplete: 'organization'
+                        }) }}
+                    {% endif %}
+                    {% if telephoneRule.visible %}
+                        {{ form.field({
+                            name: 'telephone',
+                            id: 'addr-telephone',
+                            label: __('Phone Number'),
+                            type: 'tel',
+                            value: addr.getTelephone(),
+                            required: telephoneRule.required,
+                            autocomplete: 'tel'
+                        }) }}
+                    {% endif %}
+                </div>
+            {% endif %}
+            {% if faxRule.visible or vatRule.visible %}
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    {% if faxRule.visible %}
+                        {{ form.field({
+                            name: 'fax',
+                            id: 'addr-fax',
+                            label: __('Fax'),
+                            type: 'tel',
+                            value: addr.getFax(),
+                            required: faxRule.required,
+                            autocomplete: 'fax'
+                        }) }}
+                    {% endif %}
+                    {% if vatRule.visible %}
+                        {{ form.field({
+                            name: 'vat_id',
+                            id: 'addr-vat-id',
+                            label: __('VAT Number'),
+                            value: addr.getVatId(),
+                            required: vatRule.required
+                        }) }}
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </section>
 
@@ -146,7 +219,7 @@
                     id: 'zip',
                     label: __('Zip/Postal Code'),
                     value: addr.getPostcode(),
-                    required: true,
+                    required: currentCountry not in optionalZip,
                     autocomplete: 'postal-code',
                     attrs: { 'data-postcode': '' }
                 }) }}

@@ -1,0 +1,47 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% import 'Magento_Theme::macros/form.twig' as form %}
+{% set dobRule = attributes.customerField('dob') %}
+{% set taxvatRule = attributes.customerField('taxvat') %}
+{% set genderRule = attributes.customerField('gender') %}
+
+{% if dobRule.visible or taxvatRule.visible or genderRule.visible %}
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        {% if dobRule.visible %}
+            {{ form.field({
+                name: 'dob',
+                id: idPrefix ~ '-dob',
+                label: __('Date of Birth'),
+                type: 'date',
+                value: data.getDob(),
+                required: dobRule.required,
+                autocomplete: 'bday'
+            }) }}
+        {% endif %}
+        {% if taxvatRule.visible %}
+            {{ form.field({
+                name: 'taxvat',
+                id: idPrefix ~ '-taxvat',
+                label: __('Tax/VAT Number'),
+                value: data.getTaxvat(),
+                required: taxvatRule.required
+            }) }}
+        {% endif %}
+        {% if genderRule.visible %}
+            {% set genderChoices = [{value: '', label: ''}]|merge(attributes.genderOptions()) %}
+            {{ form.field({
+                name: 'gender',
+                id: idPrefix ~ '-gender',
+                label: __('Gender'),
+                type: 'select',
+                value: data.getGender(),
+                options: genderChoices,
+                required: genderRule.required
+            }) }}
+        {% endif %}
+    </div>
+{% endif %}

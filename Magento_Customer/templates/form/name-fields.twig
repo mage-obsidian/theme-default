@@ -1,0 +1,61 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% import 'Magento_Theme::macros/form.twig' as form %}
+{% set prefixRule = attributes.customerField('prefix') %}
+{% set middlenameRule = attributes.customerField('middlename') %}
+{% set suffixRule = attributes.customerField('suffix') %}
+
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+    {% if prefixRule.visible %}
+        {{ form.text_or_list({
+            name: 'prefix',
+            id: idPrefix ~ '-prefix',
+            label: __('Prefix'),
+            value: data.getPrefix(),
+            options: prefixRule.options,
+            required: prefixRule.required,
+            autocomplete: 'honorific-prefix'
+        }) }}
+    {% endif %}
+    {{ form.field({
+        name: 'firstname',
+        id: idPrefix ~ '-firstname',
+        label: __('First Name'),
+        value: data.getFirstname(),
+        required: true,
+        autocomplete: 'given-name'
+    }) }}
+    {% if middlenameRule.visible %}
+        {{ form.field({
+            name: 'middlename',
+            id: idPrefix ~ '-middlename',
+            label: __('Middle Name/Initial'),
+            value: data.getMiddlename(),
+            required: middlenameRule.required,
+            autocomplete: 'additional-name'
+        }) }}
+    {% endif %}
+    {{ form.field({
+        name: 'lastname',
+        id: idPrefix ~ '-lastname',
+        label: __('Last Name'),
+        value: data.getLastname(),
+        required: true,
+        autocomplete: 'family-name'
+    }) }}
+    {% if suffixRule.visible %}
+        {{ form.text_or_list({
+            name: 'suffix',
+            id: idPrefix ~ '-suffix',
+            label: __('Suffix'),
+            value: data.getSuffix(),
+            options: suffixRule.options,
+            required: suffixRule.required,
+            autocomplete: 'honorific-suffix'
+        }) }}
+    {% endif %}
+</div>

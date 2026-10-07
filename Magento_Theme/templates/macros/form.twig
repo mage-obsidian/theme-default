@@ -69,6 +69,24 @@
     </div>
 {% endmacro %}
 
+{% macro text_or_list(config) %}
+    {% import _self as forms %}
+    {% set options = config.options|default([]) %}
+    {% if options is not empty %}
+        {% set choices = [{value: '', label: ''}] %}
+        {% set current = config.value|default('') %}
+        {% if current != '' and current not in options %}
+            {% set choices = choices|merge([{value: current, label: current}]) %}
+        {% endif %}
+        {% for option in options %}
+            {% set choices = choices|merge([{value: option, label: option}]) %}
+        {% endfor %}
+        {{ forms.field(config|merge({type: 'select', options: choices})) }}
+    {% else %}
+        {{ forms.field(config) }}
+    {% endif %}
+{% endmacro %}
+
 {% macro checkbox(config) %}
     {% set name = config.name %}
     {% set id = config.id ?? ('field-' ~ name|replace({'[': '-', ']': '', '_': '-', '.': '-'})|trim('-')) %}
