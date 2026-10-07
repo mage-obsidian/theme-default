@@ -4,7 +4,6 @@
  SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
  SPDX-License-Identifier: MIT
 #}
-{% import 'Magento_Theme::macros/form.twig' as form %}
 {% set agreements = block.getAgreements() %}
 {% if agreements %}
     <ol id="checkout-agreements" class="mb-6 flex flex-col gap-6">
@@ -15,12 +14,10 @@
                     {% if agreement.getIsHtml() %}{{ agreement.getContent()|raw }}{% else %}{{ agreement.getContent()|nl2br }}{% endif %}
                 </div>
                 {% if agreement.getMode() == constant('Magento\\CheckoutAgreements\\Model\\AgreementModeOptions::MODE_MANUAL') %}
-                    {{ form.checkbox({
-                        name: 'agreement[' ~ agreementId ~ ']',
-                        id: 'agreement-' ~ agreementId,
-                        label: agreement.getIsHtml() ? agreement.getCheckboxText()|raw : agreement.getCheckboxText(),
-                        attrs: { required: 'required' }
-                    }) }}
+                    <label class="field-check" for="agreement-{{ agreementId }}">
+                        <input class="field-check__input" type="checkbox" id="agreement-{{ agreementId }}" name="agreement[{{ agreementId }}]" value="1" required="required">
+                        <span class="field-check__label">{% if agreement.getIsHtml() %}{{ agreement.getCheckboxText()|raw }}{% else %}{{ agreement.getCheckboxText() }}{% endif %}</span>
+                    </label>
                 {% else %}
                     <p id="agreement-notice-{{ agreementId }}" class="text-sm text-ink">
                         {% if agreement.getIsHtml() %}{{ agreement.getCheckboxText()|raw }}{% else %}{{ agreement.getCheckboxText() }}{% endif %}

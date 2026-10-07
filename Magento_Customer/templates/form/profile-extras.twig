@@ -16,10 +16,11 @@
                 name: 'dob',
                 id: idPrefix ~ '-dob',
                 label: __('Date of Birth'),
-                type: 'date',
-                value: data.getDob(),
+                value: attributes.dobDisplay(data.getDob()),
                 required: dobRule.required,
-                autocomplete: 'bday'
+                autocomplete: 'bday',
+                hint: attributes.dobPattern()|upper,
+                attrs: {inputmode: 'numeric', placeholder: attributes.dobPattern()|upper}
             }) }}
         {% endif %}
         {% if taxvatRule.visible %}
