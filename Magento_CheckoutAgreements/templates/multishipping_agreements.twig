@@ -1,0 +1,32 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% import 'Magento_Theme::macros/form.twig' as form %}
+{% set agreements = block.getAgreements() %}
+{% if agreements %}
+    <ol id="checkout-agreements" class="mb-6 flex flex-col gap-6">
+        {% for agreement in agreements %}
+            {% set agreementId = agreement.getAgreementId() %}
+            <li class="flex flex-col gap-3">
+                <div id="agreement-content-{{ agreementId }}" class="max-h-40 overflow-y-auto rounded-edge border border-ash-200 p-4 text-sm text-ink-soft">
+                    {% if agreement.getIsHtml() %}{{ agreement.getContent()|raw }}{% else %}{{ agreement.getContent()|nl2br }}{% endif %}
+                </div>
+                {% if agreement.getMode() == constant('Magento\\CheckoutAgreements\\Model\\AgreementModeOptions::MODE_MANUAL') %}
+                    {{ form.checkbox({
+                        name: 'agreement[' ~ agreementId ~ ']',
+                        id: 'agreement-' ~ agreementId,
+                        label: agreement.getIsHtml() ? agreement.getCheckboxText()|raw : agreement.getCheckboxText(),
+                        attrs: { required: 'required' }
+                    }) }}
+                {% else %}
+                    <p id="agreement-notice-{{ agreementId }}" class="text-sm text-ink">
+                        {% if agreement.getIsHtml() %}{{ agreement.getCheckboxText()|raw }}{% else %}{{ agreement.getCheckboxText() }}{% endif %}
+                    </p>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ol>
+{% endif %}
