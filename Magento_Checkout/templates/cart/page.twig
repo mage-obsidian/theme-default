@@ -16,6 +16,9 @@
 {% import 'Magento_Theme::macros/state.twig' as state %}
 {% set cartItems = block.getCartItems() %}
 {% set items = cartItems.getItems() %}
+{% set cartValidation = block.getCartValidation() %}
+{% set cartPager = block.getCartPager() %}
+{% set pageItems = cartPager.slice(items) %}
 {% set wishlist = block.getWishlist() %}
 {% set giftOptions = block.getGiftOptions() %}
 {% set checkoutConfig = block.getCheckoutConfig().getConfig() %}
@@ -38,6 +41,7 @@
             cta_url: block.getUrl('')
         }) }}
     {% else %}
+        {{ child_html('validation') }}
         <div class="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
             <form action="{{ block.getUrl('checkout/cart/updatePost')|escape_url }}" method="post" data-cart-form>
                 {{ block.getBlockHtml('formkey')|raw }}
@@ -45,11 +49,11 @@
                    enforcing policy drops a style attribute whatever the nonce,
                    and with it the animation that tells the shopper which line
                    moved. #}
-                {{ style_rules(items|reduce((rules, line) => rules|merge({
+                {{ style_rules(pageItems|reduce((rules, line) => rules|merge({
                     ('[data-cart-line="' ~ line.id ~ '"]'): 'view-transition-name: cart-line-' ~ line.id
                 }), {})) }}
                 <ul class="divide-y divide-ash-200 border-y border-ash-200">
-                    {% for item in items %}
+                    {% for item in pageItems %}
                         <li class="flex gap-4 py-6" data-cart-line="{{ item.id }}">
                             <a href="{{ item.url|escape_url }}" class="block h-28 w-24 shrink-0 overflow-hidden rounded-edge bg-ash-100">
                                 {% if item.image %}
@@ -66,6 +70,9 @@
                                         {% endfor %}
                                     </ul>
                                 {% endif %}
+                                {% for message in item.messages %}
+                                    <p data-cart-line-message role="alert" class="text-sm text-danger">{{ message }}</p>
+                                {% endfor %}
                                 <p class="mt-1 font-mono text-sm text-ink-soft">{{ item.price }}</p>
                                 {% if item.fpt %}
                                     <p class="font-mono text-xs text-ash-500">{{ __('Fixed Product Tax') }}: {{ item.fpt }}</p>
@@ -119,6 +126,15 @@
                     {% endfor %}
                 </ul>
 
+                {% set pagerPages = cartPager.getPages(items|length) %}
+                {% if pagerPages is not empty %}
+                    <nav data-cart-pager class="mt-6 flex items-center justify-center gap-2 font-mono text-sm" aria-label="{{ __('Bag pages')|escape_html_attr }}">
+                        {% for pageLink in pagerPages %}
+                            <a href="{{ pageLink.url|escape_url }}" class="btn btn--sm {{ pageLink.current ? 'btn--solid' : 'btn--outline' }}"{% if pageLink.current %} aria-current="page"{% endif %}>{{ pageLink.number }}</a>
+                        {% endfor %}
+                    </nav>
+                {% endif %}
+
                 <div class="mt-6 flex items-center justify-between gap-4">
                     <a href="{{ cartItems.getContinueShoppingUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-label text-ink-soft transition-colors hover:text-ink">{{ __('Continue shopping') }}</a>
                     {# No-JS quantity update; cart-page.js makes the steppers live and hides this. #}
@@ -128,10 +144,17 @@
 
             <aside class="flex flex-col gap-6">
                 <div class="cart-summary rounded-edge border border-ash-200 bg-alabaster-raised p-6">
-                    {{ child_html('totals') }}
-                    <a href="{{ block.getUrl('checkout')|escape_url }}" class="btn btn--solid btn--block mt-6" data-checkout-link data-sign-in-url="{{ block.getUrl('customer/account/login')|escape_url }}">
-                        {{ __('Proceed to checkout') }}
-                    </a>
+                    {% set msrpNotice = child_html('totals_msrp')|trim %}
+                    {{ msrpNotice is not empty ? msrpNotice|raw : child_html('totals') }}
+                    {% if cartValidation.canProceedToCheckout() %}
+                        <a href="{{ block.getUrl('checkout')|escape_url }}" class="btn btn--solid btn--block mt-6" data-checkout-link data-sign-in-url="{{ block.getUrl('customer/account/login')|escape_url }}">
+                            {{ __('Proceed to checkout') }}
+                        </a>
+                    {% else %}
+                        <span class="btn btn--solid btn--block mt-6 pointer-events-none opacity-50" data-checkout-link aria-disabled="true">
+                            {{ __('Proceed to checkout') }}
+                        </span>
+                    {% endif %}
                     {% if multishippingLink and multishippingLink.isAvailable() %}
                         <a href="{{ multishippingLink.getCheckoutUrl()|escape_url }}" class="mt-3 inline-flex w-full items-center justify-center font-mono text-xs uppercase tracking-eyebrow text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline">
                             {{ __('Check Out with Multiple Addresses') }}

@@ -1,0 +1,12 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set messages = block.getCartValidation().getMessages() %}
+<div data-cart-messages class="mb-6 flex flex-col gap-2">
+    {% for message in messages %}
+        <p role="{{ message.type == 'error' ? 'alert' : 'status' }}" data-cart-message="{{ message.type|escape_html_attr }}" class="rounded-edge border border-ash-200 bg-alabaster-raised px-4 py-3 text-sm {{ message.type == 'error' ? 'text-danger' : 'text-ink-soft' }}">{{ message.text }}</p>
+    {% endfor %}
+</div>

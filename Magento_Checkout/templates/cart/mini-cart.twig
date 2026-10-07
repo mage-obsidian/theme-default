@@ -10,7 +10,10 @@
   customer-data section for its contents. URLs are resolved server-side so
   store-code / secure-base-url stay correct. `block` is the MageObsidian Template.
 #}
+{% set settings = block.getSettings() %}
 {{ render_vue('MageObsidian_Checkout::cart/MiniCart', {
+    enabled: settings.isEnabled(),
+    maxItems: settings.getMaxItems(),
     cartUrl: block.getUrl('checkout/cart'),
     checkoutUrl: block.getUrl('checkout'),
     signInUrl: block.getUrl('customer/account/login'),
@@ -28,6 +31,8 @@
         decrease: __('Decrease quantity'),
         increase: __('Increase quantity'),
         close: __('Close'),
+        edit: __('Edit'),
+        showing: __('%1 of %2'),
         open: __('Open bag'),
         added: __('Added to your bag'),
         itemsOne: __('%1 item in your bag'),
