@@ -27,7 +27,7 @@
     directory: block.getDirectoryData().getData(),
     paymentRenderers: block.getPaymentRenderers(),
     withdrawnMethods: block.getWithdrawnMethods(),
-    loginUrl: block.getUrl('customer/account/login'),
+    loginUrl: block.getSignIn().getUrl(),
     labels: {
         steps: __('Checkout steps'),
         stepIdentification: __('Identification'),

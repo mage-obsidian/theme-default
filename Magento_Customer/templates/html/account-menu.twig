@@ -20,10 +20,12 @@
 {{ render_vue('MageObsidian_Customer::account/AccountMenu', {
     accountUrl: acc.getAccountUrl(),
     loginUrl: acc.getLoginUrl(),
+    registerUrl: acc.getRegisterUrl(),
     logoutUrl: acc.getLogoutUrl(),
     ordersUrl: acc.getOrdersUrl(),
     addressesUrl: acc.getAddressesUrl(),
     signInLabel: __('Sign In'),
+    createAccountLabel: __('Create an Account'),
     menuLabel: __('Account'),
     myAccountLabel: __('My Account'),
     myOrdersLabel: __('My Orders'),

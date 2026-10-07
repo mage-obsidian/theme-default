@@ -10,6 +10,7 @@
    adds inline validation only. #}
 {% import 'Magento_Theme::macros/form.twig' as form %}
 {% set register = block.getChildBlock('form_data') %}
+{% set checkoutContext = block.getCheckoutContext() %}
 {% set fd = register.getFormData() %}
 {% set attributes = block.getFormAttributes() %}
 {% set policy = block.getPasswordPolicy() %}
@@ -38,6 +39,7 @@
                     data-err-match="{{ __('The two passwords do not match.') }}"
                 >
                     {{ block.getBlockHtml('formkey')|raw }}
+                    {% if checkoutContext.isActive() %}<input type="hidden" name="context" value="checkout">{% if checkoutContext.getReferer() %}<input type="hidden" name="referer" value="{{ checkoutContext.getReferer()|escape_html_attr }}">{% endif %}{% endif %}
 
                     {% include 'Magento_Customer::form/name-fields.twig' with { attributes: attributes, data: fd, idPrefix: 'reg' } only %}
 
@@ -97,7 +99,7 @@
 
                     <p class="text-sm text-ink-soft">
                         {{ __('Already have an account?') }}
-                        <a href="{{ block.getUrl('customer/account/login')|escape_url }}" class="link link--meta">{{ __('Sign In') }}</a>
+                        <a href="{{ checkoutContext.urlTo('customer/account/login')|escape_url }}" class="link link--meta">{{ __('Sign In') }}</a>
                     </p>
                 </form>
             </div>

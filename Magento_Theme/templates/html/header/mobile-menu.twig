@@ -15,6 +15,7 @@
 #}
 {% set stores = block.getStoreSwitcher() %}
 {% set currencies = block.getCurrencySwitcher() %}
+{% set acc = block.getAccountState() %}
 {#
   The component's own closed state, so Vue adopts the hamburger instead of
   clearing it and painting it again — keep in step with MobileMenu.vue. The
@@ -32,6 +33,17 @@
             { url: block.getUrl('wishlist'), label: __('My Wish List'), kind: 'wishlist' },
             { url: block.getUrl('catalog/product_compare'), label: __('Compare Products'), kind: 'compare' }
         ],
+        account: {
+            label: __('Account'),
+            signInLabel: __('Sign In'),
+            signInUrl: acc.getLoginUrl(),
+            createLabel: __('Create an Account'),
+            createUrl: acc.getRegisterUrl(),
+            accountLabel: __('My Account'),
+            accountUrl: acc.getAccountUrl(),
+            signOutLabel: __('Sign Out'),
+            signOutUrl: acc.getLogoutUrl()
+        },
         label: __('Menu'),
         navLabel: __('Browse'),
         brand: 'OBSIDIAN',

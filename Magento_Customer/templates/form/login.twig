@@ -10,6 +10,7 @@
    to loginPost; login-enhancer.ts adds inline validation and an AJAX sign-in. #}
 {% import 'Magento_Theme::macros/form.twig' as form %}
 {% set login = block.getChildBlock('form_data') %}
+{% set checkoutContext = block.getCheckoutContext() %}
 
 <section class="shell">
     <div class="auth-split">
@@ -32,6 +33,7 @@
                     data-err-failed="{{ __('We could not sign you in. Check your details and try again.') }}"
                 >
                     {{ block.getBlockHtml('formkey')|raw }}
+                    {% if checkoutContext.isActive() %}<input type="hidden" name="context" value="checkout">{% endif %}
 
                     <p data-login-error role="alert" class="form-banner"></p>
 
@@ -69,7 +71,7 @@
 
                     <div class="flex flex-wrap items-center justify-between gap-4">
                         <a href="{{ login.getForgotPasswordUrl()|escape_url }}" class="link link--meta">{{ __('Forgot your password?') }}</a>
-                        <a href="{{ block.getUrl('customer/account/create')|escape_url }}" class="link link--meta">{{ __('Create an account') }}</a>
+                        <a href="{{ checkoutContext.urlTo('customer/account/create')|escape_url }}" class="link link--meta">{{ __('Create an account') }}</a>
                     </div>
                 </form>
             </div>

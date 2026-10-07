@@ -1,0 +1,15 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% if block.getGreeting().isEnabled() %}
+    <div data-persistent-greeting data-welcome="{{ __('Welcome, %1!')|escape_html_attr }}" data-login-url="{{ block.getUrl('customer/account/login')|escape_url }}" hidden>
+        <span class="flex items-center gap-2">
+            <span data-persistent-name></span>
+            <a href="{{ block.getUrl('persistent/index/unsetCookie')|escape_url }}" class="link link--meta" data-persistent-not-you>{{ __('Not you?') }}</a>
+        </span>
+    </div>
+    {{ script('MageObsidian_Storefront::js/persistent-greeting') }}
+{% endif %}

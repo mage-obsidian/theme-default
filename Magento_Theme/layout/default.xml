@@ -74,6 +74,7 @@
                          drawer and the header share one source. -->
                     <argument name="store_switcher" xsi:type="object">MageObsidian\Storefront\ViewModel\StoreSwitcher</argument>
                     <argument name="currency_switcher" xsi:type="object">MageObsidian\Storefront\ViewModel\CurrencySwitcher</argument>
+                    <argument name="account_state" xsi:type="object">MageObsidian\Customer\ViewModel\AccountState</argument>
                 </arguments>
             </block>
             <!-- Desktop switchers (header.twig hides them on mobile; the drawer
