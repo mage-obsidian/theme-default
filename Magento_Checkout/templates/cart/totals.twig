@@ -7,15 +7,15 @@
 {# Cart totals. `block` is core Magento\Checkout\Block\Cart\Totals; we iterate its
    already-collected totals rather than the suppressed Knockout summary. Values are
    store-currency floats formatted by the `price` filter. #}
-{% set totals = block.getTotals() %}
+{% set taxDisplay = block.getTaxDisplay() %}
+{% set quote = block.getQuote() %}
+{% set rows = taxDisplay.totalRows(block.getTotals(), quote.getShippingAddress().getShippingDescription()|default(''), taxDisplay.fixedTaxTotals(quote.getAllVisibleItems())) %}
 <dl class="flex flex-col gap-3 font-mono text-sm">
-    {% for code, total in totals %}
-        {% if total.getValue() is not null %}
-            {% set isGrand = code == 'grand_total' %}
-            <div class="flex items-center justify-between gap-4 {{ isGrand ? 'border-t border-ash-200 pt-3 text-base font-semibold text-ink' : 'text-ink-soft' }}">
-                <dt class="uppercase tracking-mono">{{ total.getTitle() }}</dt>
-                <dd class="{{ isGrand ? 'text-ink' : '' }}">{{ total.getValue()|price }}</dd>
-            </div>
-        {% endif %}
+    {% for row in rows %}
+        {% set isGrand = row.code == 'grand_total' %}
+        <div data-total-row="{{ row.code }}" class="flex items-center justify-between gap-4 {{ isGrand ? 'border-t border-ash-200 pt-3 text-base font-semibold text-ink' : (row.detail ? 'pl-4 text-xs text-ash-500' : 'text-ink-soft') }}">
+            <dt class="{{ row.detail ? '' : 'uppercase tracking-mono' }}">{{ row.label }}</dt>
+            <dd class="{{ isGrand ? 'text-ink' : '' }}">{{ row.amount|price }}</dd>
+        </div>
     {% endfor %}
 </dl>

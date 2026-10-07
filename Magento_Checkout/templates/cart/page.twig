@@ -73,10 +73,14 @@
                                 {% for message in item.messages %}
                                     <p data-cart-line-message role="alert" class="text-sm text-danger">{{ message }}</p>
                                 {% endfor %}
-                                <p class="mt-1 font-mono text-sm text-ink-soft">{{ item.price }}</p>
-                                {% if item.fpt %}
-                                    <p class="font-mono text-xs text-ash-500">{{ __('Fixed Product Tax') }}: {{ item.fpt }}</p>
-                                {% endif %}
+                                <p class="mt-1 flex flex-col font-mono text-sm text-ink-soft" data-line-price>
+                                    {% for basis, amount in item.prices %}
+                                        <span>{% if item.prices|length > 1 %}<span class="text-xs text-ash-500">{{ basis == 'incl' ? __('Incl. Tax') : __('Excl. Tax') }}: </span>{% endif %}<span data-basis="{{ basis }}">{{ amount }}</span></span>
+                                    {% endfor %}
+                                </p>
+                                {% for fixedTax in item.fixedTaxes %}
+                                    <p class="font-mono text-xs text-ash-500" data-line-fixed-tax>{{ fixedTax.label }}: {{ fixedTax.amount }}</p>
+                                {% endfor %}
 
                                 <div class="mt-auto flex items-center gap-4 pt-3">
                                     <div class="field-stepper">
@@ -121,7 +125,11 @@
                                 </div>
                             </div>
 
-                            <p class="shrink-0 font-mono text-base text-ink">{{ item.rowTotal }}</p>
+                            <p class="flex shrink-0 flex-col items-end font-mono text-base text-ink" data-line-total>
+                                {% for basis, amount in item.rowTotals %}
+                                    <span>{% if item.rowTotals|length > 1 %}<span class="text-xs text-ash-500">{{ basis == 'incl' ? __('Incl. Tax') : __('Excl. Tax') }}: </span>{% endif %}<span data-basis="{{ basis }}">{{ amount }}</span></span>
+                                {% endfor %}
+                            </p>
                         </li>
                     {% endfor %}
                 </ul>
@@ -184,6 +192,7 @@
                 },
                 directory: directory,
                 currencyFormat: checkoutConfig.currencyFormat,
+                taxDisplay: checkoutConfig.taxDisplay,
                 labels: {
                     panel: __('Estimate Shipping and Tax'),
                     country: __('Country'),
@@ -194,7 +203,14 @@
                     loading: __('Loading…'),
                     methodsHeading: __('Shipping method'),
                     noRates: __('No quotes are available for this address.'),
-                    free: __('Free')
+                    free: __('Free'),
+                    exclTax: __('Excl. Tax'),
+                    inclTax: __('Incl. Tax'),
+                    subtotalExcl: __('Subtotal (Excl. Tax)'),
+                    subtotalIncl: __('Subtotal (Incl. Tax)'),
+                    shippingExcl: __('Shipping Excl. Tax ({description})'),
+                    shippingIncl: __('Shipping Incl. Tax ({description})'),
+                    fixedTax: __('Fixed Product Tax')
                 }
             }, true) }}
         </div>

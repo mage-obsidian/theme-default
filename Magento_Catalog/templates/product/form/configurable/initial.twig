@@ -7,7 +7,20 @@
 {%- import 'Magento_Theme::macros/form.twig' as form -%}
 <form class="pdp__configurable" novalidate>
     <div class="pdp__price mb-6 flex items-baseline gap-3" aria-live="polite">
-        <span class="pdp__price-final font-mono text-2xl{{ oldPrice ? ' text-sale' : ' text-ink' }}">{{ price }}</span>
+        {% if priceDisplay == 'both' %}
+            <span class="flex flex-col gap-1">
+                <span data-price-basis="incl" class="flex items-baseline gap-2">
+                    <span class="font-mono text-xs text-ink-soft">{{ labels.inclTax }}</span>
+                    <span class="price pdp__price-final font-mono text-2xl{{ oldPrice ? ' text-sale' : ' text-ink' }}">{{ price }}</span>
+                </span>
+                <span data-price-basis="excl" class="flex items-baseline gap-2">
+                    <span class="font-mono text-xs text-ink-soft">{{ labels.exclTax }}</span>
+                    <span class="price font-mono text-base text-ink-soft">{{ priceExcl }}</span>
+                </span>
+            </span>
+        {% else %}
+            <span class="pdp__price-final font-mono text-2xl{{ oldPrice ? ' text-sale' : ' text-ink' }}">{{ price }}</span>
+        {% endif %}
         {% apply island_if(oldPrice) %}<span class="pdp__price-regular font-mono text-base text-ink-soft line-through">{{ oldPrice }}</span>{% endapply %}
     </div>
 
