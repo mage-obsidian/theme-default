@@ -18,7 +18,7 @@
     <select data-nav-select
             class="field__control field__control--compact">
         {% for key, limit in block.getAvailableLimit() %}
-            <option value="{{ block.getPagerUrl({'product_list_limit': key})|escape_url }}"{{ block.isLimitCurrent(key) ? ' selected' }}>{{ limit|number }}</option>
+            <option value="{{ block.getPagerUrl({'product_list_limit': key})|escape_url }}"{{ block.isLimitCurrent(key) ? ' selected' }}>{{ limit matches '/^\\d+$/' ? limit|number : limit }}</option>
         {% endfor %}
     </select>
     {# Hidden from sight on mobile, where the row does not fit and "Show 12" already
