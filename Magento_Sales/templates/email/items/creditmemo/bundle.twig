@@ -1,0 +1,47 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set parent = block.getItem() %}
+{% set previousOption = '' %}
+{% for row in block.getChildren(parent) %}
+    {% set ignored = row.setOrder(parent.getOrder()) %}
+    {% if row.getOrderItem().getParentItem() %}
+        {% set attributes = block.getSelectionAttributes(row) %}
+        {% if previousOption != attributes.option_id %}
+            <tr class="bundle-option-label">
+                <td colspan="3"><strong><em>{{ attributes.option_label }}</em></strong></td>
+            </tr>
+            {% set previousOption = attributes.option_id %}
+        {% endif %}
+        <tr class="bundle-item bundle-option-value">
+            <td class="item-info"><p>{{ block.getValueHtml(row)|raw }}</p></td>
+    {% else %}
+        <tr class="bundle-item bundle-parent">
+            <td class="item-info">
+                <p class="product-name">{{ row.getName() }}</p>
+                <p class="sku">{{ __('SKU') }}: {{ block.getSku(row) }}</p>
+            </td>
+    {% endif %}
+            <td class="item-qty">{% if block.canShowPriceInfo(row) %}{{ row.getQty() + 0 }}{% else %}&nbsp;{% endif %}</td>
+            <td class="item-price">{% if block.canShowPriceInfo(row) %}{{ block.getItemPrice(row)|raw }}{% else %}&nbsp;{% endif %}</td>
+        </tr>
+{% endfor %}
+{% set options = block.getItemOptions() %}
+{% if options or parent.getDescription() %}
+    <tr>
+        <td colspan="3" class="item-extra">
+            {% if options %}
+                <dl>
+                    {% for option in options %}
+                        <dt><strong><em>{{ option.label }}</em></strong></dt>
+                        <dd>{{ option.value }}</dd>
+                    {% endfor %}
+                </dl>
+            {% endif %}
+            {{ parent.getDescription() }}
+        </td>
+    </tr>
+{% endif %}

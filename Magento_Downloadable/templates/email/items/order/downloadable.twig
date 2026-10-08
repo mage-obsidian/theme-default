@@ -1,0 +1,34 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set item = block.getItem() %}
+{% set options = block.getItemOptions() %}
+{% set purchased = block.getLinks().getPurchasedItems() %}
+<tr>
+    <td class="item-info has-extra">
+        <p class="product-name">{{ item.getName() }}</p>
+        <p class="sku">{{ __('SKU') }}: {{ block.getSku(item) }}</p>
+        {% if options %}
+            <dl>
+                {% for option in options %}
+                    <dt><strong><em>{{ option.label }}</em></strong></dt>
+                    <dd>{{ option.value|nl2br }}</dd>
+                {% endfor %}
+            </dl>
+        {% endif %}
+        {% if purchased %}
+            <dl>
+                <dt><strong><em>{{ block.getLinksTitle() }}</em></strong></dt>
+                {% for link in purchased %}
+                    <dd>{{ link.getLinkTitle() }}&nbsp;(<a href="{{ block.getPurchasedLinkUrl(link)|escape_url }}">{{ __('download') }}</a>)</dd>
+                {% endfor %}
+            </dl>
+        {% endif %}
+        {{ item.getDescription() }}
+    </td>
+    <td class="item-qty">{{ item.getQtyOrdered() + 0 }}</td>
+    <td class="item-price">{{ block.getItemPrice(item)|raw }}</td>
+</tr>
