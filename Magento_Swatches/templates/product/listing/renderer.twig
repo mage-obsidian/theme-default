@@ -5,11 +5,14 @@
  SPDX-License-Identifier: MIT
 #}
 {% set swatches = block.getSwatches() %}
-{% set groups = swatches.groups(block) %}
+{% set view = swatches.view(block) %}
+{% set groups = view.groups %}
+{% set purchase = view.purchase %}
 {% if groups is not empty %}
     {% set productUrl = block.getProduct().getProductUrl() %}
     {% set tooltip = swatches.showsTooltip() %}
-    <div class="listing-swatches" data-listing-swatches data-product-url="{{ productUrl|escape_url }}">
+    <div class="listing-swatches" data-listing-swatches data-product-url="{{ productUrl|escape_url }}"
+         {%- if purchase and view.post.action is defined %} data-purchase="{{ purchase|json_encode|escape_html_attr }}"{% endif %}>
         {% for group in groups %}
             <div class="listing-swatches__group" role="group" aria-label="{{ group.label|escape_html_attr }}"
                  data-attribute-code="{{ group.code|escape_html_attr }}">
@@ -41,5 +44,16 @@
                 {% endif %}
             </div>
         {% endfor %}
+        {% if purchase and view.post.action is defined %}
+            <form data-add-to-cart data-listing-purchase action="{{ view.post.action|escape_url }}" method="post" hidden>
+                <input type="hidden" name="product" value="{{ view.post.data.product }}">
+                <input type="hidden" name="uenc" value="{{ view.post.data.uenc }}">
+                {% for group in groups %}
+                    <input type="hidden" name="super_attribute[{{ group.id|escape_html_attr }}]" data-attribute-code="{{ group.code|escape_html_attr }}" disabled>
+                {% endfor %}
+                <button type="submit" class="btn btn--outline btn--sm btn--block">{{ __('Add to cart') }}</button>
+            </form>
+            <span class="inline-flex w-full items-center justify-center rounded-edge border border-ash-200 px-4 py-2.5 font-mono text-eyebrow uppercase tracking-label text-ash-500" data-listing-unavailable hidden>{{ __('Not available') }}</span>
+        {% endif %}
     </div>
 {% endif %}
