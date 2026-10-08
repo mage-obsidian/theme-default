@@ -8,16 +8,21 @@
   Downloadable buy box: native add-to-cart POST plus the link selector. Links
   purchased separately POST as links[]; the controller validates required
   selection, so the form works with no JS. Samples are plain download links.
-  (AJAX / live-total is deferred — composite POST stays native for now.)
+  (The price follows the chosen links; the composite POST stays native.)
 #}
 {% import 'Magento_Theme::macros/form.twig' as form %}
 {% set view = block.getView() %}
+{% set stock = block.getStock() %}
 {% set links = block.getChildBlock('downloadable_links') %}
 {% set samples = block.getChildBlock('downloadable_samples') %}
 {% set separately = links and links.getLinksPurchasedSeparately() %}
 {% set required = links and links.getLinkSelectionRequired() %}
 
 <form class="pdp__form flex flex-col gap-6"
+      {% if separately %}data-downloadable-links
+          data-base-price="{{ view.getFinalPrice() }}"
+          data-currency-format="{{ view.getCurrencyFormat() }}"
+      {% endif %}
       action="{{ view.getAddToCartAction()|escape_url }}" method="post" enctype="multipart/form-data" data-busy-submit>
     <input type="hidden" name="product" value="{{ view.getProductId() }}">
     <input type="hidden" name="uenc" value="{{ view.getUenc()|escape_html_attr }}">
@@ -28,10 +33,17 @@
             <legend class="eyebrow">
                 {{ links.getLinksTitle() }}{% if required and separately %} <span class="text-sale">*</span>{% endif %}
             </legend>
+            {% if separately and links.getLinks()|length > 1 %}
+                <label class="pdp__links-all field-check text-sm text-ink">
+                    <input type="checkbox" class="field-check__input" data-links-select-all>
+                    <span class="flex-1">{{ __('Select all') }}</span>
+                </label>
+            {% endif %}
             {% for link in links.getLinks() %}
                 <label class="pdp__link field-check text-sm text-ink">
                     {% if separately %}
                         <input type="checkbox" name="links[]" value="{{ link.getId() }}" {{ links.getLinkCheckedValue(link) }}
+                               data-link-price="{{ links.getCurrencyPrice(link.getPrice()) }}"
                                class="field-check__input">
                     {% endif %}
                     <span class="flex-1">{{ link.getTitle() }}</span>
@@ -49,7 +61,7 @@
     {% endif %}
 
     <div class="flex flex-wrap items-end gap-4">
-        {{ form.qty({ name: 'qty' }) }}
+        {{ form.qty({ name: 'qty', min: stock.getMinQty(), step: stock.getStep() }) }}
 
         <button type="submit"
                 class="btn btn--solid btn--lg flex-1">
@@ -73,3 +85,6 @@
     </section>
 {% endif %}
 {{ script('MageObsidian_Storefront::js/form-busy') }}
+{% if separately %}
+    {{ script('MageObsidian_Catalog::js/downloadable-links') }}
+{% endif %}

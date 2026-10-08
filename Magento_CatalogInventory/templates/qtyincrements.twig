@@ -1,0 +1,11 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% if block.getProductQtyIncrements() %}
+    <p class="pdp__increments font-mono text-eyebrow uppercase tracking-label text-ink-soft">
+        {{ __('%1 is available to buy in increments of %2', block.getProductName(), block.getProductQtyIncrements()) }}
+    </p>
+{% endif %}

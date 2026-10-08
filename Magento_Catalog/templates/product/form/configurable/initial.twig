@@ -24,6 +24,8 @@
         {% apply island_if(oldPrice) %}<span class="pdp__price-regular font-mono text-base text-ink-soft line-through">{{ oldPrice }}</span>{% endapply %}
     </div>
 
+    {% apply island_if(false) %}{% endapply %}
+
     {% apply island_list %}
         {% for group in groups %}
             <fieldset class="pdp__swatch-group mb-6 border-0 p-0">
@@ -54,7 +56,7 @@
     {% endapply %}
 
     <div class="pdp__buy-row flex flex-wrap items-end gap-4">
-        {{ form.qty({ id: 'pdp-cfg-qty', label: labels.qty, value: qty }) }}
+        {{ form.qty({ id: 'pdp-cfg-qty', label: labels.qty, value: qty, min: qtyMin, step: qtyStep }) }}
         <button type="submit" aria-disabled="true" aria-busy="false"
                 class="btn btn--solid btn--lg flex-1"><span class="btn__label">{{ labels.selectOptions }}</span>{% apply island_if(false) %}{% endapply %}</button>
     </div>

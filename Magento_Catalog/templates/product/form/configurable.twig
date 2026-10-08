@@ -15,6 +15,7 @@
   them, and append them (incl. file uploads) to the add-to-cart body.
 #}
 {% set view = block.getView() %}
+{% set stock = block.getStock() %}
 {% set cfg = block.getChildBlock('configurable') %}
 {% set optionsBlock = block.getChildBlock('product_options') %}
 {% set hasOptions = optionsBlock and optionsBlock.getOptions() is not empty %}
@@ -37,6 +38,7 @@
     unavailable: __('This combination is unavailable'),
     inclTax: __('Incl. Tax'),
     exclTax: __('Excl. Tax'),
+    tierPrice: __('Buy %1 for %2 each and save %3%'),
     added: __('Added to cart'),
     failed: __('Could not add to cart')
 } %}
@@ -65,7 +67,9 @@
             priceExcl: view.formatPrice(view.getFinalPriceExcludingTax()),
             priceDisplay: view.getPriceDisplayMode(),
             oldPrice: null,
-            qty: 1,
+            qty: stock.getMinQty(),
+            qtyMin: stock.getMinQty(),
+            qtyStep: stock.getStep(),
             labels: labels
         } only %}
     {% endif %}
@@ -83,7 +87,9 @@
     initialPriceAmountExcl: view.getFinalPriceExcludingTax(),
     priceDisplay: view.getPriceDisplayMode(),
     preconfigured: view.getPreconfiguredSuperAttribute(),
-    initialQty: view.getPreconfiguredQty(),
+    initialQty: view.getPreconfiguredQty() > 1 ? view.getPreconfiguredQty() : stock.getMinQty(),
+    qtyMin: stock.getMinQty(),
+    qtyStep: stock.getStep(),
     labels: labels
 }, true, serverHtml, true) }}
 <noscript>

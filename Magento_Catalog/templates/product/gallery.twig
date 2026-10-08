@@ -12,6 +12,8 @@
 {% if images is not empty %}
 {% set main = images|first %}
 <div class="pdp__gallery" role="group" aria-label="{{ __('Product gallery') }}">
+    <a href="#gallery-next-area" class="action skip skip-gallery-next sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-edge focus:border focus:border-ink focus:bg-alabaster focus:px-4 focus:py-2 focus:font-mono focus:text-eyebrow focus:uppercase focus:tracking-eyebrow focus:text-ink focus:no-underline">{{ __('Skip to the end of the images gallery') }}</a>
+    <a id="gallery-prev-area" tabindex="-1"></a>
     <figure class="pdp__gallery-main relative m-0 block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised">
         {{ image(main.large, {
             attributes: { 'data-gallery-main': true },
@@ -24,6 +26,13 @@
             fetchpriority: 'high',
             loading: 'eager'
         }) }}
+        <div data-gallery-video class="absolute inset-0 flex items-center bg-ink" hidden></div>
+        <button type="button" data-gallery-play
+                {%- if main.video %} data-video-embed="{{ main.video.embed|escape_html_attr }}" data-video-title="{{ main.video.title }}"{% else %} hidden{% endif %}
+                aria-label="{{ __('Play video') }}"
+                class="pdp__play absolute left-1/2 top-1/2 z-10 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-alabaster bg-ink/70 text-alabaster transition-colors hover:bg-ink">
+            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11.04-6.86a1 1 0 0 0 0-1.72L9.5 4.28A1 1 0 0 0 8 5.14Z"/></svg>
+        </button>
     </figure>
 
     {% if images|length > 1 %}
@@ -32,21 +41,29 @@
             {% for image in images %}
                 <li>
                     <button type="button"
-                            class="pdp__thumb block w-full overflow-hidden rounded-edge border border-transparent bg-alabaster-raised transition-colors aria-pressed:border-ink"
+                            class="pdp__thumb relative block w-full overflow-hidden rounded-edge border border-transparent bg-alabaster-raised transition-colors aria-pressed:border-ink"
                             data-gallery-thumb
                             data-large="{{ image.large|escape_url }}"
                             data-large-srcset="{{ image.largeSrcset|default('') }}"
                             data-label="{{ image.label }}"
+                            {%- if image.video %} data-video-embed="{{ image.video.embed|escape_html_attr }}" data-video-title="{{ image.video.title }}"{% endif %}
                             aria-pressed="{{ loop.first ? 'true' : 'false' }}"
-                            aria-label="{{ __('Show image %1', loop.index) }}">
+                            aria-label="{{ image.video ? __('Show video %1', loop.index) : __('Show image %1', loop.index) }}">
                         <img class="aspect-[4/5] h-full w-full object-cover"
                              src="{{ image.thumb|escape_url }}"
                              alt=""
                              loading="lazy" decoding="async">
+                        {% if image.video %}
+                            <span data-gallery-video-badge class="pdp__thumb-play pointer-events-none absolute inset-0 flex items-center justify-center text-alabaster" aria-hidden="true">
+                                <svg class="h-6 w-6 drop-shadow" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11.04-6.86a1 1 0 0 0 0-1.72L9.5 4.28A1 1 0 0 0 8 5.14Z"/></svg>
+                            </span>
+                        {% endif %}
                     </button>
                 </li>
             {% endfor %}
         </ul>
     {% endif %}
+    <a id="gallery-next-area" tabindex="-1"></a>
+    <a href="#gallery-prev-area" class="action skip skip-gallery-prev sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-edge focus:border focus:border-ink focus:bg-alabaster focus:px-4 focus:py-2 focus:font-mono focus:text-eyebrow focus:uppercase focus:tracking-eyebrow focus:text-ink focus:no-underline">{{ __('Skip to the beginning of the images gallery') }}</a>
 </div>
 {% endif %}

@@ -137,7 +137,7 @@
         <label for="{{ id }}" class="field__label block">{{ config.label ?? __('Qty') }}</label>
         <input id="{{ id }}"
                {% if config.name is defined %}name="{{ config.name }}"{% endif %}
-               type="number" inputmode="numeric" min="1" step="1" value="{{ config.value ?? 1 }}"
+               type="number" inputmode="numeric" min="{{ config.min ?? 1 }}" step="{{ config.step ?? 1 }}" value="{{ config.value ?? config.min ?? 1 }}"
                class="field__control field-qty mt-2">
     </div>
 {% endmacro %}

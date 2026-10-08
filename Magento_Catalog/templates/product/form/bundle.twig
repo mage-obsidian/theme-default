@@ -12,6 +12,7 @@
 #}
 {% import 'Magento_Theme::macros/form.twig' as form %}
 {% set view = block.getView() %}
+{% set stock = block.getStock() %}
 {% set bundle = block.getChildBlock('bundle') %}
 {% set options = bundle ? bundle.getOptions() : [] %}
 
@@ -32,7 +33,7 @@
     {% endif %}
 
     <div class="flex flex-wrap items-end gap-4">
-        {{ form.qty({ name: 'qty' }) }}
+        {{ form.qty({ name: 'qty', min: stock.getMinQty(), step: stock.getStep() }) }}
 
         <button type="submit"
                 class="btn btn--solid btn--lg flex-1">

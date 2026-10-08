@@ -11,6 +11,7 @@
 #}
 {% set view = block.getView() %}
 {% set gallery = block.getGallery() %}
+{% set stock = block.getStock() %}
 {% set product = view.getProduct() %}
 {% set configurable = view.isConfigurable() %}
 
@@ -40,6 +41,18 @@
                 <div class="pdp__price mt-6">{{ view.getPriceHtml()|raw }}</div>
             {% endif %}
 
+            {{ child_html('tier_price') }}
+
+            {% set availability = stock.getAvailability() %}
+            {% if availability and availability.inStock %}
+                <p class="pdp__availability mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-eyebrow uppercase tracking-label text-ink-soft">
+                    <span class="pdp__availability-status">{{ __('In stock') }}</span>
+                    {% if availability.left is not null %}
+                        <span class="pdp__availability-left text-sale">{{ __('Only %1 left', availability.left) }}</span>
+                    {% endif %}
+                </p>
+            {% endif %}
+
             {# Generic buy-box hook: a domain module (stock, delivery estimate…)
                fills it; empty when no such module is installed. #}
             {{ child_html('product_info_extra') }}
@@ -50,6 +63,7 @@
             {% endif %}
 
             <div class="pdp__buy mt-8">
+                {{ child_html('qty_increments') }}
                 {% if configurable %}
                     {% include 'Magento_Catalog::product/form/configurable.twig' %}
                 {% elseif view.isSaleable() %}
