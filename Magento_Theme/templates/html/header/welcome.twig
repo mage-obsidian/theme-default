@@ -1,0 +1,11 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set message = block.getChrome().getWelcome() %}
+{% if message %}
+    <span class="truncate" data-guest-welcome>{{ message }}</span>
+    {{ script('MageObsidian_Storefront::js/guest-welcome') }}
+{% endif %}

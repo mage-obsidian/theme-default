@@ -1,0 +1,24 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set switcher = block.getSwitcher() %}
+{% if switcher.hasMultipleGroups() %}
+    {{ script('MageObsidian_Storefront::js/switch-actions') }}
+    <nav class="mt-8" id="switcher-store" aria-label="{{ __('Select Store')|escape_html_attr }}" data-store-switcher>
+        <div class="mb-4 font-mono text-eyebrow uppercase tracking-spaced text-on-obsidian">{{ __('Select Store') }}</div>
+        <ul class="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+            {% for group in switcher.getGroups() %}
+                <li>
+                    {% if group.current %}
+                        <span class="text-on-obsidian" aria-current="true">{{ group.label }}</span>
+                    {% else %}
+                        <a href="{{ group.url|escape_url }}" data-switch-link class="transition-colors hover:text-on-obsidian">{{ group.label }}</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+{% endif %}

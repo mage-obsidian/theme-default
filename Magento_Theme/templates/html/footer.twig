@@ -15,8 +15,7 @@
         <div>
             <div class="mb-4 font-display text-xl tracking-label text-on-obsidian">OBSIDIAN</div>
             <p class="max-w-[32ch] text-sm leading-relaxed">
-                Outerwear and tailoring cut along one clean line. A volcanic-glass palette,
-                knife-clean seams, and nothing that doesn't earn its place.
+                {{ __("Outerwear and tailoring cut along one clean line. A volcanic-glass palette, knife-clean seams, and nothing that doesn't earn its place.") }}
             </p>
         </div>
 
@@ -25,14 +24,16 @@
         <div>
             <div class="mb-4 font-mono text-eyebrow uppercase tracking-spaced text-on-obsidian">{{ __('More') }}</div>
             {# Excluded: the Shop column, already placed above by the grid. #}
-            {{ block.getChildHtmlWithExclusions('', true, ['obsidian.footer_nav'])|raw }}
+            {{ block.getChildHtmlWithExclusions('', true, ['obsidian.footer_nav', 'copyright', 'store_switcher'])|raw }}
+            {{ child_html('store_switcher') }}
         </div>
     </div>
 
     <div class="border-t border-obsidian-800">
         <div class="mx-auto flex max-w-shell flex-wrap items-center justify-between gap-3 px-4 py-6 font-mono text-eyebrow uppercase tracking-eyebrow md:px-8">
-            <span>© AW25 OBSIDIAN — a MageObsidian demo line</span>
-            <span>Cut in Porto · Shipped worldwide</span>
+            {% set copyright = block.getChildBlock('copyright') %}
+            <span>{{ copyright and block.getChrome().hasCopyright() ? copyright.getCopyright() : __('© AW25 OBSIDIAN — a MageObsidian demo line') }}</span>
+            <span>{{ __('Cut in Porto · Shipped worldwide') }}</span>
         </div>
     </div>
 </div>

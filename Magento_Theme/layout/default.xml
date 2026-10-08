@@ -105,6 +105,7 @@
         <referenceBlock name="footer.content" template="Magento_Theme::html/footer.twig">
             <arguments>
                 <argument name="navigation" xsi:type="object">MageObsidian\Storefront\ViewModel\Navigation</argument>
+                <argument name="chrome" xsi:type="object">MageObsidian\Storefront\ViewModel\PageChrome</argument>
             </arguments>
             <!-- Its own block, rather than a loop in footer.twig, so it can carry a ttl. -->
             <block class="MageObsidian\Storefront\Block\Navigation" name="obsidian.footer_nav"
@@ -114,8 +115,8 @@
                 </arguments>
             </block>
         </referenceBlock>
-        <!-- copyright is rendered inside footer.twig -->
-        <referenceBlock name="copyright" remove="true"/>
+        <move element="copyright" destination="footer.content"/>
+        <referenceBlock name="logo" template="Magento_Theme::html/header/logo.twig"/>
 
         <!-- Repoint Magento_Theme's structural blocks to their Twig ports. -->
         <referenceBlock name="skip_to_content" template="Magento_Theme::html/skip.twig"/>

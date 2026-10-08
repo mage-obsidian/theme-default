@@ -1,0 +1,23 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set source = block.getLogoSrc() %}
+{% set alt = block.getLogoAlt() %}
+{% set sizes = block.getLogoSizeResolver() %}
+{% set width = (sizes ? sizes.getWidth() : 0) ?: block.getLogoWidth() %}
+{% set height = (sizes ? sizes.getHeight() : 0) ?: block.getLogoHeight() %}
+{% if block.getLogoState().isConfigured(source) %}
+    <a href="{{ block.getUrl('') }}" class="inline-flex items-center" aria-label="{{ (alt ?: __('OBSIDIAN — home'))|escape_html_attr }}">
+        <img src="{{ source|escape_url }}" alt="{{ alt|escape_html_attr }}"
+             {% if width %}width="{{ width }}"{% endif %}
+             {% if height %}height="{{ height }}"{% endif %}
+             class="h-8 w-auto max-w-[10rem] object-contain sm:h-10 sm:max-w-[14rem]">
+    </a>
+{% else %}
+    <a href="{{ block.getUrl('') }}"
+       class="font-display text-base font-semibold tracking-mono text-ink min-[360px]:text-lg sm:text-2xl sm:tracking-label"
+       aria-label="{{ __('OBSIDIAN — home')|escape_html_attr }}">OBSIDIAN</a>
+{% endif %}
