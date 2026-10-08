@@ -1,0 +1,33 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set productId = block.getProductId() %}
+{% set unsubscription = block.getUnsubscription() %}
+{% set productName = unsubscription.getProductName(productId) %}
+<div class="mx-auto w-full max-w-readable px-4 py-12 md:px-8">
+    <h1 class="page-heading">{{ __('Stock alerts') }}</h1>
+
+    {% if unsubscription.hasSubscription(productId) %}
+        <form action="{{ block.getUrl('productalert/unsubscribe/stock')|escape_url }}" method="post" class="mt-8 flex flex-col gap-6" data-auto-submit>
+            {{ block.getBlockHtml('formkey')|raw }}
+            <input type="hidden" name="product" value="{{ productId }}">
+            <p>
+                {% if productName %}
+                    {{ __('You are about to stop receiving back-in-stock alerts for %1.', productName) }}
+                {% else %}
+                    {{ __('You are about to stop receiving back-in-stock alerts for this product.') }}
+                {% endif %}
+            </p>
+            <div>
+                <button type="submit" class="btn btn--solid">{{ __('Unsubscribe') }}</button>
+            </div>
+        </form>
+        {{ script('MageObsidian_Storefront::js/auto-submit') }}
+    {% else %}
+        <p class="mt-8" data-unsubscribe-expired>{{ __('This unsubscribe link is no longer valid, or you are already unsubscribed from this alert.') }}</p>
+        <p class="mt-4"><a class="link" href="{{ block.getUrl('customer/account')|escape_url }}">{{ __('Back to my account') }}</a></p>
+    {% endif %}
+</div>
