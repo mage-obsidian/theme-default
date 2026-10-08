@@ -1,0 +1,17 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set kind = block.getRecentKind() %}
+{% set title = kind == 'viewed' ? __('Recently Viewed Products') : __('Recently Compared Products') %}
+<section class="block widget block-recent-products block-recent-products--{{ kind }}" data-recent-products data-kind="{{ kind }}" data-url="{{ block.getRecently().cardsUrl()|escape_url }}" data-count="{{ block.getData('page_size')|default(5) }}" hidden>
+    <h2 class="font-display text-2xl text-ink">{{ title }}</h2>
+    <div class="mt-6" data-recent-products-list></div>
+</section>
+{{ script('MageObsidian_Storefront::js/cart-actions') }}
+{{ script('MageObsidian_Storefront::js/compare-actions') }}
+{{ script('MageObsidian_Storefront::js/wishlist-actions') }}
+{{ script('MageObsidian_Catalog::js/recently-compared') }}
+{{ script('MageObsidian_Catalog::js/recent-products') }}

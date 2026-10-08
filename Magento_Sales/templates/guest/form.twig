@@ -16,19 +16,6 @@
     <p class="mt-2 text-sm text-ink-soft">{{ __('Enter your order details to view its status, invoices and shipments.') }}</p>
 
     <div class="mt-8">
-        {{ render_vue('MageObsidian_Sales::sales/OrdersReturnsForm', {
-            action: view.getActionUrl(),
-            labels: {
-                legend: __('Order Information'),
-                orderId: __('Order ID'),
-                lastName: __('Billing Last Name'),
-                findBy: __('Find Order By'),
-                email: __('Email'),
-                zip: __('Billing ZIP Code'),
-                emailOption: __('Email Address'),
-                zipOption: __('ZIP Code'),
-                submit: __('Continue')
-            }
-        }, true) }}
+        {% include 'Magento_Sales::guest/form-island.twig' with { view: view, block: block } only %}
     </div>
 </div>

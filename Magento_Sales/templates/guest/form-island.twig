@@ -1,0 +1,20 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{{ render_vue('MageObsidian_Sales::sales/OrdersReturnsForm', {
+    action: view.getActionUrl(),
+    labels: {
+        legend: __('Order Information'),
+        orderId: __('Order ID'),
+        lastName: __('Billing Last Name'),
+        findBy: __('Find Order By'),
+        email: __('Email'),
+        zip: __('Billing ZIP Code'),
+        emailOption: __('Email Address'),
+        zipOption: __('ZIP Code'),
+        submit: __('Continue')
+    }
+}, eager is defined ? eager : true) }}

@@ -1,0 +1,15 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{{ render_vue('MageObsidian_Storefront::wishlist/WishlistSidebar', {
+    listUrl: block.getUrl('wishlist'),
+    labels: {
+        title: __('My Wish List'),
+        open: __('Go to Wish List'),
+        addToCart: __('Add to Cart'),
+        remove: __('Remove %1 from wish list')
+    }
+}) }}

@@ -1,0 +1,11 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set productId = block.getRecently().currentProductId() %}
+{% if productId %}
+    <div hidden data-recently-viewed="{{ productId|escape_html_attr }}"></div>
+    {{ script('MageObsidian_Catalog::js/recently-viewed') }}
+{% endif %}

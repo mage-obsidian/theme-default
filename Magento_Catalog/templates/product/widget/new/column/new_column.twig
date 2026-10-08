@@ -1,0 +1,29 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set products = block.getProductCollection() %}
+{% set variant = block.getColumnVariant() %}
+
+{% if products and products.getSize() %}
+    <div class="block widget block-new-products block-new-products--{{ variant }}">
+        <h2 class="font-display text-lg text-ink">{{ __('New Products') }}</h2>
+        <ol class="mt-3 flex flex-col gap-3">
+            {% for product in products.getItems() %}
+                {% set media = variant != 'names' ? block.getCard().getImage(product, 'category_page_grid') : null %}
+                <li class="product-item flex items-center gap-3">
+                    {% if media %}
+                        <a href="{{ product.getProductUrl()|escape_url }}" class="shrink-0" {{ variant == 'images' ? '' : 'tabindex="-1" aria-hidden="true"' }}>
+                            {{ image(media.src, { alt: variant == 'images' ? product.getName() : '', width: 64, height: 80, loading: 'lazy', class: 'h-20 w-16 object-cover' }) }}
+                        </a>
+                    {% endif %}
+                    {% if variant != 'images' %}
+                        <a href="{{ product.getProductUrl()|escape_url }}" class="text-sm text-ink hover:text-accent">{{ product.getName() }}</a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+{% endif %}

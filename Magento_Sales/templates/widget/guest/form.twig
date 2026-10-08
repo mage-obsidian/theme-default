@@ -1,0 +1,14 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% if block.isEnable() %}
+    <div class="widget block block-orders-returns mx-auto max-w-xl">
+        <h2 class="font-display text-2xl text-ink">{{ __('Orders and Returns') }}</h2>
+        <div class="mt-6">
+            {{ block.getIsland().toHtml()|raw }}
+        </div>
+    </div>
+{% endif %}

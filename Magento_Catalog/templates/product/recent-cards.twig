@@ -1,0 +1,13 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+<ol class="products-grid grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-5">
+    {% for product in block.getProducts() %}
+        <li class="product-item">
+            {% include 'Magento_Catalog::product/card.twig' with { product: product, index: loop.index0, eager_count: 0, priority_count: 0 } %}
+        </li>
+    {% endfor %}
+</ol>

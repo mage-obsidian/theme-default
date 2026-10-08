@@ -1,0 +1,18 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{{ render_vue('MageObsidian_Sales::sales/ReorderSidebar', {
+    action: block.getUrl('checkout/cart/addgroup'),
+    viewAllUrl: block.getUrl('sales/order/history'),
+    labels: {
+        title: __('Recently Ordered'),
+        subtitle: __('Last Ordered Items'),
+        addToCart: __('Add to Cart'),
+        viewAll: __('View All'),
+        unavailable: __('Product is not salable.'),
+        choose: __('Please select at least one item to add.')
+    }
+}) }}

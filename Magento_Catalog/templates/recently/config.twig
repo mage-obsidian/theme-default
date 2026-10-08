@@ -1,0 +1,8 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set config = block.getRecently().config() %}
+<div hidden data-recently-config data-scope="{{ config.scope|escape_html_attr }}" data-sync="{{ config.sync ? '1' : '0' }}" data-sync-url="{{ config.syncUrl|escape_url }}" data-viewed-lifetime="{{ config.viewedLifetime }}" data-compared-lifetime="{{ config.comparedLifetime }}"></div>

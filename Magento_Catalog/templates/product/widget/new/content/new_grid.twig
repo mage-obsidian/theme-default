@@ -1,0 +1,23 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set products = block.getProductCollection() %}
+
+{% if products and products.getSize() %}
+    <div class="block widget block-new-products">
+        <p class="font-mono text-xs uppercase tracking-eyebrow text-ink-soft">{{ __('New Products') }}</p>
+        <ol class="products-grid mt-6 grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 lg:grid-cols-4" aria-label="{{ __('New Products')|escape_html_attr }}">
+            {% for product in products.getItems() %}
+                <li class="product-item">
+                    {% include 'Magento_Catalog::product/card.twig' with { product: product, index: loop.index0, eager_count: 0, priority_count: 0 } %}
+                </li>
+            {% endfor %}
+        </ol>
+        {% if block.showPager() %}
+            {{ block.getPagerHtml()|raw }}
+        {% endif %}
+    </div>
+{% endif %}
