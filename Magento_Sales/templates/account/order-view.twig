@@ -58,6 +58,8 @@
     <div class="mt-8 print:hidden">{{ account.order_track(steps) }}</div>
 {% endif %}
 
+{{ child_html('order.comments')|raw }}
+
 {% include 'Magento_Sales::order/info/links.twig' with { 'order_id': order.getId(), 'current': 'view', 'route_prefix': route_prefix } %}
 
 {% if orderGift and orderGift.message %}
@@ -129,6 +131,7 @@
         <button type="submit" class="btn btn--solid">{{ __('Reorder') }}</button>
     </form>
     <a href="{{ block.getUrl(route_prefix ~ '/print', {'order_id': order.getId()})|escape_url }}" class="link link--meta">{{ __('Print Order') }}</a>
+    {{ child_html('tracking-info-link')|raw }}
     {% if not is_guest %}
         {% include 'Magento_Sales::account/cancel-order.twig' %}
     {% endif %}

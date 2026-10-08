@@ -1,0 +1,19 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% if block.hasComments() %}
+    <div class="mt-4 document-comments">
+        <h3 class="table-label">{{ block.getTitle() }}</h3>
+        <dl class="mt-2 space-y-3 text-sm">
+            {% for entry in block.getComments() %}
+                <div>
+                    <dt class="text-ink-soft">{{ entry.getCreatedAt()|date_format('long') }}</dt>
+                    <dd class="text-ink">{{ entry.getComment() }}</dd>
+                </div>
+            {% endfor %}
+        </dl>
+    </div>
+{% endif %}

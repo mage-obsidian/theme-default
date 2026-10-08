@@ -30,6 +30,8 @@
     action: statusChip
 }) }}
 
+{{ child_html('sales.order.info.buttons')|raw }}
+
 {% include 'Magento_Sales::order/info/links.twig' with { 'order_id': order.getId(), 'current': 'creditmemo', 'route_prefix': route_prefix } %}
 
 {% for creditmemo in order.getCreditmemosCollection() %}
@@ -46,6 +48,7 @@
             <div class="mt-6 flex justify-end">
                 {% include 'Magento_Sales::order/document-totals.twig' with { 'document': creditmemo, 'order': order, 'grand_label': __('Refund Total') } %}
             </div>
+            {{ block.getChildBlock('creditmemo_comments').setEntity(creditmemo).toHtml()|raw }}
         </div>
     </section>
 {% endfor %}

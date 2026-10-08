@@ -1,0 +1,18 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set order = block.getOrder() %}
+{% set policy = block.getReorderPolicy() %}
+<div class="mt-6 flex flex-wrap items-center gap-5 print:hidden">
+    {% if policy and policy.canReorder(order) %}
+        <form action="{{ block.getReorderUrl(order)|escape_url }}" method="post" class="inline" data-busy-submit>
+            {{ block.getBlockHtml('formkey')|raw }}
+            <button type="submit" class="btn btn--solid">{{ __('Reorder') }}</button>
+        </form>
+    {% endif %}
+    <a href="{{ block.getPrintUrl(order)|escape_url }}" target="_blank" rel="noopener" class="link link--meta">{{ __('Print Order') }}</a>
+</div>
+{{ script('MageObsidian_Storefront::js/form-busy') }}

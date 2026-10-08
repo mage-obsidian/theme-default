@@ -1,0 +1,10 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% import 'Magento_Theme::macros/account.twig' as account %}
+{% set order = block.getOrder() %}
+{% set presentation = block.getOrderPresentation() %}
+{{ account.chip(order.getStatusLabel(), presentation ? presentation.getStateTone(order) : 'neutral') }}

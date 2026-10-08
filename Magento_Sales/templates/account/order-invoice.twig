@@ -32,6 +32,8 @@
     action: statusChip
 }) }}
 
+{{ child_html('sales.order.info.buttons')|raw }}
+
 {% include 'Magento_Sales::order/info/links.twig' with { 'order_id': order.getId(), 'current': 'invoice', 'route_prefix': route_prefix } %}
 
 {% for invoice in order.getInvoiceCollection() %}
@@ -48,6 +50,7 @@
             <div class="mt-6 flex justify-end">
                 {% include 'Magento_Sales::order/document-totals.twig' with { 'document': invoice, 'order': order, 'grand_label': __('Invoice Total') } %}
             </div>
+            {{ block.getChildBlock('invoice_comments').setEntity(invoice).toHtml()|raw }}
         </div>
     </section>
 {% endfor %}

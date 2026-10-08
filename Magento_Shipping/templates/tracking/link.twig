@@ -1,0 +1,10 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set order = block.getOrder() %}
+{% if order and order.getTracksCollection().getSize() > 0 %}
+    <a href="{{ block.getWindowUrl(order)|escape_url }}" target="_blank" rel="noopener" class="link link--meta print:hidden">{{ block.getLabel() }}</a>
+{% endif %}

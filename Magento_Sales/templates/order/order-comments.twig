@@ -1,0 +1,24 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set history = block.getOrder().getVisibleStatusHistory() %}
+{% if history is not empty %}
+    <section class="account-panel mt-8 order-comments">
+        <div class="account-panel__head">
+            <h2 class="account-panel__title">{{ __('About Your Order') }}</h2>
+        </div>
+        <div class="account-panel__body">
+            <dl class="space-y-3 text-sm">
+                {% for entry in history %}
+                    <div>
+                        <dt class="table-label">{{ entry.getCreatedAt()|date_format('long') }}</dt>
+                        <dd class="text-ink">{{ entry.getComment() }}</dd>
+                    </div>
+                {% endfor %}
+            </dl>
+        </div>
+    </section>
+{% endif %}

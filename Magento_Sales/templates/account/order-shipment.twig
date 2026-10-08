@@ -31,6 +31,8 @@
     action: statusChip
 }) }}
 
+{{ child_html('sales.order.info.buttons')|raw }}
+
 {% include 'Magento_Sales::order/info/links.twig' with { 'order_id': order.getId(), 'current': 'shipment', 'route_prefix': route_prefix } %}
 
 {% for shipment in order.getShipmentsCollection() %}
@@ -53,6 +55,7 @@
                 <div class="overflow-x-auto">
                     {% include 'Magento_Sales::order/items/shipment-table.twig' with { items: shipment.getAllItems(), order: order, itemOptions: itemOptions } %}
                 </div>
+                {{ block.getChildBlock('shipment_comments').setEntity(shipment).toHtml()|raw }}
         </div>
     </section>
 {% endfor %}

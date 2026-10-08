@@ -19,9 +19,11 @@
 {% set single = printBlock.getShipment() %}
 {% set shipments = single ? [single] : order.getShipmentsCollection() %}
 
+{% set statusChip %}{{ child_html('order.status')|raw }}{% endset %}
 {{ account.page_header({
     eyebrow: order.getCreatedAt()|date_format('long'),
-    title: __('Order #%1', order.getRealOrderId())
+    title: __('Order #%1', order.getRealOrderId()),
+    action: statusChip
 }) }}
 
 {% for shipment in shipments %}
