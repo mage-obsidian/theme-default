@@ -67,12 +67,18 @@
                     </div>
                     <ul class="mt-2 text-sm text-ink-soft">
                         {% for item in block.getAddressItems(address) %}
-                            <li>{{ item.getQuoteItem().getName() }} <span class="text-ash-500">× {{ item.getQty() }}</span></li>
+                            <li>
+                                {{ item.getQuoteItem().getName() }} <span class="text-ash-500">× {{ item.getQty() }}</span>
+                                {% set renderer = block.getChildBlock('checkout.cart.item.renderers') %}
+                                {% if renderer %}{{ renderer.setItem(item).toHtml()|raw }}{% endif %}
+                            </li>
                         {% endfor %}
                     </ul>
                 </div>
             </article>
         {% endfor %}
+
+        {{ child_html('checkout_billing_items')|raw }}
 
         <div class="flex items-center justify-between gap-4">
             <a href="{{ block.getBackUrl()|escape_url }}" class="font-mono text-xs uppercase tracking-eyebrow text-ink-soft transition-colors hover:text-ink">{{ __('Back to Select Addresses') }}</a>

@@ -82,7 +82,11 @@
                                 <tbody class="divide-y divide-ash-200">
                                     {% for item in block.getShippingAddressItems(address) %}
                                         <tr>
-                                            <td class="py-2 text-ink">{{ item.getName() }}</td>
+                                            <td class="py-2 text-ink">
+                                                {{ item.getName() }}
+                                                {% set renderer = block.getChildBlock('checkout.cart.item.renderers') %}
+                                                {% if renderer %}{{ renderer.setItem(item).toHtml()|raw }}{% endif %}
+                                            </td>
                                             <td class="py-2 text-center text-ink-soft">{{ (item.getQty() * 1) }}</td>
                                             <td class="py-2 text-right font-mono text-ink">{{ item.getRowTotal()|price }}</td>
                                         </tr>

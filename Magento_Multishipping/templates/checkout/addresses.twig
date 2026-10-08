@@ -29,7 +29,11 @@
                     {% for index, item in block.getItems() %}
                         {% if item.getQuoteItem() %}
                             <tr>
-                                <td class="px-4 py-4 align-top text-ink">{{ item.getQuoteItem().getName() }}</td>
+                                <td class="px-4 py-4 align-top text-ink">
+                                    {{ item.getQuoteItem().getName() }}
+                                    {% set renderer = block.getChildBlock('checkout.cart.item.renderers') %}
+                                    {% if renderer %}{{ renderer.setItem(item).toHtml()|raw }}{% endif %}
+                                </td>
                                 <td class="px-4 py-4 align-top">
                                     <label class="sr-only" for="ship-{{ index }}-{{ item.getQuoteItemId() }}-qty">{{ __('Qty') }}</label>
                                     <input type="number" min="0" size="2"

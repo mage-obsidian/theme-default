@@ -1,0 +1,17 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set options = block.getLineOptions().getOptions(block.getItem()) %}
+{% if options %}
+    <dl class="mt-1 space-y-0.5 text-xs text-ink-soft" data-line-options>
+        {% for option in options %}
+            <div class="flex flex-wrap gap-1.5">
+                <dt class="text-ash-500">{{ option.label }}:</dt>
+                <dd>{{ option.value }}</dd>
+            </div>
+        {% endfor %}
+    </dl>
+{% endif %}
