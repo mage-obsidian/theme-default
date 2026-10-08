@@ -24,15 +24,20 @@
    here and printed at the foot: read after the loop, a loaded collection can
    report the rows in hand as the total. #}
 {% set pager = wishlist.getChildHtml('wishlist_item_pager') %}
+{% set optionsBlock = wishlist.getChildBlock('customer.wishlist.item.options') %}
+{% set reviewBlock = wishlist.getChildBlock('customer.wishlist.item.review') %}
+{% set commentBlock = wishlist.getChildBlock('customer.wishlist.item.comment') %}
+{% set editBlock = wishlist.getChildBlock('customer.wishlist.item.edit') %}
+{% set products = [] %}
+{% for entry in items %}
+    {% set products = products|merge([entry.getProduct()]) %}
+{% endfor %}
 
 {% set headerActions %}
     {% if items.getSize() > 0 %}
         <div class="flex flex-wrap items-center gap-5">
             <a href="{{ block.getUrl('wishlist/index/share')|escape_url }}" class="link link--meta">{{ __('Share Wish List') }}</a>
-            <form action="{{ block.getUrl('wishlist/index/allcart')|escape_url }}" method="post" class="inline" data-busy-submit>
-                {{ block.getBlockHtml('formkey')|raw }}
-                <button type="submit" class="btn btn--solid">{{ __('Add All to Cart') }}</button>
-            </form>
+            <button type="submit" form="wishlist-update-form" formaction="{{ block.getUrl('wishlist/index/allcart')|escape_url }}" class="btn btn--solid">{{ __('Add All to Cart') }}</button>
         </div>
     {% endif %}
 {% endset %}
@@ -44,11 +49,14 @@
 }) }}
 
 {% if items.getSize() > 0 %}
+    <form id="wishlist-update-form" action="{{ block.getUrl('wishlist/index/update', {'wishlist_id': wishlist.getWishlistInstance().getId()})|escape_url }}" method="post" data-busy-submit>
+        {{ block.getBlockHtml('formkey')|raw }}
+    </form>
     <ul class="mt-8 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
         {% for item in items %}
             {% set product = item.getProduct() %}
             {% set img = thumbnail.get(product) %}
-            <li class="product-card group flex flex-col">
+            <li class="product-card group flex flex-col" data-item-id="{{ item.getId()|escape_html_attr }}">
                 <a href="{{ product.getProductUrl()|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised" tabindex="-1">
                     <img src="{{ img.url|escape_url }}" width="{{ img.width }}" height="{{ img.height }}" alt="{{ img.label|escape_html_attr }}" loading="lazy" class="h-full w-full object-cover">
                 </a>
@@ -57,7 +65,9 @@
                     <h2 class="product-card__name font-display text-base leading-snug text-ink">
                         <a href="{{ product.getProductUrl()|escape_url }}" class="transition-colors hover:text-accent">{{ product.getName() }}</a>
                     </h2>
+                    {% if reviewBlock %}{{ reviewBlock.setItem(item).setSiblings(products).toHtml()|raw }}{% endif %}
                     <span class="product-card__price font-mono text-sm text-ink">{{ product.getFinalPrice()|price }}</span>
+                    {% if optionsBlock %}{{ optionsBlock.setItem(item).toHtml()|raw }}{% endif %}
 
                     <div class="product-card__action mt-auto pt-2">
                         {% if not product.isSaleable() %}
@@ -67,15 +77,18 @@
                                as ProductCard); a direct cart POST would hit the configure page. #}
                             <a href="{{ product.getProductUrl()|escape_url }}" class="btn btn--outline btn--sm btn--block">{{ __('View Options') }}</a>
                         {% else %}
-                            <form action="{{ block.getUrl('wishlist/index/cart')|escape_url }}" method="post" class="flex items-center gap-2" data-busy-submit>
-                                {{ block.getBlockHtml('formkey')|raw }}
-                                <input type="hidden" name="item" value="{{ item.getId()|escape_html_attr }}">
-                                <label class="sr-only" for="qty-{{ item.getId() }}">{{ __('Quantity') }}</label>
-                                <input type="number" id="qty-{{ item.getId() }}" name="qty" value="{{ item.getQty()|round }}" min="1" class="{{ inputClass }}">
-                                <button type="submit" class="btn btn--outline btn--sm flex-1">{{ __('Add to Cart') }}</button>
-                            </form>
+                            <button type="submit" form="wishlist-update-form" formaction="{{ block.getUrl('wishlist/index/cart')|escape_url }}" name="item" value="{{ item.getId()|escape_html_attr }}" class="btn btn--outline btn--sm btn--block">{{ __('Add to Cart') }}</button>
                         {% endif %}
                     </div>
+
+                    {% if item.canHaveQty() %}
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm text-ink-soft" for="qty-{{ item.getId() }}">{{ __('Qty') }}</label>
+                            <input type="number" id="qty-{{ item.getId() }}" name="qty[{{ item.getId()|escape_html_attr }}]" form="wishlist-update-form" value="{{ item.getQty()|round }}" min="1" class="{{ inputClass }}"{% if not product.isSaleable() %} disabled{% endif %}>
+                        </div>
+                    {% endif %}
+
+                    {% if commentBlock %}{{ commentBlock.setItem(item).toHtml()|raw }}{% endif %}
 
                     <form
                         action="{{ block.getUrl('wishlist/index/remove')|escape_url }}"
@@ -90,12 +103,16 @@
                         <input type="hidden" name="item" value="{{ item.getId()|escape_html_attr }}">
                         <button type="submit" class="link link--meta">{{ __('Remove') }}</button>
                     </form>
+                    {% if editBlock %}{{ editBlock.setItem(item).toHtml()|raw }}{% endif %}
                 </div>
             </li>
         {% endfor %}
     </ul>
 
-    <div class="mt-10">{{ pager|raw }}</div>
+    <div class="mt-10 flex flex-wrap items-center justify-between gap-4">
+        {{ wishlist.getChildHtml('customer.wishlist.button.update')|raw }}
+        {{ pager|raw }}
+    </div>
 {% else %}
     <div class="mt-8">
         {{ state.empty(block, {

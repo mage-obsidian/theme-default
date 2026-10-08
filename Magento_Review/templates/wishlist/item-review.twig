@@ -1,0 +1,15 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% from 'Magento_Review::review/stars.twig' import stars %}
+{% set product = block.getItem().getProduct() %}
+{% set rating = block.getRating() ? block.getRating().getSummary(product, block.getSiblings()) : null %}
+{% if rating %}
+    <a href="{{ product.getProductUrl()|escape_url }}#reviews" class="product-card__rating inline-flex items-center gap-2 text-ink-soft transition-colors hover:text-ink">
+        {{ stars(rating.percent, __('%1 out of 5 stars', (rating.percent / 20)|round(1))) }}
+        <span class="font-mono text-eyebrow">({{ rating.count }})</span>
+    </a>
+{% endif %}

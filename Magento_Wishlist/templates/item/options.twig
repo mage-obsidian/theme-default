@@ -1,0 +1,17 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set options = block.getOptionList() %}
+{% if options %}
+    <dl class="wishlist-item__options space-y-0.5 text-xs text-ink-soft">
+        {% for option in options %}
+            <div class="flex flex-wrap gap-1.5">
+                <dt class="text-ash-500">{{ option.label }}:</dt>
+                <dd>{% if option.value is iterable %}{{ option.value|join('<br>')|raw }}{% else %}{{ option.value|raw }}{% endif %}</dd>
+            </div>
+        {% endfor %}
+    </dl>
+{% endif %}

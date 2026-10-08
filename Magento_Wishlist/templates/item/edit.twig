@@ -1,0 +1,10 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set item = block.getItem() %}
+{% if item.getProduct().isVisibleInSiteVisibility() %}
+    <a href="{{ block.getItemConfigureUrl(item)|escape_url }}" class="link link--meta">{{ __('Edit') }}</a>
+{% endif %}
