@@ -1,0 +1,18 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set ads = block.getReportConversion() ? block.getGoogleAds().conversion() : block.getGoogleAds().tag() %}
+{% set until = block.getDeferUntil()|default('interaction') %}
+
+{% if ads %}
+    <div hidden
+         data-google-ads="{{ ads|json_encode|escape_html_attr }}"
+         data-until="{{ until|escape_html_attr }}"
+         {% if until == 'now' %}data-reason="{{ block.getDeferReason()|default('declared by the page')|escape_html_attr }}"{% endif %}></div>
+
+    {{ script('MageObsidian_Storefront::js/deferred-scripts') }}
+    {{ script('MageObsidian_Storefront::js/analytics') }}
+{% endif %}

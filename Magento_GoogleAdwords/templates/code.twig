@@ -1,0 +1,18 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set legacy = block.getLegacyConversion() %}
+{% set conversion = legacy.conversion() %}
+
+{% if conversion %}
+    <div hidden data-google-conversion="{{ conversion|json_encode|escape_html_attr }}"></div>
+
+    {{ script('MageObsidian_Storefront::js/google-conversion') }}
+
+    {% if legacy.pixelUrl() %}
+        <noscript><img height="1" width="1" alt="" src="{{ legacy.pixelUrl()|escape_url }}"></noscript>
+    {% endif %}
+{% endif %}
