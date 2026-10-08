@@ -81,6 +81,8 @@
             </a>
         {% endif %}
 
+        {{ block.getProductDetailsHtml(product)|raw }}
+
         <div class="product-card__price font-mono text-sm text-ink">{{ block.getProductPrice(product)|raw }}</div>
 
         <div class="product-card__action mt-2">

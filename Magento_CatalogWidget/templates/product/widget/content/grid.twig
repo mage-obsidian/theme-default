@@ -34,6 +34,8 @@
             {% endfor %}
         </ol>
 
+        {% include 'Magento_Catalog::product/swatches-script.twig' with { items: products.getItems(), list_block: block } only %}
+
         {% if block.showPager() %}
             {{ block.getPagerHtml()|raw }}
         {% endif %}

@@ -1,0 +1,11 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set view = block.getBeacons().productView() %}
+{% if view %}
+    <div hidden data-report-beacon="product-view" data-url="{{ view.url|escape_url }}" data-product-id="{{ view.productId|escape_html_attr }}"></div>
+    {{ script('MageObsidian_Catalog::js/report-beacons') }}
+{% endif %}

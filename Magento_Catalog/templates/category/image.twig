@@ -1,0 +1,13 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set image = block.getLanding().getImage() %}
+{% if image %}
+    <div class="category-image mb-8 overflow-hidden rounded-edge bg-alabaster-raised">
+        <img class="image h-auto w-full object-cover" src="{{ image.url|escape_url }}" alt="{{ image.alt|escape_html_attr }}"
+             decoding="async">
+    </div>
+{% endif %}

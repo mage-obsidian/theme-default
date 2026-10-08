@@ -22,6 +22,7 @@
         <div class="message info empty py-16 text-center font-mono text-sm uppercase tracking-label text-ink-soft">
             {{ __('We can’t find products matching the selection.') }}
         </div>
+        {{ block.getAdditionalHtml()|raw }}
     {% else %}
         {{ block.getToolbarHtml()|raw }}
         {{ block.getAdditionalHtml()|raw }}
@@ -41,6 +42,8 @@
                 </li>
             {% endfor %}
         </ol>
+
+        {% include 'Magento_Catalog::product/swatches-script.twig' with { items: products, list_block: block } only %}
 
         {{ block.getChildBlock('toolbar').setIsBottom(true).toHtml()|raw }}
 

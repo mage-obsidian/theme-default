@@ -1,0 +1,23 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set items = block.getItems() %}
+{% if items|length > 0 %}
+    <section class="search-assist mb-8 border-y border-ash-200 py-4" aria-label="{{ block.getTitle()|escape_html_attr }}">
+        <p class="eyebrow">{{ block.getTitle() }}</p>
+        <ul class="mt-2 flex flex-wrap gap-x-6 gap-y-2" role="list">
+            {% for item in items %}
+                <li class="flex items-baseline gap-2">
+                    <a class="search-assist__term text-ink underline underline-offset-4 transition-colors hover:text-accent"
+                       href="{{ block.getLink(item.getQueryText())|escape_url }}">{{ item.getQueryText() }}</a>
+                    {% if block.isShowResultsCount() %}
+                        <span class="font-mono text-eyebrow text-ink-soft">{{ item.getResultsCount() }}</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endif %}

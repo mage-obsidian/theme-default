@@ -1,0 +1,11 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set terms = block.getBeacons().searchTerms() %}
+{% if terms %}
+    <div hidden data-report-beacon="search-term" data-url="{{ terms.url|escape_url }}"></div>
+    {{ script('MageObsidian_Catalog::js/report-beacons') }}
+{% endif %}

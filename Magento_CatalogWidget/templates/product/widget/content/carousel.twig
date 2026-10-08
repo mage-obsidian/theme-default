@@ -23,5 +23,6 @@
                 </li>
             {% endfor %}
         </ol>
+        {% include 'Magento_Catalog::product/swatches-script.twig' with { items: products.getItems(), list_block: block } only %}
     </div>
 {% endif %}

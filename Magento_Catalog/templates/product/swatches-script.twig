@@ -1,0 +1,11 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set renderer = list_block.getDetailsRenderer('configurable') %}
+{% if renderer and renderer.getNameInLayout() == 'category.product.type.details.renderers.configurable'
+    and items|filter(item => item.getTypeId() == 'configurable')|length > 0 %}
+    {{ script('MageObsidian_Catalog::js/listing-swatches') }}
+{% endif %}

@@ -1,0 +1,45 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set swatches = block.getSwatches() %}
+{% set groups = swatches.groups(block) %}
+{% if groups is not empty %}
+    {% set productUrl = block.getProduct().getProductUrl() %}
+    {% set tooltip = swatches.showsTooltip() %}
+    <div class="listing-swatches" data-listing-swatches data-product-url="{{ productUrl|escape_url }}">
+        {% for group in groups %}
+            <div class="listing-swatches__group" role="group" aria-label="{{ group.label|escape_html_attr }}"
+                 data-attribute-code="{{ group.code|escape_html_attr }}">
+                {% for option in group.options %}
+                    <a class="listing-swatch listing-swatch--{{ option.kind }}"
+                       href="{{ (productUrl ~ '#' ~ group.code ~ '=' ~ option.id)|escape_url }}"
+                       data-option-id="{{ option.id|escape_html_attr }}"
+                       {%- if option.image %}
+                       data-image-src="{{ option.image.src|escape_url }}"
+                       data-image-srcset="{{ option.image.srcset|escape_html_attr }}"
+                       {%- endif %}
+                       aria-label="{{ (group.label ~ ': ' ~ option.label)|escape_html_attr }}"
+                       {%- if tooltip %} title="{{ option.label|escape_html_attr }}"{% endif %}>
+                        {%- if option.kind == 'color' and option.value matches '/^#[0-9a-fA-F]{3,8}$/' -%}
+                            <svg class="listing-swatch__chip" viewBox="0 0 1 1" aria-hidden="true" focusable="false">
+                                <rect width="1" height="1" fill="{{ option.value|escape_html_attr }}"/>
+                            </svg>
+                        {%- elseif option.kind == 'image' -%}
+                            <img class="listing-swatch__chip" src="{{ option.value|escape_url }}" alt="" width="24" height="24"
+                                 loading="lazy" decoding="async">
+                        {%- else -%}
+                            <span class="listing-swatch__text">{{ option.label }}</span>
+                        {%- endif -%}
+                    </a>
+                {% endfor %}
+                {% if group.hidden > 0 %}
+                    <a class="listing-swatches__more" href="{{ productUrl|escape_url }}"
+                       aria-label="{{ __('%1 more options for %2', group.hidden, group.label)|escape_html_attr }}">+{{ group.hidden }}</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
