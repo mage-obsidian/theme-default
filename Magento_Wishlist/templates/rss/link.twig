@@ -1,0 +1,10 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% if block.isRssAllowed() and block.getLink() %}
+    <a href="{{ block.getLink()|escape_url }}" class="link link--meta">{{ __('RSS Feed') }}</a>
+{% endif %}
+

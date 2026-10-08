@@ -1,0 +1,10 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% set link = block.getOrderFeed().link() %}
+{% if link %}
+    <a href="{{ link|escape_url }}" class="link link--meta" rel="nofollow">{{ __('Subscribe to Order Status') }}</a>
+{% endif %}

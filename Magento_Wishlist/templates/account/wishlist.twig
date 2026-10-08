@@ -111,6 +111,7 @@
 
     <div class="mt-10 flex flex-wrap items-center justify-between gap-4">
         {{ wishlist.getChildHtml('customer.wishlist.button.update')|raw }}
+        {{ child_html('wishlist.rss.link')|raw }}
         {{ pager|raw }}
     </div>
 {% else %}

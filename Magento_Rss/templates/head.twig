@@ -1,0 +1,9 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% for link in block.getRssLinks().all() %}
+    <link rel="alternate" type="application/rss+xml" title="{{ link.label|escape_html_attr }}" href="{{ link.href|escape_url }}">
+{% endfor %}

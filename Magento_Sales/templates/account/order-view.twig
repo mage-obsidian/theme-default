@@ -132,6 +132,7 @@
     </form>
     <a href="{{ block.getUrl(route_prefix ~ '/print', {'order_id': order.getId()})|escape_url }}" class="link link--meta">{{ __('Print Order') }}</a>
     {{ child_html('tracking-info-link')|raw }}
+    {{ child_html('sales.order.info.buttons.rss')|raw }}
     {% if not is_guest %}
         {% include 'Magento_Sales::account/cancel-order.twig' %}
     {% endif %}

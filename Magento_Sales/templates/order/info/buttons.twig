@@ -14,5 +14,6 @@
         </form>
     {% endif %}
     <a href="{{ block.getPrintUrl(order)|escape_url }}" target="_blank" rel="noopener" class="link link--meta">{{ __('Print Order') }}</a>
+    {{ block.getChildHtml('sales.order.info.buttons.rss')|raw }}
 </div>
 {{ script('MageObsidian_Storefront::js/form-busy') }}

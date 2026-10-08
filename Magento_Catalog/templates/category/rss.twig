@@ -1,0 +1,9 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% if block.isRssAllowed() and block.getLink() and block.isTopCategory() %}
+    <p class="mb-8 print:hidden"><a href="{{ block.getLink()|escape_url }}" class="link link--meta">{{ block.getLabel() }}</a></p>
+{% endif %}
