@@ -19,6 +19,9 @@
         </p>
         <p class="mt-2 text-ink-soft">{{ __('We will email you an order confirmation with the details.') }}</p>
 
+        <div class="mt-4">{{ child_html('checkout.success.print.button')|raw }}</div>
+        {{ child_html('downloadable.checkout.success')|raw }}
+
         <a href="{{ block.getContinueUrl()|escape_url }}"
            class="btn btn--solid btn--lg mt-10">
             {{ __('Continue Shopping') }}

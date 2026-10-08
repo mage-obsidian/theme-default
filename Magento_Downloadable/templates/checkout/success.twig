@@ -1,0 +1,9 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% if block.getOrderHasDownloadable() %}
+    <p class="mt-6"><a href="{{ block.getDownloadableProductsUrl()|escape_url }}" class="link">{{ __('Go to My Downloadable Products') }}</a></p>
+{% endif %}

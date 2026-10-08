@@ -1,0 +1,12 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+<section class="mx-auto mt-12 w-full max-w-readable rounded-edge border border-ash-200 p-6 text-center" data-checkout-registration>
+    <h2 class="font-display text-xl text-ink">{{ __('Create an account') }}</h2>
+    <p class="mt-2 text-sm text-ink-soft">{{ __('You can track your order status by creating an account.') }}</p>
+    <p class="mt-1 text-sm text-ink-soft">{{ __('Email Address') }}: <span class="font-mono text-ink">{{ block.getEmailAddress() }}</span></p>
+    <a href="{{ block.getCreateAccountUrl()|escape_url }}" class="btn btn--outline mt-4">{{ __('Create an Account') }}</a>
+</section>

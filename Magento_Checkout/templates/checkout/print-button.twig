@@ -1,0 +1,9 @@
+{#
+ This file is part of the MageObsidian - Default Theme project.
+
+ SPDX-FileCopyrightText: 2026 Jeanmarcos Juarez
+ SPDX-License-Identifier: MIT
+#}
+{% if block.getCanViewOrder() and block.getCanPrintOrder() %}
+    <a href="{{ block.getPrintUrl()|escape_url }}" target="_blank" rel="noopener" class="link link--meta print:hidden">{{ __('Print receipt') }}</a>
+{% endif %}
