@@ -32,7 +32,7 @@
 
         {% if reviews.hasReviews() %}
             <ol class="reviews-list mt-8 grid gap-8 sm:grid-cols-2" role="list">
-                {% for review in reviews.getItems() %}
+                {% for review in reviews.getPageItems() %}
                     <li class="review rounded-edge border border-ash-200 bg-alabaster-raised p-6">
                         {{ stars(review.percent, __('%1 out of 5 stars', (review.percent / 20)|round(1))) }}
                         <h3 class="mt-3 font-display text-base text-ink">{{ review.title }}</h3>
@@ -43,70 +43,90 @@
                     </li>
                 {% endfor %}
             </ol>
+            {% if reviews.getPageCount() > 1 %}
+                <nav class="reviews-pager mt-8 flex flex-wrap items-center gap-2" aria-label="{{ __('Review pages')|escape_html_attr }}">
+                    {% for page in 1..reviews.getPageCount() %}
+                        {% if page == reviews.getPage() %}
+                            <span class="btn btn--solid btn--sm" aria-current="page">{{ page }}</span>
+                        {% else %}
+                            <a href="{{ reviews.getPageUrl(page)|escape_url }}" class="btn btn--outline btn--sm">{{ page }}</a>
+                        {% endif %}
+                    {% endfor %}
+                </nav>
+            {% endif %}
         {% else %}
             <p class="mt-6 font-mono text-sm text-ink-soft">{{ __('No reviews yet. Be the first to share your thoughts.') }}</p>
         {% endif %}
 
-        <div class="review-form mt-12 max-w-2xl">
-            <h3 class="font-display text-lg text-ink">{{ __('Write a review') }}</h3>
-            <form method="post" action="{{ reviewForm.getAction()|escape_url }}" class="mt-6 flex flex-col gap-5"
-                  data-review-form data-err-required="{{ __('This is a required field.')|escape_html_attr }}">
-                {{ block.getBlockHtml('formkey')|raw }}
+        {% if reviewForm.getAllowWriteReviewFlag() %}
+            <div class="review-form mt-12 max-w-2xl">
+                <h3 class="font-display text-lg text-ink">{{ __('Write a review') }}</h3>
+                <form method="post" action="{{ reviewForm.getAction()|escape_url }}" class="mt-6 flex flex-col gap-5"
+                      data-review-form data-err-required="{{ __('This is a required field.')|escape_html_attr }}">
+                    {{ block.getBlockHtml('formkey')|raw }}
 
-                {% set ratings = reviewForm.getRatings() %}
-                {% if ratings and ratings.getSize() %}
-                    <div class="flex flex-col gap-4">
-                        {% for rating in ratings %}
-                            <fieldset class="review-rating border-0 p-0" role="radiogroup" aria-label="{{ rating.getRatingCode() }}">
-                                <legend class="eyebrow">{{ rating.getRatingCode() }}</legend>
-                                <div class="review-rating__stars mt-2">
-                                    {% for option in rating.getOptions()|reverse %}
-                                        {% set inputId = 'rating-' ~ rating.getId() ~ '-' ~ option.getValue() %}
-                                        <input class="review-rating__input sr-only" type="radio"
-                                               id="{{ inputId }}" name="ratings[{{ rating.getId() }}]"
-                                               value="{{ option.getId() }}" required>
-                                        <label class="review-rating__star" for="{{ inputId }}">
-                                            <span class="sr-only">{{ __('%1 stars', option.getValue()) }}</span>
-                                            <span aria-hidden="true">★</span>
-                                        </label>
-                                    {% endfor %}
-                                </div>
-                            </fieldset>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                    {% set ratings = reviewForm.getRatings() %}
+                    {% if ratings and ratings.getSize() %}
+                        <div class="flex flex-col gap-4">
+                            {% for rating in ratings %}
+                                <fieldset class="review-rating border-0 p-0" role="radiogroup" aria-label="{{ rating.getRatingCode() }}">
+                                    <legend class="eyebrow">{{ rating.getRatingCode() }}</legend>
+                                    <div class="review-rating__stars mt-2">
+                                        {% for option in rating.getOptions()|reverse %}
+                                            {% set inputId = 'rating-' ~ rating.getId() ~ '-' ~ option.getValue() %}
+                                            <input class="review-rating__input sr-only" type="radio"
+                                                   id="{{ inputId }}" name="ratings[{{ rating.getId() }}]"
+                                                   value="{{ option.getId() }}" required>
+                                            <label class="review-rating__star" for="{{ inputId }}">
+                                                <span class="sr-only">{{ __('%1 stars', option.getValue()) }}</span>
+                                                <span aria-hidden="true">★</span>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+                                </fieldset>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
-                {{ form.field({
-                    name: 'nickname',
-                    id: 'review-nickname',
-                    label: __('Nickname'),
-                    required: true
-                }) }}
-                {{ form.field({
-                    name: 'title',
-                    id: 'review-title',
-                    label: __('Summary'),
-                    required: true
-                }) }}
-                {{ form.field({
-                    name: 'detail',
-                    id: 'review-detail',
-                    label: __('Review'),
-                    type: 'textarea',
-                    required: true,
-                    attrs: { rows: 4 }
-                }) }}
+                    {{ form.field({
+                        name: 'nickname',
+                        id: 'review-nickname',
+                        label: __('Nickname'),
+                        required: true
+                    }) }}
+                    {{ form.field({
+                        name: 'title',
+                        id: 'review-title',
+                        label: __('Summary'),
+                        required: true
+                    }) }}
+                    {{ form.field({
+                        name: 'detail',
+                        id: 'review-detail',
+                        label: __('Review'),
+                        type: 'textarea',
+                        required: true,
+                        attrs: { rows: 4 }
+                    }) }}
 
-                {# The reCAPTCHA slot, when the store configured one for this form. #}
-                {{ child_html('recaptcha') }}
+                    {# The reCAPTCHA slot, when the store configured one for this form. #}
+                    {{ child_html('recaptcha') }}
 
-                {{ form.required_note(__('Required fields')) }}
+                    {{ form.required_note(__('Required fields')) }}
 
-                <button type="submit" class="action submit btn btn--solid btn--lg w-fit">
-                    {{ __('Submit Review') }}
-                </button>
-            </form>
-        </div>
+                    <button type="submit" class="action submit btn btn--solid btn--lg w-fit">
+                        {{ __('Submit Review') }}
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <p class="review-form review-form--locked mt-12 font-mono text-sm text-ink-soft">
+                {{ __('Only registered users can write reviews.') }}
+                <a href="{{ reviewForm.getLoginLink()|escape_url }}" class="text-ink underline hover:text-accent">{{ __('Sign in') }}</a>
+                {{ __('or') }}
+                <a href="{{ reviewForm.getRegisterUrl()|escape_url }}" class="text-ink underline hover:text-accent">{{ __('create an account') }}</a>
+            </p>
+        {% endif %}
     </div>
 
     {# No Product node here. The engine emits exactly one per page from

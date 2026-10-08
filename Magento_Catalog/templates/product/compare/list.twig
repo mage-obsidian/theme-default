@@ -9,7 +9,15 @@
 {% set itemCount = items.getSize ? items.getSize() : items|length %}
 
 <div class="mx-auto w-full max-w-shell px-4 py-12 md:px-8">
-    <h1 class="font-display text-3xl text-ink md:text-4xl">{{ __('Compare Products') }}</h1>
+    <div class="flex flex-wrap items-baseline justify-between gap-4">
+        <h1 class="font-display text-3xl text-ink md:text-4xl">{{ __('Compare Products') }}</h1>
+        {% if itemCount > 0 %}
+            <form action="{{ block.getUrl('catalog/product_compare/clear') }}" method="post" data-busy-submit>
+                {{ block.getBlockHtml('formkey')|raw }}
+                <button type="submit" class="font-mono text-micro uppercase tracking-eyebrow text-sale underline">{{ __('Clear All') }}</button>
+            </form>
+        {% endif %}
+    </div>
 
     {% if itemCount > 0 %}
         <div class="mt-8 overflow-x-auto">
@@ -20,13 +28,28 @@
                         {% for item in items %}
                             <th scope="col" class="border-b border-ash-200 p-4 align-top">
                                 <a href="{{ item.getProductUrl()|escape_url }}" class="block font-display text-base leading-snug text-ink hover:text-accent">{{ item.getName() }}</a>
-                                <div class="mt-2 font-mono text-sm text-ink">{{ item.getFinalPrice()|price }}</div>
+                                <div class="mt-2 font-mono text-sm text-ink">{{ block.getProductPrice(item)|raw }}</div>
                                 <div class="mt-3 flex flex-col gap-2">
-                                    <form action="{{ block.getUrl('checkout/cart/add') }}" method="post" data-add-to-cart>
-                                        <input type="hidden" name="product" value="{{ item.getId() }}">
-                                        {{ block.getBlockHtml('formkey')|raw }}
-                                        <button type="submit" class="btn btn--solid btn--sm btn--block">{{ __('Add to Cart') }}</button>
-                                    </form>
+                                    {% set post = block.getCard().isQuickAdd(item) ? block.getCard().getAddToCartPostParams(item) : {} %}
+                                    {% if post.action is defined %}
+                                        <form action="{{ post.action|escape_url }}" method="post" data-add-to-cart>
+                                            <input type="hidden" name="product" value="{{ post.data.product }}">
+                                            <input type="hidden" name="uenc" value="{{ post.data.uenc }}">
+                                            {{ block.getBlockHtml('formkey')|raw }}
+                                            <button type="submit" class="btn btn--solid btn--sm btn--block">{{ __('Add to Cart') }}</button>
+                                        </form>
+                                    {% elseif item.isSaleable() %}
+                                        <a href="{{ item.getProductUrl()|escape_url }}" class="btn btn--outline btn--sm btn--block">{{ __('Choose options') }}</a>
+                                    {% else %}
+                                        <span class="font-mono text-eyebrow uppercase tracking-label text-ash-500">{{ __('Out of stock') }}</span>
+                                    {% endif %}
+                                    {% if block.getWishlist() and block.getWishlist().isEnabled() %}
+                                        <form data-add-to-wishlist data-product-id="{{ item.getId() }}" action="{{ block.getUrl('wishlist/index/add') }}" method="post">
+                                            <input type="hidden" name="product" value="{{ item.getId() }}">
+                                            {{ block.getBlockHtml('formkey')|raw }}
+                                            <button type="submit" aria-pressed="false" class="btn btn--outline btn--sm btn--block">{{ __('Add to Wish List') }}</button>
+                                        </form>
+                                    {% endif %}
                                     <form action="{{ block.getUrl('catalog/product_compare/remove') }}" method="post" data-busy-submit>
                                         <input type="hidden" name="product" value="{{ item.getId() }}">
                                         {{ block.getBlockHtml('formkey')|raw }}

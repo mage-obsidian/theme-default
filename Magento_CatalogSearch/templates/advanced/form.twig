@@ -9,8 +9,8 @@
    per-field validation widget is dropped; native number/date inputs and required
    server-side validation cover it. #}
 {% import 'Magento_Theme::macros/form.twig' as form %}
-{# Max query length cap on free-text inputs (Magento's default search limit). #}
-{% set maxlen = 128 %}
+{# Max query length cap on free-text inputs, as the store configures it. #}
+{% set maxlen = block.getMaxQueryLength() ?: 128 %}
 
 <div class="mx-auto w-full max-w-readable px-4 py-12 md:px-8">
     <h1 class="page-heading">{{ __('Advanced Search') }}</h1>

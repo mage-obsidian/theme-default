@@ -13,7 +13,9 @@
 {% set info = block.getChildBlock('info') %}
 {% set address = block.getChildBlock('address') %}
 {% set summary = block.getAccountSummary() %}
-{% set counted = block.getAccountNav().getLinks()|filter(link => link.count is not null) %}
+{% set navLinks = block.getAccountNav().getLinks() %}
+{% set navIds = navLinks|map(link => link.id) %}
+{% set counted = navLinks|filter(link => link.count is not null) %}
 
 {{ account.page_header({
     eyebrow: __('Account'),
@@ -68,8 +70,12 @@
     <div class="flex flex-wrap gap-3">
         <a href="{{ block.getUrl('customer/address/new')|escape_url }}" class="btn btn--outline btn--sm">{{ __('Add an Address') }}</a>
         <a href="{{ block.getUrl('customer/account/edit')|escape_url }}" class="btn btn--outline btn--sm">{{ __('Account Information') }}</a>
-        <a href="{{ block.getUrl('newsletter/manage')|escape_url }}" class="btn btn--outline btn--sm">{{ __('Newsletter') }}</a>
-        <a href="{{ block.getUrl('wishlist')|escape_url }}" class="btn btn--outline btn--sm">{{ __('Wish List') }}</a>
+        {% if 'newsletter' in navIds %}
+            <a href="{{ block.getUrl('newsletter/manage')|escape_url }}" class="btn btn--outline btn--sm">{{ __('Newsletter') }}</a>
+        {% endif %}
+        {% if 'wishlist' in navIds %}
+            <a href="{{ block.getUrl('wishlist')|escape_url }}" class="btn btn--outline btn--sm">{{ __('Wish List') }}</a>
+        {% endif %}
     </div>
 {% endset %}
 <div class="mt-8">

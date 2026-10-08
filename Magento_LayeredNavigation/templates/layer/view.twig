@@ -33,6 +33,7 @@
     {% set swatchVm = block.getSwatchViewModel() %}
     {% set filterState = block.getFilterState() %}
     {% set vite = block.getVite() %}
+    {% set showCounts = block.getLayerFilter() is null or block.getLayerFilter().shouldDisplayProductCountOnLayer() %}
 
     <dialog class="ln-dialog" data-filter-dialog
             {% if filterState %}id="{{ filterState.getDialogId() }}"{% endif %}
@@ -106,7 +107,9 @@
                                     <li>
                                         <a href="{{ item.getUrl()|escape_url }}" class="ln__item" rel="nofollow">
                                             <span class="ln__item-label">{{ item.getLabel()|raw }}</span>
-                                            <span class="ln__item-count">{{ item.getCount() }}</span>
+                                            {% if showCounts %}
+                                                <span class="ln__item-count">{{ item.getCount() }}</span>
+                                            {% endif %}
                                         </a>
                                     </li>
                                 {% endfor %}

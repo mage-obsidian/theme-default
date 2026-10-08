@@ -5,8 +5,8 @@
  SPDX-License-Identifier: MIT
 #}
 {# "Email to a Friend" form. `block` is the core Block\Send: post URL, prefilled
-   sender, max recipients. Recipient rows are static (no JS row-builder); blank
-   rows are ignored on the server. Native POST — works with no JS. #}
+   sender, max recipients. The first recipient is required; the rest sit in a
+   native disclosure and are ignored when blank. Native POST — works with no JS. #}
 {% import 'Magento_Theme::macros/form.twig' as form %}
 {% set maxRecipients = block.getMaxRecipients() ?: 1 %}
 
@@ -43,10 +43,6 @@
             }) }}
         </fieldset>
 
-        {# One recipient row: the core form starts with zero rows and adds them via
-           a JS row-builder, so empty pre-rendered rows would be POSTed as blank
-           emails and fail server validation. A single row is the no-JS-correct
-           equivalent (the dominant case — emailing one friend). #}
         <fieldset class="flex flex-col gap-4">
             <legend class="field__label mb-2">{{ __('Invitee') }}</legend>
             <div class="grid gap-5 sm:grid-cols-2">
@@ -62,6 +58,24 @@
                     required: true
                 }) }}
             </div>
+            {% if maxRecipients > 1 %}
+                <details class="flex flex-col gap-4">
+                    <summary class="link link--meta cursor-pointer">{{ __('Add more recipients (up to %1)', maxRecipients) }}</summary>
+                    {% for index in 1..(maxRecipients - 1) %}
+                        <div class="mt-4 grid gap-5 sm:grid-cols-2">
+                            {{ form.field({
+                                name: 'recipients[name][' ~ index ~ ']',
+                                label: __('Name')
+                            }) }}
+                            {{ form.field({
+                                name: 'recipients[email][' ~ index ~ ']',
+                                label: __('Email'),
+                                type: 'email'
+                            }) }}
+                        </div>
+                    {% endfor %}
+                </details>
+            {% endif %}
         </fieldset>
 
         {# The reCAPTCHA slot, when the store configured one for this form. #}

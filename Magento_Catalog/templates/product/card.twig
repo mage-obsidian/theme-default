@@ -15,6 +15,7 @@
   works with no JS and is progressively enhanced by cart-actions.js. Products
   that need options route to the PDP.
 #}
+{% from 'Magento_Review::review/stars.twig' import stars %}
 {% set url = product.getProductUrl() %}
 {#
   The list is rendered by the core ListProduct block, which is NOT a MageObsidian
@@ -71,6 +72,14 @@
         <h2 class="product-card__name font-display text-base leading-snug text-ink">
             <a href="{{ url|escape_url }}" class="transition-colors hover:text-accent">{{ product.getName() }}</a>
         </h2>
+
+        {% set rating = block.getRating() ? block.getRating().getSummary(product, block.getLoadedProductCollection()) : null %}
+        {% if rating %}
+            <a href="{{ url|escape_url }}#reviews" class="product-card__rating inline-flex items-center gap-2 text-ink-soft transition-colors hover:text-ink">
+                {{ stars(rating.percent, __('%1 out of 5 stars', (rating.percent / 20)|round(1))) }}
+                <span class="font-mono text-eyebrow">({{ rating.count }})</span>
+            </a>
+        {% endif %}
 
         <div class="product-card__price font-mono text-sm text-ink">{{ block.getProductPrice(product)|raw }}</div>
 

@@ -77,10 +77,12 @@
                     </div>
                     {% include 'Magento_Customer::form/password-meter.twig' with { policy: policy } only %}
 
-                    {{ form.checkbox({
-                        name: 'is_subscribed',
-                        label: __('Sign up for our newsletter')
-                    }) }}
+                    {% if register.isNewsletterEnabled() %}
+                        {{ form.checkbox({
+                            name: 'is_subscribed',
+                            label: __('Sign up for our newsletter')
+                        }) }}
+                    {% endif %}
 
                     {# Remember-me (Magento_Persistent; the VM self-gates on the enable flags). #}
                     {% include 'Magento_Persistent::remember-me.twig' with { remember: block.getRemember() } only %}
