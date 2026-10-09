@@ -58,8 +58,9 @@
                module) this stays a plain link to the cart page; the checkout
                module's mini-cart island enhances it to open the drawer instead.
                The label is icon-only (shopping-bag lives in the cart_count island),
-               so the link carries the accessible name itself. #}
-            <a href="{{ block.getUrl('checkout/cart') }}" data-minicart-trigger class="inline-flex items-center rounded-edge border border-ash-300 px-3 py-2 transition-colors hover:border-ink" aria-label="{{ __('Bag')|escape_html_attr }}">
+               so the link takes its accessible name from the island's live region
+               ("N in your bag"), which starts with the count the badge shows. #}
+            <a href="{{ block.getUrl('checkout/cart') }}" data-minicart-trigger class="inline-flex items-center rounded-edge border border-ash-300 px-3 py-2 transition-colors hover:border-ink">
                 {{ child_html('cart_count') }}
             </a>
         </div>
