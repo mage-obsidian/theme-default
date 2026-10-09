@@ -1,0 +1,19 @@
+name: Announce
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to announce
+        required: true
+
+jobs:
+  discord:
+    uses: mage-obsidian/.github/.github/workflows/discord-release.yml@main
+    with:
+      tag: ${{ inputs.tag || github.event.release.tag_name }}
+      ping_role_id: ${{ vars.DISCORD_RELEASE_ROLE_ID }}
+    secrets:
+      DISCORD_RELEASES_WEBHOOK: ${{ secrets.DISCORD_RELEASES_WEBHOOK }}
