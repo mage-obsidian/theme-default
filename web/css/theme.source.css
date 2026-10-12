@@ -333,10 +333,22 @@ main#maincontent {
    header paints at its place in flow and the content below covers the mega-menu
    flyouts. The footer needs no counterpart — it already paints after the well. */
 .header_container {
+  --obsidian-header-strip: 0px;
   view-transition-name: obsidian-header;
-  position: relative;
+  position: sticky;
+  top: calc(var(--obsidian-pinned-offset, 0px) - var(--obsidian-header-strip));
   z-index: 40;
 }
+
+@media (width >= 64rem) {
+  .header_container:has(> .header-strip) { --obsidian-header-strip: 2.3125rem; }
+}
+
+html {
+  scroll-padding-top: calc(var(--obsidian-pinned-offset, 0px) + var(--obsidian-header-height, 68px) + 1px + 1rem);
+}
+
+.header-strip { height: var(--obsidian-header-strip); }
 
 #page_bottom_container { view-transition-name: obsidian-footer; }
 .message.global.demo { view-transition-name: obsidian-notice; }
