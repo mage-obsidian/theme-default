@@ -36,7 +36,7 @@
 {% set headerActions %}
     {% if items.getSize() > 0 %}
         <div class="flex flex-wrap items-center gap-5">
-            <a href="{{ block.getUrl('wishlist/index/share')|escape_url }}" class="link link--meta">{{ __('Share Wish List') }}</a>
+            <a href="{{ block.getUrl('wishlist/index/share', {'wishlist_id': wishlist.getWishlistInstance().getId()})|escape_url }}" class="link link--meta">{{ __('Share Wish List') }}</a>
             <button type="submit" form="wishlist-update-form" formaction="{{ block.getUrl('wishlist/index/allcart')|escape_url }}" class="btn btn--solid">{{ __('Add All to Cart') }}</button>
         </div>
     {% endif %}

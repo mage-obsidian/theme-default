@@ -15,6 +15,10 @@
 
 <form action="{{ sharing.getSendUrl()|escape_url }}" method="post" class="mt-8 flex max-w-xl flex-col gap-6" data-busy-submit>
     {{ block.getBlockHtml('formkey')|raw }}
+    {% set wishlistId = block.getViewModel().getWishlistId() %}
+    {% if wishlistId %}
+        <input type="hidden" name="wishlist_id" value="{{ wishlistId }}">
+    {% endif %}
     {{ form.field({
         name: 'emails',
         id: 'email_address',
