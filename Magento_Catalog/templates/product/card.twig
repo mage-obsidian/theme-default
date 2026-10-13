@@ -26,7 +26,7 @@
 {% set is_eager = position is not null and position < eager_count|default(0) %}
 {% set is_priority = position is not null and position < priority_count|default(0) %}
 {% set media = block.getCard().getImage(product, 'category_page_grid') %}
-<article class="product-card group flex flex-col">
+<article class="product-card group flex h-full flex-col">
     <div class="product-card__media-wrap relative">
         <a href="{{ url|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-deep" tabindex="-1">
             {{ image(media.src, {
@@ -85,7 +85,7 @@
 
         <div class="product-card__price font-mono text-sm text-ink">{{ block.getProductPrice(product)|raw }}</div>
 
-        <div class="product-card__action mt-2">
+        <div class="product-card__action mt-auto pt-2">
             {% set post = block.getCard().isQuickAdd(product) ? block.getCard().getAddToCartPostParams(product) : {} %}
             {% if post.action is defined %}
                 <form data-add-to-cart action="{{ post.action|escape_url }}" method="post">
