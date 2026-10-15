@@ -6,5 +6,9 @@
 #}
 {% set item = block.getItem() %}
 {% if item.getProduct().isVisibleInSiteVisibility() %}
-    <a href="{{ block.getItemConfigureUrl(item)|escape_url }}" class="link link--meta">{{ __('Edit') }}</a>
+    <a href="{{ block.getItemConfigureUrl(item)|escape_url }}" aria-label="{{ __('Edit')|escape_html_attr }}" title="{{ __('Edit')|escape_html_attr }}" class="btn btn--outline btn--icon rounded-full bg-alabaster/90 backdrop-blur">
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" />
+        </svg>
+    </a>
 {% endif %}

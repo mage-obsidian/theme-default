@@ -17,7 +17,7 @@
 {% set wishlist = block.getChildBlock('wishlist') %}
 {% set thumbnail = block.getThumbnail() %}
 {% set items = wishlist.getWishlistItems() %}
-{% set inputClass = 'field__control field-qty w-16 px-2' %}
+{% set inputClass = 'field__control field-qty h-11 w-16 px-2 text-center' %}
 
 {# The pager core sets up in Customer\Wishlist::_prepareLayout is what caps the
    collection to a page, so not rendering it hid the rest of the list. Rendered
@@ -57,9 +57,31 @@
             {% set product = item.getProduct() %}
             {% set img = thumbnail.get(product) %}
             <li class="product-card group flex flex-col" data-item-id="{{ item.getId()|escape_html_attr }}">
-                <a href="{{ product.getProductUrl()|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised" tabindex="-1">
-                    <img src="{{ img.url|escape_url }}" width="{{ img.width }}" height="{{ img.height }}" alt="{{ img.label|escape_html_attr }}" loading="lazy" class="h-full w-full object-cover">
-                </a>
+                <div class="relative">
+                    <a href="{{ product.getProductUrl()|escape_url }}" class="product-card__media relative block aspect-[4/5] overflow-hidden rounded-edge bg-alabaster-raised" tabindex="-1">
+                        <img src="{{ img.url|escape_url }}" width="{{ img.width }}" height="{{ img.height }}" alt="{{ img.label|escape_html_attr }}" loading="lazy" class="h-full w-full object-cover">
+                    </a>
+                    <div class="absolute right-2 top-2 z-10 flex flex-col gap-2">
+                        <form
+                            action="{{ block.getUrl('wishlist/index/remove')|escape_url }}"
+                            method="post"
+                            data-confirm-title="{{ __('Remove from your wish list?')|escape_html_attr }}"
+                            data-confirm-body="{{ __('%1 will no longer be saved here. You can always add it again.', product.getName())|escape_html_attr }}"
+                            data-confirm-ok="{{ __('Remove')|escape_html_attr }}"
+                            data-busy-submit
+                            data-confirm-cancel="{{ __('Keep it')|escape_html_attr }}"
+                        >
+                            {{ block.getBlockHtml('formkey')|raw }}
+                            <input type="hidden" name="item" value="{{ item.getId()|escape_html_attr }}">
+                            <button type="submit" aria-label="{{ __('Remove')|escape_html_attr }}" title="{{ __('Remove')|escape_html_attr }}" class="btn btn--outline btn--icon rounded-full bg-alabaster/90 backdrop-blur">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </form>
+                        {% if editBlock %}{{ editBlock.setItem(item).toHtml()|raw }}{% endif %}
+                    </div>
+                </div>
 
                 <div class="product-card__body mt-4 flex flex-1 flex-col gap-2">
                     <h2 class="product-card__name font-display text-base leading-snug text-ink">
@@ -69,41 +91,23 @@
                     <span class="product-card__price font-mono text-sm text-ink">{{ product.getFinalPrice()|price }}</span>
                     {% if optionsBlock %}{{ optionsBlock.setItem(item).toHtml()|raw }}{% endif %}
 
-                    <div class="product-card__action mt-auto pt-2">
+                    <div class="product-card__action mt-auto flex flex-wrap items-center gap-2 pt-2">
+                        {% if item.canHaveQty() %}
+                            <label class="sr-only" for="qty-{{ item.getId() }}">{{ __('Qty') }}</label>
+                            <input type="number" id="qty-{{ item.getId() }}" name="qty[{{ item.getId()|escape_html_attr }}]" form="wishlist-update-form" value="{{ item.getQty()|round }}" min="1" class="{{ inputClass }}"{% if not product.isSaleable() %} disabled{% endif %}>
+                        {% endif %}
                         {% if not product.isSaleable() %}
-                            {{ account.chip(__('Out of stock'), 'dead') }}
+                            <div class="flex-1">{{ account.chip(__('Out of stock'), 'dead') }}</div>
                         {% elseif product.getTypeInstance().canConfigure(product) %}
                             {# Configurable/bundle/grouped need options → send to the PDP (same
                                as ProductCard); a direct cart POST would hit the configure page. #}
-                            <a href="{{ product.getProductUrl()|escape_url }}" class="btn btn--outline btn--sm btn--block">{{ __('View Options') }}</a>
+                            <a href="{{ product.getProductUrl()|escape_url }}" class="btn btn--solid min-w-32 flex-1 whitespace-nowrap px-3">{{ __('View Options') }}</a>
                         {% else %}
-                            <button type="submit" form="wishlist-update-form" formaction="{{ block.getUrl('wishlist/index/cart')|escape_url }}" name="item" value="{{ item.getId()|escape_html_attr }}" class="btn btn--outline btn--sm btn--block">{{ __('Add to Cart') }}</button>
+                            <button type="submit" form="wishlist-update-form" formaction="{{ block.getUrl('wishlist/index/cart')|escape_url }}" name="item" value="{{ item.getId()|escape_html_attr }}" class="btn btn--solid min-w-32 flex-1 whitespace-nowrap px-3">{{ __('Add to Cart') }}</button>
                         {% endif %}
                     </div>
 
-                    {% if item.canHaveQty() %}
-                        <div class="flex items-center gap-2">
-                            <label class="text-sm text-ink-soft" for="qty-{{ item.getId() }}">{{ __('Qty') }}</label>
-                            <input type="number" id="qty-{{ item.getId() }}" name="qty[{{ item.getId()|escape_html_attr }}]" form="wishlist-update-form" value="{{ item.getQty()|round }}" min="1" class="{{ inputClass }}"{% if not product.isSaleable() %} disabled{% endif %}>
-                        </div>
-                    {% endif %}
-
                     {% if commentBlock %}{{ commentBlock.setItem(item).toHtml()|raw }}{% endif %}
-
-                    <form
-                        action="{{ block.getUrl('wishlist/index/remove')|escape_url }}"
-                        method="post"
-                        data-confirm-title="{{ __('Remove from your wish list?')|escape_html_attr }}"
-                        data-confirm-body="{{ __('%1 will no longer be saved here. You can always add it again.', product.getName())|escape_html_attr }}"
-                        data-confirm-ok="{{ __('Remove')|escape_html_attr }}"
-                        data-busy-submit
-                        data-confirm-cancel="{{ __('Keep it')|escape_html_attr }}"
-                    >
-                        {{ block.getBlockHtml('formkey')|raw }}
-                        <input type="hidden" name="item" value="{{ item.getId()|escape_html_attr }}">
-                        <button type="submit" class="link link--meta">{{ __('Remove') }}</button>
-                    </form>
-                    {% if editBlock %}{{ editBlock.setItem(item).toHtml()|raw }}{% endif %}
                 </div>
             </li>
         {% endfor %}

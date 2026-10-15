@@ -8,5 +8,5 @@
 {% set product = item.getProduct() %}
 <div class="field wishlist-item__comment">
     <label class="sr-only" for="wishlist-comment-{{ item.getId() }}">{{ __('Comment') }}</label>
-    <textarea id="wishlist-comment-{{ item.getId() }}" name="description[{{ item.getId()|escape_html_attr }}]" form="wishlist-update-form" rows="2" placeholder="{{ __('Add a note for yourself')|escape_html_attr }}" class="field__control w-full"{% if not product.isSaleable() %} disabled{% endif %}>{{ item.getDescription() }}</textarea>
+    <textarea id="wishlist-comment-{{ item.getId() }}" name="description[{{ item.getId()|escape_html_attr }}]" form="wishlist-update-form" rows="1" placeholder="{{ __('Add a note for yourself')|escape_html_attr }}" class="field__control wishlist-item__note w-full"{% if not product.isSaleable() %} disabled{% endif %}>{{ item.getDescription() }}</textarea>
 </div>
