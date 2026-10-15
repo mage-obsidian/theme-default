@@ -102,64 +102,72 @@
                 }, true) }}
             {% endif %}
 
-            <form data-add-to-wishlist data-product-id="{{ view.getProductId() }}"
-                  action="{{ block.getUrl('wishlist/index/add') }}" method="post" class="pdp__wishlist mt-4">
-                <input type="hidden" name="product" value="{{ view.getProductId() }}">
-                {{ block.getBlockHtml('formkey')|raw }}
-                {# Inline, not hero_icon: the saved/compared state fills the glyph
-                   (.is-saved svg { fill }), and hero_icon renders a <use> clone of an
-                   <svg fill="none">, whose own attribute beats the inherited fill —
-                   the heart would stay an outline. #}
-                <button type="submit" aria-pressed="false"
-                        class="inline-flex min-h-6 items-center gap-2 eyebrow transition-colors hover:text-ink">
-                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                    </svg>
-                    {{ __('Add to Wish List') }}
-                </button>
-            </form>
+            <div class="pdp__secondary mt-4 grid gap-3 sm:grid-cols-2">
+                <form data-add-to-wishlist data-product-id="{{ view.getProductId() }}"
+                      action="{{ block.getUrl('wishlist/index/add') }}" method="post" class="pdp__wishlist">
+                    <input type="hidden" name="product" value="{{ view.getProductId() }}">
+                    {{ block.getBlockHtml('formkey')|raw }}
+                    {# Inline, not hero_icon: the saved/compared state fills the glyph
+                       (.is-saved svg { fill }), and hero_icon renders a <use> clone of an
+                       <svg fill="none">, whose own attribute beats the inherited fill —
+                       the heart would stay an outline. #}
+                    <button type="submit" aria-pressed="false" class="btn btn--outline w-full whitespace-nowrap px-4">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                        </svg>
+                        <span class="toggle-label toggle-label--off">{{ __('Add to Wish List') }}</span>
+                        <span class="toggle-label toggle-label--on">{{ __('Remove from Wish List') }}</span>
+                    </button>
+                </form>
 
-            <form data-add-to-compare data-product-id="{{ view.getProductId() }}"
-                  action="{{ block.getUrl('catalog/product_compare/add') }}" method="post" class="pdp__compare mt-3">
-                <input type="hidden" name="product" value="{{ view.getProductId() }}">
-                {{ block.getBlockHtml('formkey')|raw }}
-                <button type="submit" aria-pressed="false"
-                        class="inline-flex min-h-6 items-center gap-2 eyebrow transition-colors hover:text-ink">
-                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
-                    </svg>
-                    {{ __('Add to Compare') }}
-                </button>
-            </form>
+                <form data-add-to-compare data-product-id="{{ view.getProductId() }}"
+                      action="{{ block.getUrl('catalog/product_compare/add') }}" method="post" class="pdp__compare">
+                    <input type="hidden" name="product" value="{{ view.getProductId() }}">
+                    {{ block.getBlockHtml('formkey')|raw }}
+                    <button type="submit" aria-pressed="false" class="btn btn--outline w-full whitespace-nowrap px-4">
+                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
+                        </svg>
+                        <span class="toggle-label toggle-label--off">{{ __('Add to Compare') }}</span>
+                        <span class="toggle-label toggle-label--on">{{ __('Remove from Compare') }}</span>
+                    </button>
+                </form>
+            </div>
 
             {# Price-drop / back-in-stock notify links (Magento_ProductAlert VM
                self-gates each on the enable flag and product applicability). #}
             {% set productAlert = block.getProductAlert() %}
-            {% if productAlert and productAlert.isPriceAllowed() %}
-                <a href="{{ productAlert.getPriceUrl()|escape_url }}" class="pdp__alert mt-3 inline-flex items-center gap-2 eyebrow underline-offset-4 transition-colors hover:text-ink hover:underline">
-                    <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('bell', 'outline', '24')|raw }}</span>
-                    {{ __('Notify me when the price drops') }}
-                </a>
-            {% endif %}
-            {% if productAlert and productAlert.isStockAllowed() %}
-                <a href="{{ productAlert.getStockUrl()|escape_url }}" class="pdp__alert mt-3 inline-flex items-center gap-2 eyebrow underline-offset-4 transition-colors hover:text-ink hover:underline">
-                    <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('bell-alert', 'outline', '24')|raw }}</span>
-                    {{ __('Notify me when this product is in stock') }}
-                </a>
-            {% endif %}
-
             {# Email to a Friend (Magento_SendFriend; VM self-gates on the enable flag). #}
             {% set sendfriend = block.getSendfriend() %}
-            {% if sendfriend and sendfriend.isAllowed() and sendfriend.getSendUrl() %}
-                <a href="{{ sendfriend.getSendUrl()|escape_url }}" class="pdp__sendfriend mt-3 inline-flex items-center gap-2 eyebrow underline-offset-4 transition-colors hover:text-ink hover:underline">
-                    <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('envelope', 'outline', '24')|raw }}</span>
-                    {{ __('Email to a Friend') }}
-                </a>
+            {% set priceAlert = productAlert and productAlert.isPriceAllowed() %}
+            {% set stockAlert = productAlert and productAlert.isStockAllowed() %}
+            {% set sendToFriend = sendfriend and sendfriend.isAllowed() and sendfriend.getSendUrl() %}
+            {% if priceAlert or stockAlert or sendToFriend %}
+                <div class="pdp__utility-links mt-8 flex flex-col items-start gap-3 border-t border-ash-200 pt-8">
+                    {% if priceAlert %}
+                        <a href="{{ productAlert.getPriceUrl()|escape_url }}" class="pdp__alert inline-flex min-h-6 items-center gap-2 eyebrow underline-offset-4 transition-colors hover:text-ink hover:underline">
+                            <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('bell', 'outline', '24')|raw }}</span>
+                            {{ __('Notify me when the price drops') }}
+                        </a>
+                    {% endif %}
+                    {% if stockAlert %}
+                        <a href="{{ productAlert.getStockUrl()|escape_url }}" class="pdp__alert inline-flex min-h-6 items-center gap-2 eyebrow underline-offset-4 transition-colors hover:text-ink hover:underline">
+                            <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('bell-alert', 'outline', '24')|raw }}</span>
+                            {{ __('Notify me when this product is in stock') }}
+                        </a>
+                    {% endif %}
+                    {% if sendToFriend %}
+                        <a href="{{ sendfriend.getSendUrl()|escape_url }}" class="pdp__sendfriend inline-flex min-h-6 items-center gap-2 eyebrow underline-offset-4 transition-colors hover:text-ink hover:underline">
+                            <span class="inline-flex [&>svg]:h-4 [&>svg]:w-4">{{ hero_icon('envelope', 'outline', '24')|raw }}</span>
+                            {{ __('Email to a Friend') }}
+                        </a>
+                    {% endif %}
+                </div>
             {% endif %}
 
             {% set specifications = view.getSpecifications() %}
             {% if specifications is not empty %}
-                <section class="pdp__specs mt-12 border-t border-ash-200 pt-8" aria-labelledby="pdp-specs-title">
+                <section class="pdp__specs mt-8 border-t border-ash-200 pt-8" aria-labelledby="pdp-specs-title">
                     <h2 id="pdp-specs-title" class="eyebrow">{{ __('Details') }}</h2>
                     <dl class="mt-4 grid grid-cols-1 gap-y-3 sm:grid-cols-[auto_1fr] sm:gap-x-8">
                         {% for specification in specifications %}
