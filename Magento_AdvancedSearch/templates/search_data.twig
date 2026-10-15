@@ -6,7 +6,7 @@
 #}
 {% set items = block.getItems() %}
 {% if items|length > 0 %}
-    <section class="search-assist mb-8 border-y border-ash-200 py-4" aria-label="{{ block.getTitle()|escape_html_attr }}">
+    <section class="search-assist mb-8 border-b border-ash-200 pb-8" aria-label="{{ block.getTitle()|escape_html_attr }}">
         <p class="eyebrow">{{ block.getTitle() }}</p>
         <ul class="mt-2 flex flex-wrap gap-x-6 gap-y-2" role="list">
             {% for item in items %}
