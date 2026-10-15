@@ -334,7 +334,6 @@ main#maincontent {
    flyouts. The footer needs no counterpart — it already paints after the well. */
 .header_container {
   --obsidian-header-strip: 0px;
-  view-transition-name: obsidian-header;
   position: sticky;
   top: calc(var(--obsidian-pinned-offset, 0px) - var(--obsidian-header-strip));
   z-index: 40;

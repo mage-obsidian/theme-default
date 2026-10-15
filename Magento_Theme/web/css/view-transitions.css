@@ -4,6 +4,8 @@
  * SPDX-FileCopyrightText: 2024 Jeanmarcos Juarez
  * SPDX-License-Identifier: MIT
  */
+:root:active-view-transition .header_container { view-transition-name: obsidian-header; }
+
 ::view-transition-group(obsidian-header),
 ::view-transition-group(obsidian-footer),
 ::view-transition-group(obsidian-notice) { animation: none; }
